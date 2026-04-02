@@ -55,9 +55,10 @@ export default function Home() {
       });
       setShowApprovalDialog(false);
     } catch (error: any) {
+      const errorMessage = error.response?.data?.error || 'An error occurred.';
       toast({
         title: 'Request Failed',
-        description: error.response?.data?.error || 'An error occurred.',
+        description: String(errorMessage),
         variant: 'destructive',
       });
     } finally {

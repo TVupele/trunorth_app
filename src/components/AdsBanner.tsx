@@ -4,7 +4,6 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import api from '@/lib/api';
-import { adsBannerItems } from '@/data/index';
 
 interface AdBanner {
   id: string;
@@ -28,14 +27,15 @@ export function AdsBanner() {
     const fetchBanners = async () => {
       try {
         const response = await api.get('/public/ad-banners');
-        const activeBanners = response.data.filter((b: AdBanner) => b.is_active);
+        const data = response.data;
+        const activeBanners = Array.isArray(data) ? data.filter((b: AdBanner) => b.is_active) : [];
         if (activeBanners.length > 0) {
           setBanners(activeBanners.sort((a: AdBanner, b: AdBanner) => a.display_order - b.display_order));
         } else {
-          setBanners(adsBannerItems);
+          setBanners([]);
         }
       } catch (error) {
-        setBanners(adsBannerItems);
+        setBanners([]);
       } finally {
         setIsLoading(false);
       }
@@ -75,6 +75,7 @@ export function AdsBanner() {
   }
 
   const currentSlide = banners[currentIndex];
+  const imageSrc = currentSlide.image_url || (currentSlide as any).image || '';
 
   return (
     <div
@@ -93,7 +94,7 @@ export function AdsBanner() {
             className="absolute inset-0"
           >
             <img
-              src={currentSlide.image_url || currentSlide.image}
+              src={imageSrc}
               alt={currentSlide.title}
               className="h-full w-full object-cover"
             />
