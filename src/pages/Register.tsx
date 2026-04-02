@@ -108,7 +108,7 @@ export default function Register() {
                 </span>
               </div>
             </div>
-            <a href="http://localhost:3001/api/auth/google" className="w-full">
+            <a href={`${import.meta.env.VITE_API_URL || ''}/api/auth/google`} className="w-full">
               <Button variant="outline" className="w-full">
                 Sign up with Google
               </Button>

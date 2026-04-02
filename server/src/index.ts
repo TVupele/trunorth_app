@@ -34,10 +34,16 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Determine allowed origins
+const allowedOrigins = isProduction 
+  ? (process.env.ALLOWED_ORIGINS?.split(',') || [])
+  : ['http://localhost:8080', 'http://localhost:5000'];
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:8080', // Allow frontend to access
+  origin: allowedOrigins,
   credentials: true,
 }));
 app.use(express.json());
@@ -97,7 +103,5 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   res.status(500).json({ error: 'Something went wrong on the server!' });
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
-});
+// Vercel serverless handler
+export default app;
