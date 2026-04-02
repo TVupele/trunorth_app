@@ -93,7 +93,7 @@ export default function ReligiousServices() {
       setIsRegistrationOpen(false);
       setSelectedService(null);
     } catch (error: any) {
-      toast({ title: 'Registration Failed', description: error.response?.data?.error || 'An error occurred.', variant: 'destructive' });
+      toast({ title: 'Registration Failed', description: String(error.response?.data?.error) || 'An error occurred.', variant: 'destructive' });
     }
   };
 

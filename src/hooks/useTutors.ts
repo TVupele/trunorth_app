@@ -19,7 +19,7 @@ export const useTutors = create<TutorsState>()((set) => ({
       const response = await api.get('/tutors');
       set({ tutors: response.data, isLoading: false });
     } catch (error: any) {
-      set({ error: error.response?.data?.error || error.message, isLoading: false });
+      set({ error: typeof errorMsg === 'string' ? errorMsg : String(errorMsg), isLoading: false });
     }
   },
 }));

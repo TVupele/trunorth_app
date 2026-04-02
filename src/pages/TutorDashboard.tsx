@@ -79,7 +79,7 @@ export default function TutorDashboard() {
       setIsEditing(false);
       fetchData();
     } catch (error: any) {
-      toast({ title: 'Error', description: error.response?.data?.error || 'Failed to update.', variant: 'destructive' });
+      toast({ title: 'Error', description: String(error.response?.data?.error) || 'Failed to update.', variant: 'destructive' });
     }
   };
 

@@ -113,7 +113,7 @@ export default function Donations() {
       setCustomAmount('');
       setIsAnonymous(false);
     } catch (error: any) {
-      toast({ title: 'Donation Failed', description: error.response?.data?.error || 'An error occurred.', variant: 'destructive' });
+      toast({ title: 'Donation Failed', description: String(error.response?.data?.error) || 'An error occurred.', variant: 'destructive' });
     }
   };
 

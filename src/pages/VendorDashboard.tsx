@@ -62,7 +62,7 @@ export default function VendorDashboard() {
       setEditDialog({ open: false, data: null });
       fetchData();
     } catch (error: any) {
-      toast({ title: 'Error', description: error.response?.data?.error || 'Failed to save.', variant: 'destructive' });
+      toast({ title: 'Error', description: String(error.response?.data?.error) || 'Failed to save.', variant: 'destructive' });
     }
   };
 

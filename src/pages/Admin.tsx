@@ -105,7 +105,7 @@ export default function Admin() {
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, role } : u));
       toast({ title: 'Success', description: `User role updated to ${role}` });
     } catch (error: any) {
-      toast({ title: 'Error', description: error.response?.data?.error || 'Failed to update role', variant: 'destructive' });
+      toast({ title: 'Error',         description: String(error.response?.data?.error) || 'Failed to update role', variant: 'destructive' });
     }
   };
 
@@ -129,7 +129,7 @@ export default function Admin() {
       toast({ title: 'Success', description: `${requestType} request approved` });
       fetchData();
     } catch (error: any) {
-      toast({ title: 'Error', description: error.response?.data?.error || 'Failed to approve request', variant: 'destructive' });
+      toast({ title: 'Error',         description: String(error.response?.data?.error) || 'Failed to approve request', variant: 'destructive' });
     }
   };
 
@@ -139,7 +139,7 @@ export default function Admin() {
       setPendingRequests(prev => prev.filter(r => r.id !== requestId));
       toast({ title: 'Success', description: 'Request rejected' });
     } catch (error: any) {
-      toast({ title: 'Error', description: error.response?.data?.error || 'Failed to reject request', variant: 'destructive' });
+      toast({ title: 'Error',         description: String(error.response?.data?.error) || 'Failed to reject request', variant: 'destructive' });
     }
   };
 
@@ -156,7 +156,7 @@ export default function Admin() {
       setEditDialog({ open: false, type: '', data: null });
       fetchData();
     } catch (error: any) {
-      toast({ title: 'Error', description: error.response?.data?.error || 'Failed to save', variant: 'destructive' });
+      toast({ title: 'Error', description: String(error.response?.data?.error) || 'Failed to save', variant: 'destructive' });
     }
   };
 
@@ -183,7 +183,7 @@ export default function Admin() {
       setEditDialog({ open: false, type: '', data: null });
       fetchData();
     } catch (error: any) {
-      toast({ title: 'Error', description: error.response?.data?.error || 'Failed to save banner', variant: 'destructive' });
+      toast({ title: 'Error', description: String(error.response?.data?.error) || 'Failed to save banner', variant: 'destructive' });
     }
   };
 

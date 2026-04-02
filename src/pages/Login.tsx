@@ -32,7 +32,7 @@ export default function Login() {
     } catch (error: any) {
       toast({
         title: 'Login failed',
-        description: error.response?.data?.error || error.message,
+        description: String(error.response?.data?.error || error.message),
         variant: 'destructive',
       });
     } finally {

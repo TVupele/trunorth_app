@@ -84,7 +84,7 @@ export default function Emergency() {
       setFormData({ type: 'medical', priority: 'medium', location: '', description: '' });
       toast({ title: 'Report Submitted', description: 'Your emergency report has been submitted successfully.' });
     } catch (error: any) {
-      toast({ title: 'Error', description: error.response?.data?.error || 'Failed to submit report.', variant: 'destructive' });
+      toast({ title: 'Error', description: String(error.response?.data?.error) || 'Failed to submit report.', variant: 'destructive' });
     }
   };
 

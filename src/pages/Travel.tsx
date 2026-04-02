@@ -99,7 +99,7 @@ export default function Travel() {
     } catch (error: any) {
       toast({
         title: 'Booking Failed',
-        description: error.response?.data?.error || 'Unable to process your booking. Please try again.',
+        description: String(error.response?.data?.error) || 'Unable to process your booking. Please try again.',
         variant: 'destructive',
       });
     } finally {

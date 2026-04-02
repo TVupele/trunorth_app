@@ -42,7 +42,7 @@ export default function Register() {
     } catch (error: any) {
       toast({
         title: 'Registration failed',
-        description: error.response?.data?.error || error.message,
+        description: String(error.response?.data?.error || error.message),
         variant: 'destructive',
       });
     } finally {

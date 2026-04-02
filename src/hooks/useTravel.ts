@@ -19,7 +19,7 @@ export const useTravel = create<TravelState>()((set) => ({
       const response = await api.get('/travel');
       set({ packages: response.data, isLoading: false });
     } catch (error: any) {
-      set({ error: error.response?.data?.error || error.message, isLoading: false });
+      set({ error: typeof errorMsg === 'string' ? errorMsg : String(errorMsg), isLoading: false });
     }
   },
 }));
