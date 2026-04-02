@@ -26,7 +26,8 @@ export const useDashboardStats = create<DashboardStatsState>()((set) => ({
       const response = await api.get('/dashboard/stats');
       set({ stats: response.data, isLoading: false });
     } catch (error: any) {
-      set({ error: error.response?.data?.error || error.message, isLoading: false });
+      const errorMsg = error.response?.data?.error;
+      set({ error: typeof errorMsg === 'string' ? errorMsg : 'Failed to fetch dashboard stats.', isLoading: false });
     }
   },
 }));

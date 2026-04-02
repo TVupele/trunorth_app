@@ -57,8 +57,9 @@ export const useWallet = create<WalletState>()(
             isLoading: false,
           });
         } catch (err: any) {
+          const errorMsg = err.response?.data?.error;
           set({
-            error: err.response?.data?.error || 'Failed to fetch wallet data.',
+            error: typeof errorMsg === 'string' ? errorMsg : 'Failed to fetch wallet data.',
             isLoading: false,
           });
         }

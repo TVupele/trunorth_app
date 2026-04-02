@@ -55,7 +55,8 @@ export default function Home() {
       });
       setShowApprovalDialog(false);
     } catch (error: any) {
-      const errorMessage = error.response?.data?.error || 'An error occurred.';
+      const errorData = error.response?.data?.error;
+      const errorMessage = typeof errorData === 'string' ? errorData : 'An error occurred.';
       toast({
         title: 'Request Failed',
         description: String(errorMessage),
