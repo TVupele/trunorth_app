@@ -92,7 +92,7 @@ export default function Login() {
                 </span>
               </div>
             </div>
-            <a href={`${import.meta.env.VITE_API_URL || ''}/api/auth/google`} className="w-full">
+            <a href={`${import.meta.env.VITE_API_URL || 'https://trunorth-super-app.onrender.com'}/api/auth/google`} className="w-full">
               <Button variant="outline" className="w-full">
                 Login with Google
               </Button>

@@ -2,7 +2,8 @@ import axios from 'axios';
 import { useAuth } from '@/hooks/useAuth';
 
 const getApiBaseUrl = () => {
-  const apiUrl = import.meta.env.VITE_API_URL;
+  const API_URL = "https://trunorth-super-app.onrender.com";
+  const apiUrl = import.meta.env.VITE_API_URL || API_URL;
   if (apiUrl) {
     try {
       // Use the URL constructor for a robust way to combine base URL and path
