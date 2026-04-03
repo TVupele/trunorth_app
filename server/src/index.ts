@@ -33,19 +33,17 @@ import emergencyRoutes from './routes/emergency';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
-const isProduction = process.env.NODE_ENV === 'production';
-
-// Determine allowed origins
-const allowedOrigins = isProduction 
-  ? (process.env.ALLOWED_ORIGINS?.split(',') || [])
-  : ['http://localhost:8080', 'http://localhost:5000'];
+const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-  origin: allowedOrigins,
-  credentials: true,
+  origin: [
+    'http://localhost:5173',
+    'https://trunorth-app.vercel.app'
+  ],
+  credentials: true
 }));
+app.options('*', cors());
 app.use(express.json());
 
 // Session middleware

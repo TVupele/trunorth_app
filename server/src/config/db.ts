@@ -10,6 +10,9 @@ export const pool = new Pool({
   // Using a connection string is the standard approach
   // Example: postgres://username:password@localhost:5432/trunorth_db
   connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 // Centralized query function

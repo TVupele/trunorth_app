@@ -207,6 +207,8 @@ function cdnPrefixImages(): Plugin {
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
+  const isProduction = mode === 'production';
+  
   return {
     server: {
       host: "::",
@@ -243,6 +245,13 @@ export default defineConfig(({ mode }) => {
           ? process.env.VITE_ENABLE_ROUTE_MESSAGING === 'true'
           : process.env.VITE_ENABLE_ROUTE_MESSAGING !== 'false'
       ),
+      // Expose production flag for api.ts
+      'import.meta.env.PROD': isProduction,
+    },
+    build: {
+      // Ensure proper build output for Vercel
+      outDir: 'dist',
+      emptyOutDir: true,
     },
   }
 });
