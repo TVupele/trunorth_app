@@ -511,10 +511,10 @@ export default function Admin() {
                 <div><Label>Ticket Price</Label><Input type="number" value={editDialog.data?.ticket_price || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, ticket_price: e.target.value } })} /></div>
                 <div><Label>Total Seats</Label><Input type="number" value={editDialog.data?.total_seats || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, total_seats: e.target.value } })} /></div>
                 <div><Label>Category</Label><Input value={editDialog.data?.category || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, category: e.target.value } })} /></div>
-              </>
-            )}
-            {editDialog.type === 'campaigns' && (
-              <>
+                <div><Label>Image URL (Required for Ad Banner)</Label><Input value={editDialog.data?.image_url || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, image_url: e.target.value } })} /></div>
+                </>
+                )}
+                {editDialog.type === 'campaigns' && (              <>
                 <div><Label>Title</Label><Input value={editDialog.data?.title || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, title: e.target.value } })} /></div>
                 <div><Label>Description</Label><Textarea value={editDialog.data?.description || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, description: e.target.value } })} /></div>
                 <div><Label>Goal Amount</Label><Input type="number" value={editDialog.data?.goal_amount || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, goal_amount: e.target.value } })} /></div>

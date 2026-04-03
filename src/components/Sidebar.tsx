@@ -49,29 +49,21 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   const sidebarContent = (
     <div className="flex h-full flex-col bg-sidebar">
-      <div className="flex items-center justify-between p-6">
-        <div className="flex items-center gap-3">
-          <img src="/Logo_Icon.jpeg" alt="Trunorth Logo" className="h-10 w-10 rounded-xl" />
-          <div>
-            <h1 className="text-lg font-bold text-sidebar-foreground">Trunorth</h1>
-            <p className="text-xs text-muted-foreground">Super App</p>
-          </div>
-        </div>
+      <div className="relative pt-6 px-4 pb-4">
         <Button
           variant="ghost"
           size="icon"
-          className="lg:hidden"
+          className="absolute top-2 right-2 lg:hidden text-muted-foreground hover:text-foreground"
           onClick={onClose}
         >
           <X className="h-5 w-5" />
         </Button>
-      </div>
-
-      <div className="mx-4 mb-4 rounded-xl bg-gradient-to-br from-primary to-primary/80 p-4 shadow-lg">
-        <p className="text-xs font-medium text-primary-foreground/80">Wallet Balance</p>
-        <p className="mt-1 font-mono text-2xl font-bold text-primary-foreground">
-          {formatCurrency(balance, currency)}
-        </p>
+        <div className="rounded-xl bg-gradient-to-br from-primary to-primary/80 p-4 shadow-lg w-full">
+          <p className="text-xs font-medium text-primary-foreground/80">Wallet Balance</p>
+          <p className="mt-1 font-mono text-2xl font-bold text-primary-foreground">
+            {formatCurrency(balance, currency)}
+          </p>
+        </div>
       </div>
 
       <Separator className="mx-4" />

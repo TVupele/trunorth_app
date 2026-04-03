@@ -58,11 +58,8 @@ export function TopBar({ onMenuToggle }: TopBarProps) {
             <Menu className="h-5 w-5" />
           </Button>
 
-          <Link to={ROUTE_PATHS.HOME} className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-lg">T</span>
-            </div>
-            <span className="hidden sm:inline-block font-bold text-lg">Trunorth</span>
+          <Link to={ROUTE_PATHS.HOME} className="flex items-center">
+            <img src="/Logo_Icon.jpeg" alt="Trunorth Logo" className="h-8 w-8 rounded-lg object-cover" />
           </Link>
         </div>
 

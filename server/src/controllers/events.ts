@@ -64,7 +64,27 @@ export const createEvent = async (req: Request, res: Response) => {
        VALUES ($1, $2, $3, $4, $5, $6, $7, $7, $8) RETURNING *`,
       [title, description, image_url || null, event_date, location, ticket_price || 0, total_seats || 0, category || 'General']
     );
-    res.status(201).json(result.rows[0]);
+
+    const event = result.rows[0];
+
+    // Automatically create an ad banner for the event
+    const bannerImageUrl = event.image_url || '/placeholder.svg';
+    await query(
+      `INSERT INTO ad_banners (title, description, type, image_url, cta, link, is_active, display_order)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [
+        event.title,
+        event.description || `Join us for ${event.title}`,
+        'event',
+        bannerImageUrl,
+        'View Event',
+        '/events',
+        true,
+        0
+      ]
+    );
+
+    res.status(201).json(event);
   } catch (error) {
     console.error('Create event error:', error);
     res.status(500).json({ error: 'Internal server error.' });
