@@ -6,7 +6,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "/api/:path*"
+      "destination": "https://trunorth-super-app.onrender.com/api/:path*"
     }
   ]
 }
