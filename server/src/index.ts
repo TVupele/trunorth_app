@@ -101,5 +101,10 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   res.status(500).json({ error: 'Something went wrong on the server!' });
 });
 
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
+
 // Vercel serverless handler
 export default app;
