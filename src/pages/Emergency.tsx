@@ -37,11 +37,14 @@ export default function Emergency() {
 
   useEffect(() => {
     const fetchReports = async () => {
+      setIsLoading(true);
       try {
         const response = await api.get('/emergency');
-        setReports(response.data);
+        const data = response.data;
+        setReports(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Failed to fetch reports:', error);
+        setReports([]);
       } finally {
         setIsLoading(false);
       }

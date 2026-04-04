@@ -215,12 +215,12 @@ export default function Wallet() {
               <div className="font-mono text-3xl md:text-5xl font-bold tracking-tight">
                 {formatCurrency(balance, currency)}
               </div>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2">
                 {/* Top Up Dialog */}
                 <Dialog open={topUpDialogOpen} onOpenChange={setTopUpDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="secondary" className="gap-2">
-                      <Plus className="h-4 w-4" />
+                    <Button variant="secondary" size="sm" className="gap-1 flex-1">
+                      <Plus className="h-3 w-3" />
                       Top Up
                     </Button>
                   </DialogTrigger>
@@ -344,9 +344,9 @@ export default function Wallet() {
                 {/* Send Money Dialog */}
                 <Dialog open={sendMoneyDialogOpen} onOpenChange={setSendMoneyDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="secondary" className="gap-2">
-                      <ArrowUpRight className="h-4 w-4" />
-                      Send Money
+                    <Button variant="secondary" size="sm" className="gap-1 flex-1">
+                      <ArrowUpRight className="h-3 w-3" />
+                      Send
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
@@ -378,9 +378,9 @@ export default function Wallet() {
                 {/* Request Money Dialog */}
                 <Dialog open={requestMoneyDialogOpen} onOpenChange={setRequestMoneyDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="secondary" className="gap-2">
-                      <ArrowDownLeft className="h-4 w-4" />
-                      Request Money
+                    <Button variant="secondary" size="sm" className="gap-1 flex-1">
+                      <ArrowDownLeft className="h-3 w-3" />
+                      Request
                     </Button>
                   </DialogTrigger>
                   <DialogContent>

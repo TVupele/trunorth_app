@@ -15,20 +15,32 @@ export function LanguageSwitcher() {
     i18n.changeLanguage(lng);
   };
 
+  const currentLang = i18n.language;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Globe className="h-[1.2rem] w-[1.2rem]" />
-          <span className="sr-only">Change language</span>
+        <Button 
+          variant="default" 
+          size="sm" 
+          className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
+        >
+          <Globe className="h-4 w-4" />
+          <span className="text-xs">{currentLang === 'ha' ? 'HA' : 'EN'}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => changeLanguage('en')}>
-          English
+        <DropdownMenuItem 
+          onClick={() => changeLanguage('en')}
+          className={currentLang === 'en' ? 'bg-primary/10' : ''}
+        >
+          🇬🇧 English
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => changeLanguage('ha')}>
-          Hausa
+        <DropdownMenuItem 
+          onClick={() => changeLanguage('ha')}
+          className={currentLang === 'ha' ? 'bg-primary/10' : ''}
+        >
+          🇳🇬 Hausa
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

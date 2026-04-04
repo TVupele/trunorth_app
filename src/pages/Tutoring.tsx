@@ -27,6 +27,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { motion } from 'framer-motion';
 import { useTutors } from '@/hooks/useTutors';
 
@@ -412,7 +413,7 @@ export default function Tutoring() {
       </div>
 
       <Dialog open={bookingDialogOpen} onOpenChange={setBookingDialogOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden">
           <DialogHeader>
             <DialogTitle>Book Tutoring Session</DialogTitle>
             <DialogDescription>
@@ -420,6 +421,7 @@ export default function Tutoring() {
             </DialogDescription>
           </DialogHeader>
 
+          <ScrollArea className="h-[60vh] pr-4">
           {selectedTutor && (
             <div className="space-y-6">
               <div className="flex items-start gap-4 p-4 bg-muted rounded-lg">
@@ -531,6 +533,7 @@ export default function Tutoring() {
               </div>
             </div>
           )}
+          </ScrollArea>
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setBookingDialogOpen(false)}>

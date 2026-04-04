@@ -45,16 +45,17 @@ export default function Marketplace() {
     const fetchProducts = async () => {
       try {
         const response = await api.get('/products');
-        setProducts(response.data);
+        const data = response.data;
+        setProducts(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Failed to fetch products:', error);
-        toast({ title: 'Error', description: 'Failed to load products.', variant: 'destructive' });
+        setProducts([]);
       } finally {
         setIsLoadingProducts(false);
       }
     };
     fetchProducts();
-  }, [toast]);
+  }, []);
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {

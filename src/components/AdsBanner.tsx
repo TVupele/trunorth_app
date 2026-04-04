@@ -69,7 +69,7 @@ export function AdsBanner() {
   if (isLoading || banners.length === 0) {
     return (
       <div className="relative w-full overflow-hidden rounded-xl bg-card animate-pulse">
-        <div className="aspect-[21/9] md:aspect-[3/1] bg-muted" />
+        <div className="aspect-[16/9] md:aspect-[21/9] bg-muted" />
       </div>
     );
   }
@@ -83,7 +83,7 @@ export function AdsBanner() {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div className="relative aspect-[21/9] md:aspect-[3/1]">
+      <div className="relative aspect-[16/9] md:aspect-[21/9]">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
@@ -96,7 +96,7 @@ export function AdsBanner() {
             <img
               src={imageSrc}
               alt={currentSlide.title}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-contain"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/30" />
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, Bell, User, LogOut, Settings, Wallet, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,7 @@ import { ROUTE_PATHS, formatCurrency, formatDate } from '@/lib/index';
 import { useWallet } from '@/hooks/useWallet';
 import { useAuth } from '@/hooks/useAuth';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import api from '@/lib/api';
 
 interface TopBarProps {
   onMenuToggle: () => void;
@@ -31,7 +32,26 @@ export function TopBar({ onMenuToggle }: TopBarProps) {
   const currency = useWallet((state) => state.currency);
   const transactions = useWallet((state) => state.transactions);
   const recentTransactions = transactions.slice(0, 5);
-  const [notificationCount] = useState(3);
+  const [notificationCount, setNotificationCount] = useState(0);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [isLoadingNotifications, setIsLoadingNotifications] = useState(true);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await api.get('/notifications');
+        const data = response.data;
+        setNotifications(Array.isArray(data) ? data : []);
+        setNotificationCount(Array.isArray(data) ? data.length : 0);
+      } catch (error) {
+        setNotifications([]);
+        setNotificationCount(0);
+      } finally {
+        setIsLoadingNotifications(false);
+      }
+    };
+    fetchNotifications();
+  }, []);
   
   // Destructure the user and logout function directly from your new Zustand store
   const { user, logout } = useAuth(); 
@@ -59,7 +79,7 @@ export function TopBar({ onMenuToggle }: TopBarProps) {
           </Button>
 
           <Link to={ROUTE_PATHS.HOME} className="flex items-center">
-            <img src="/Logo_Icon.jpeg" alt="Trunorth Logo" className="h-8 w-8 rounded-lg object-cover" />
+            <img src="/Logo_Icon.jpeg" alt="Trunorth Logo" className="h-12 w-12 rounded-lg object-contain" />
           </Link>
         </div>
 

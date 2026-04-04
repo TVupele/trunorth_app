@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Image as ImageIcon, Send, MessageCircle, Heart, Trash2 } from 'lucide-react';
+import { Search, Image as ImageIcon, Send, MessageCircle, Heart, Trash2, Plus } from 'lucide-react';
 import { useSocial } from '@/hooks/useSocial';
+import { useAuth } from '@/hooks/useAuth';
 import { PostCard } from '@/components/PostCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,9 +15,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { formatDate } from '@/lib/index';
 
 export default function Social() {
+  const { user } = useAuth();
   const { posts, conversations, messages, fetchPosts, createPost, sendMessage, markMessagesAsRead } = useSocial();
   const [postContent, setPostContent] = useState('');
-  const [postImage, setPostImage] = useState('');
+  const [postImage, setPostImage] = useState<File | null>(null);
+  const [postImagePreview, setPostImagePreview] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('feed');
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
@@ -27,11 +30,33 @@ export default function Social() {
     fetchPosts();
   }, [fetchPosts]);
 
-  const handleCreatePost = () => {
+  const handleCreatePost = async () => {
     if (postContent.trim()) {
-      createPost(postContent, postImage || undefined);
+      let imageUrl: string | undefined;
+      if (postImage) {
+        const formData = new FormData();
+        formData.append('image', postImage);
+        try {
+          const response = await api.post('/posts/upload', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          });
+          imageUrl = response.data.url;
+        } catch (error) {
+          console.error('Image upload failed:', error);
+        }
+      }
+      createPost(postContent, imageUrl);
       setPostContent('');
-      setPostImage('');
+      setPostImage(null);
+      setPostImagePreview('');
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPostImage(file);
+      setPostImagePreview(URL.createObjectURL(file));
     }
   };
 
@@ -110,17 +135,27 @@ export default function Social() {
                     className="min-h-[100px] resize-none"
                   />
                   <div className="flex items-center gap-4">
-                    <Input
-                      type="url"
-                      placeholder="Image URL (optional)"
-                      value={postImage}
-                      onChange={(e) => setPostImage(e.target.value)}
-                      className="flex-1"
-                    />
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                      />
+                      <Button variant="outline" size="sm" type="button">
+                        <ImageIcon className="h-4 w-4" />
+                        <span className="ml-2">Add Image</span>
+                      </Button>
+                    </label>
+                    {postImagePreview && (
+                      <div className="relative w-12 h-12 rounded-md overflow-hidden">
+                        <img src={postImagePreview} alt="Preview" className="w-full h-full object-cover" />
+                      </div>
+                    )}
                     <Button
                       onClick={handleCreatePost}
                       disabled={!postContent.trim()}
-                      className="gap-2"
+                      className="gap-2 ml-auto"
                     >
                       <Send className="h-4 w-4" />
                       Post

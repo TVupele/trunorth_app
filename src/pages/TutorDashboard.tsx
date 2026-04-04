@@ -154,8 +154,8 @@ export default function TutorDashboard() {
             {isEditing ? (
               <div className="space-y-4">
                 <div>
-                  <Label>Subjects (comma-separated)</Label>
-                  <Input value={editData.subjects} onChange={(e) => setEditData({ ...editData, subjects: e.target.value })} placeholder="Mathematics, Physics, Chemistry" />
+                  <Label>Subjects Specializations (comma-separated)</Label>
+                  <Input value={editData.subjects} onChange={(e) => setEditData({ ...editData, subjects: e.target.value })} placeholder="e.g., Mathematics, Physics, Chemistry" />
                 </div>
                 <div>
                   <Label>Hourly Rate (NGN)</Label>

@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import api from '@/lib/api';
 import { ROUTE_PATHS, formatCurrency } from '@/lib/index';
 import {
-  Wallet, Users, Plane, GraduationCap, AlertTriangle, Heart,
+  Users, Plane, GraduationCap, AlertTriangle, Heart,
   ShoppingBag, Calendar, Church, Bot, MessageSquare, TrendingUp,
   Store, BadgeCheck,
 } from 'lucide-react';
@@ -242,24 +242,8 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 35, delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4 md:mb-6"
+          className="grid grid-cols-2 gap-3 mb-4 md:mb-6"
         >
-          <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
-            <CardHeader className="pb-1 pt-3 px-4">
-              <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-                <Wallet className="w-3.5 h-3.5" />Wallet Balance
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="px-4 pb-3">
-              {isWalletLoading ? (
-                <Skeleton className="h-6 w-28" />
-              ) : (
-                <div className="text-lg font-bold font-mono text-primary">{formatCurrency(balance, currency)}</div>
-              )}
-              <p className="text-xs text-muted-foreground mt-0.5">Available balance</p>
-            </CardContent>
-          </Card>
-
           <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-accent/10">
             <CardHeader className="pb-1 pt-3 px-4">
               <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-2">
@@ -268,9 +252,9 @@ export default function Home() {
             </CardHeader>
             <CardContent className="px-4 pb-3">
               {isStatsLoading ? (
-                <Skeleton className="h-6 w-14" />
+                <Skeleton className="h-8 w-12" />
               ) : (
-                <div className="text-lg font-bold text-accent">{stats.unreadMessages}</div>
+                <div className="text-2xl font-bold text-accent">{stats.unreadMessages}</div>
               )}
               <p className="text-xs text-muted-foreground mt-0.5">New conversations</p>
             </CardContent>
@@ -284,9 +268,9 @@ export default function Home() {
             </CardHeader>
             <CardContent className="px-4 pb-3">
               {isStatsLoading ? (
-                <Skeleton className="h-6 w-14" />
+                <Skeleton className="h-8 w-12" />
               ) : (
-                <div className="text-lg font-bold text-secondary">{stats.upcomingBookings}</div>
+                <div className="text-2xl font-bold text-secondary">{stats.upcomingBookings}</div>
               )}
               <p className="text-xs text-muted-foreground mt-0.5">Active reservations</p>
             </CardContent>

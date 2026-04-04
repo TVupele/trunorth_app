@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Heart, MessageCircle, Share2, Send } from 'lucide-react';
 import { Post, formatDate } from '@/lib/index';
 import { useSocial } from '@/hooks/useSocial';
+import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -14,7 +15,9 @@ interface PostCardProps {
 }
 
 export function PostCard({ post }: PostCardProps) {
+  const { user } = useAuth();
   const { toggleLike, addComment } = useSocial();
+  const authorName = post.userId === user?.id ? (user?.fullName || 'You') : post.userName;
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,11 +50,11 @@ export function PostCard({ post }: PostCardProps) {
       <CardHeader className="pb-3">
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10">
-            <AvatarImage src={post.userAvatar} alt={post.userName} />
-            <AvatarFallback>{post.userName.charAt(0)}</AvatarFallback>
+            <AvatarImage src={post.userAvatar} alt={authorName} />
+            <AvatarFallback>{authorName.charAt(0)}</AvatarFallback>
           </Avatar>
           <div className="flex-1">
-            <p className="font-semibold text-sm">{post.userName}</p>
+            <p className="font-semibold text-sm">{authorName}</p>
             <p className="text-xs text-muted-foreground">{formatDate(post.timestamp)}</p>
           </div>
         </div>

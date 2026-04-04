@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Users, ShoppingBag, Calendar, Heart, Church, GraduationCap, Store,
@@ -197,7 +197,22 @@ export default function Admin() {
     }
   };
 
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEditDialog({ ...editDialog, data: { ...editDialog.data, image_url: reader.result as string } });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const openCreateDialog = (type: string) => {
+    setSelectedImageFile(null);
     const defaults: Record<string, any> = {
       products: { name: '', description: '', price: 0, category: 'General', stock_quantity: 0, image_url: '' },
       events: { title: '', description: '', event_date: '', location: '', ticket_price: 0, total_seats: 0, category: 'General', image_url: '' },
@@ -499,7 +514,17 @@ export default function Admin() {
                 <div><Label>Price</Label><Input type="number" value={editDialog.data?.price || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, price: e.target.value } })} /></div>
                 <div><Label>Category</Label><Input value={editDialog.data?.category || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, category: e.target.value } })} /></div>
                 <div><Label>Stock</Label><Input type="number" value={editDialog.data?.stock_quantity || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, stock_quantity: e.target.value } })} /></div>
-                <div><Label>Image URL</Label><Input value={editDialog.data?.image_url || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, image_url: e.target.value } })} /></div>
+                <div className="space-y-2">
+                  <Label>Product Image</Label>
+                  <div className="flex items-center gap-2">
+                    <label className="flex items-center gap-2 cursor-pointer bg-primary px-3 py-2 rounded-md text-primary-foreground hover:bg-primary/90 text-sm">
+                      <input type="file" accept="image/*" onChange={handleImageFileChange} className="hidden" />
+                      Choose Image
+                    </label>
+                    {editDialog.data?.image_url && <span className="text-xs text-muted-foreground">Image selected</span>}
+                  </div>
+                  {editDialog.data?.image_url && <img src={editDialog.data.image_url} alt="Preview" className="h-20 w-20 object-cover rounded" />}
+                </div>
               </>
             )}
             {editDialog.type === 'events' && (
@@ -562,7 +587,19 @@ export default function Admin() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div><Label>Image URL</Label><Input value={editDialog.data?.image_url || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, image_url: e.target.value } })} /></div>
+                <div className="space-y-2">
+                  <Label>Banner Image (recommended: 1200x400)</Label>
+                  <div className="flex items-center gap-2">
+                    <label className="flex items-center gap-2 cursor-pointer bg-primary px-4 py-2 rounded-md text-primary-foreground hover:bg-primary/90 font-medium">
+                      <input type="file" accept="image/*" onChange={handleImageFileChange} className="hidden" />
+                      Upload Image
+                    </label>
+                    {editDialog.data?.image_url && <span className="text-xs text-green-600">Image loaded</span>}
+                  </div>
+                  {editDialog.data?.image_url && (
+                    <img src={editDialog.data.image_url} alt="Preview" className="w-full h-32 object-cover rounded-lg" />
+                  )}
+                </div>
                 <div><Label>CTA Button Text</Label><Input value={editDialog.data?.cta || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, cta: e.target.value } })} /></div>
                 <div><Label>Link</Label><Input value={editDialog.data?.link || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, link: e.target.value } })} /></div>
                 <div><Label>Display Order</Label><Input type="number" value={editDialog.data?.display_order || 0} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, display_order: parseInt(e.target.value) } })} /></div>
