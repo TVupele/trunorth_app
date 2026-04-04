@@ -9,7 +9,7 @@ import { ROUTE_PATHS, formatCurrency } from '@/lib/index';
 import {
   Users, Plane, GraduationCap, AlertTriangle, Heart,
   ShoppingBag, Calendar, Church, Bot, MessageSquare, TrendingUp,
-  Store, BadgeCheck,
+  Store, BadgeCheck, Wallet,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { NewsFeed } from '@/components/NewsFeed';
