@@ -17,6 +17,10 @@ export const ROUTE_PATHS = {
   AI_ASSISTANT: '/ai-assistant',
   PROFILE: '/profile',
   SETTINGS: '/settings',
+  MOBILE_HOME: '/mobile',
+  MOBILE_FEED: '/mobile/feed',
+  MOBILE_WALLET: '/mobile/wallet',
+  MOBILE_EVENTS: '/mobile/events',
 } as const;
 
 export interface User {
