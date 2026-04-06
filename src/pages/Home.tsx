@@ -175,14 +175,14 @@ export default function Home() {
     <div>
       <AdsBanner />
 
-      <div>
+      <div className="mt-4">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 35 }}
           className="mb-4 md:mb-6"
         >
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">
+          <h1 className="text-xl md:text-2xl font-bold text-foreground mb-1">
             Welcome back, {user?.fullName ? user.fullName.split(' ')[0] : ''}!
           </h1>
           <p className="text-muted-foreground text-sm">

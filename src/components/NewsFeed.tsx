@@ -31,7 +31,7 @@ export function NewsFeed() {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-foreground mb-6">News Feed</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">News Feed</h2>
         {Array.from({ length: 3 }).map((_, i) => (<Skeleton key={i} className="h-40 w-full rounded-lg" />))}
       </div>
     );
@@ -39,7 +39,7 @@ export function NewsFeed() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold text-foreground mb-6">News Feed</h2>
+      <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">News Feed</h2>
       {posts.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
           <p>No posts yet. Be the first to share something!</p>

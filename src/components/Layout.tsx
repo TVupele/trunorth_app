@@ -87,7 +87,7 @@ function MobileLayout({ children }: { children: React.ReactNode }) {
         </div>
       </motion.header>
 
-      <main className="flex-1 pb-20 overflow-y-auto">
+      <main className="flex-1 px-4 pt-4 pb-20 overflow-y-auto">
         {children}
       </main>
 
