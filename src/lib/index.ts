@@ -180,7 +180,13 @@ export const formatCurrency = (amount: number, currency: string = 'NGN'): string
 };
 
 export const formatDate = (dateString: string): string => {
+  if (!dateString || typeof dateString !== 'string') {
+    return 'Unknown';
+  }
   const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
+    return 'Unknown';
+  }
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffMins = Math.floor(diffMs / 60000);

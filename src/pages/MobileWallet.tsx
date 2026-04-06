@@ -301,7 +301,11 @@ export default function MobileWallet() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm truncate">{getTransactionLabel(txn)}</p>
-                    <p className="text-xs text-muted-foreground">{new Date(txn.timestamp).toLocaleDateString()}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {txn.timestamp && !isNaN(Date.parse(txn.timestamp)) 
+                        ? new Date(txn.timestamp).toLocaleDateString() 
+                        : 'Pending'}
+                    </p>
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0">

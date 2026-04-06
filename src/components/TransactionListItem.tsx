@@ -79,7 +79,9 @@ export function TransactionListItem({ transaction }: TransactionListItemProps) {
             </p>
             <div className="flex items-center gap-2 mt-1">
               <p className="text-sm text-muted-foreground">
-                {formatDate(transaction.timestamp)}
+                {transaction.timestamp && !isNaN(Date.parse(transaction.timestamp)) 
+                  ? formatDate(transaction.timestamp) 
+                  : 'Pending'}
               </p>
               <Badge variant={getStatusBadgeVariant(transaction.status)} className="text-xs">
                 {transaction.status}

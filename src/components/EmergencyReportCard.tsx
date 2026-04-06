@@ -31,13 +31,7 @@ const typeLabels = {
   other: "Other Emergency",
 };
 
-const statusConfig = {
-  pending: { variant: "outline" as const, icon: Clock },
-  "in-progress": { variant: "default" as const, icon: Loader2 },
-  resolved: { variant: "secondary" as const, icon: CheckCircle2 },
-};
-
-export { EmergencyReportCard as default }; // Also export as default for backward compatibility
+export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
   const priorityStyle = priorityConfig[report.priority] || priorityConfig.medium;
   const PriorityIcon = priorityStyle.icon;
   const statusStyle = statusConfig[report.status] || statusConfig.pending;
@@ -59,7 +53,7 @@ export { EmergencyReportCard as default }; // Also export as default for backwar
             <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
               <div className="flex items-center gap-1">
                 <MapPin className="w-4 h-4" />
-                <span>{report.location}</span>
+                <span>{report.location || 'Unknown'}</span>
               </div>
               <div className="flex items-center gap-1">
                 <Clock className="w-4 h-4" />
