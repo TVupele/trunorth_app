@@ -99,7 +99,7 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
     <div className="min-h-screen bg-background pb-20">
       {/* Top Bar */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur border-b border-border">
-        <div className="flex items-center justify-between px-4 py-3">
+        <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
             <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <SheetTrigger asChild>
@@ -174,7 +174,7 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
       </div>
 
       {/* Main Content */}
-      <div className="pt-20 px-4">
+      <div className="pt-24 px-6">
         {/* Welcome Section - Reduced Size */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -312,7 +312,7 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
       <Link to={ROUTE_PATHS.SOCIAL}>
         <Button
           size="lg"
-          className="fixed bottom-20 right-4 h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary/90"
+          className="fixed bottom-20 right-6 h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary/90"
         >
           <Send className="h-6 w-6" />
         </Button>
