@@ -66,20 +66,20 @@ export function TopBar({ onMenuToggle }: TopBarProps) {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
-      <div className="h-full flex items-center justify-between px-4 lg:px-6">
-        <div className="flex items-center gap-4">
+    <header className="fixed top-0 left-0 right-0 z-50 h-16 md:h-20 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+      <div className="h-full flex items-center justify-between px-2 md:px-6">
+        <div className="flex items-center gap-1 md:gap-4">
           <Button
             variant="ghost"
             size="icon"
             className="lg:hidden"
             onClick={onMenuToggle}
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="h-6 w-6" />
           </Button>
 
           <Link to={ROUTE_PATHS.HOME} className="flex items-center">
-            <img src="/Logo_Icon.jpeg" alt="Trunorth Logo" className="h-12 w-12 rounded-lg object-contain" />
+            <img src="/Logo_Icon.jpeg" alt="Trunorth Logo" className="h-12 md:h-16 w-auto object-contain scale-125 origin-left" />
           </Link>
         </div>
 

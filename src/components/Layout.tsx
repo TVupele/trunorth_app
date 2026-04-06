@@ -49,7 +49,7 @@ export function Layout({ children }: LayoutProps) {
       
       <Sidebar isOpen={sidebarOpen} onClose={handleSidebarClose} />
       
-      <div className="lg:ml-[250px] pt-16 h-[calc(100vh-4rem)] overflow-y-auto">
+      <div className="lg:ml-[250px] pt-16 md:pt-20 h-[calc(100vh-4rem)] md:h-[calc(100vh-5rem)] overflow-y-auto">
         <main className="p-4 lg:p-6 pb-24 lg:pb-6">
           {children}
         </main>
