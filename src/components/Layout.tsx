@@ -70,24 +70,15 @@ export function Layout({ children }: LayoutProps) {
 
 function MobileLayout({ children }: { children: React.ReactNode }) {
   const [showPostModal, setShowPostModal] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <motion.header
-        initial={{ y: -60 }}
-        animate={{ y: 0 }}
-        className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border/50"
-      >
-        <div className="px-4 py-3 flex items-center justify-between">
-          <h1 className="text-lg font-bold text-primary">TruNORTH</h1>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">Nigeria</span>
-          </div>
-        </div>
-      </motion.header>
+      <TopBar onMenuToggle={() => setSidebarOpen(true)} />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <main className="flex-1 px-4 pt-4 pb-20 overflow-y-auto">
+      <main className="flex-1 px-4 pt-20 pb-20 overflow-y-auto">
         {children}
       </main>
 

@@ -183,17 +183,17 @@ export default function Wallet() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="bg-background">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="max-w-7xl mx-auto space-y-8"
+        className="max-w-7xl mx-auto space-y-6 md:space-y-8"
       >
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight">Wallet</h1>
-            <p className="text-muted-foreground mt-2">Manage your finances and transactions</p>
+            <h1 className="text-2xl md:text-4xl font-bold tracking-tight">Wallet</h1>
+            <p className="text-sm md:text-base text-muted-foreground mt-1 md:mt-2">Manage your finances and transactions</p>
           </div>
         </div>
 
@@ -427,16 +427,18 @@ export default function Wallet() {
                 </div>
               </div>
 
-              <Tabs value={activeFilter} onValueChange={(value) => setActiveFilter(value as Transaction['type'] | 'all')}>
-                <TabsList className="grid w-full grid-cols-6">
-                  <TabsTrigger value="all">All</TabsTrigger>
-                  <TabsTrigger value="send">Sent</TabsTrigger>
-                  <TabsTrigger value="receive">Received</TabsTrigger>
-                  <TabsTrigger value="top-up">Top-up</TabsTrigger>
-                  <TabsTrigger value="payment">Payment</TabsTrigger>
-                  <TabsTrigger value="request">Request</TabsTrigger>
-                </TabsList>
-              </Tabs>
+              <div className="w-full overflow-x-auto pb-2 no-scrollbar">
+                <Tabs value={activeFilter} onValueChange={(value) => setActiveFilter(value as Transaction['type'] | 'all')}>
+                  <TabsList className="inline-flex w-max min-w-full">
+                    <TabsTrigger value="all" className="flex-1">All</TabsTrigger>
+                    <TabsTrigger value="send" className="flex-1">Sent</TabsTrigger>
+                    <TabsTrigger value="receive" className="flex-1">Received</TabsTrigger>
+                    <TabsTrigger value="top-up" className="flex-1">Top-up</TabsTrigger>
+                    <TabsTrigger value="payment" className="flex-1">Payment</TabsTrigger>
+                    <TabsTrigger value="request" className="flex-1">Request</TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
 
               <ul className="space-y-3">
                 {filteredTransactions.length === 0 ? (
