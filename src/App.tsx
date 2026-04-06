@@ -31,6 +31,9 @@ import Admin from "@/pages/Admin";
 import VendorDashboard from "@/pages/VendorDashboard";
 import TutorDashboard from "@/pages/TutorDashboard";
 import AuthToken from "@/pages/AuthToken";
+import MobileHome from "@/pages/MobileHome";
+import MobileWallet from "@/pages/MobileWallet";
+import MobileAdmin from "@/pages/MobileAdmin";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -142,6 +145,9 @@ const App = () => {
               <Route element={<TutorLayout />}>
                 <Route path="/tutor/dashboard" element={<TutorDashboard />} />
               </Route>
+              <Route path={ROUTE_PATHS.MOBILE_HOME} element={<MobileHome />} />
+              <Route path={ROUTE_PATHS.MOBILE_WALLET} element={<MobileWallet />} />
+              <Route path={ROUTE_PATHS.MOBILE_ADMIN} element={<MobileAdmin />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </HashRouter>

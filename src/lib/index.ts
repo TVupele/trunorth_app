@@ -21,6 +21,8 @@ export const ROUTE_PATHS = {
   MOBILE_FEED: '/mobile/feed',
   MOBILE_WALLET: '/mobile/wallet',
   MOBILE_EVENTS: '/mobile/events',
+  MOBILE_SOCIAL: '/mobile/social',
+  MOBILE_ADMIN: '/mobile/admin',
 } as const;
 
 export interface User {

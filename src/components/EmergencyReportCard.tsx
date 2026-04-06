@@ -1,4 +1,4 @@
-import { EmergencyReport, formatDate, getStatusBadgeVariant } from "@/lib/index";
+import { EmergencyReport, formatDate } from "@/lib/index";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,16 @@ interface EmergencyReportCardProps {
 }
 
 const priorityConfig = {
-  low: { color: "text-muted-foreground", bg: "bg-muted", icon: CheckCircle2 },
-  medium: { color: "text-warning", bg: "bg-warning/10", icon: AlertTriangle },
-  high: { color: "text-destructive", bg: "bg-destructive/10", icon: AlertTriangle },
-  critical: { color: "text-destructive", bg: "bg-destructive/20", icon: AlertTriangle },
+  low: { color: "text-muted-foreground", bg: "bg-muted", variant: "secondary" as const, icon: CheckCircle2 },
+  medium: { color: "text-warning", bg: "bg-warning/10", variant: "outline" as const, icon: AlertTriangle },
+  high: { color: "text-destructive", bg: "bg-destructive/10", variant: "destructive" as const, icon: AlertTriangle },
+  critical: { color: "text-destructive", bg: "bg-destructive/20", variant: "destructive" as const, icon: AlertTriangle },
+};
+
+const statusConfig = {
+  pending: { variant: "outline" as const, icon: Clock },
+  "in-progress": { variant: "default" as const, icon: Loader2 },
+  resolved: { variant: "secondary" as const, icon: CheckCircle2 },
 };
 
 const typeLabels = {
@@ -25,16 +31,17 @@ const typeLabels = {
   other: "Other Emergency",
 };
 
-const statusIcons = {
-  pending: Clock,
-  "in-progress": Loader2,
-  resolved: CheckCircle2,
+const statusConfig = {
+  pending: { variant: "outline" as const, icon: Clock },
+  "in-progress": { variant: "default" as const, icon: Loader2 },
+  resolved: { variant: "secondary" as const, icon: CheckCircle2 },
 };
 
-export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
-  const priorityStyle = priorityConfig[report.priority];
+export { EmergencyReportCard as default }; // Also export as default for backward compatibility
+  const priorityStyle = priorityConfig[report.priority] || priorityConfig.medium;
   const PriorityIcon = priorityStyle.icon;
-  const StatusIcon = statusIcons[report.status];
+  const statusStyle = statusConfig[report.status] || statusConfig.pending;
+  const StatusIcon = statusStyle.icon;
   const isHighPriority = report.priority === "high" || report.priority === "critical";
 
   const cardContent = (
@@ -43,8 +50,8 @@ export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="font-semibold text-lg">{typeLabels[report.type]}</h3>
-              <Badge variant={getStatusBadgeVariant(report.priority)} className={priorityStyle.bg}>
+              <h3 className="font-semibold text-lg">{typeLabels[report.type] || report.type}</h3>
+              <Badge variant={priorityStyle.variant} className={priorityStyle.bg}>
                 <PriorityIcon className="w-3 h-3 mr-1" />
                 {report.priority.toUpperCase()}
               </Badge>
@@ -60,7 +67,7 @@ export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
               </div>
             </div>
           </div>
-          <Badge variant={getStatusBadgeVariant(report.status)} className="shrink-0">
+          <Badge variant={statusStyle.variant} className="shrink-0">
             <StatusIcon className={`w-3 h-3 mr-1 ${report.status === "in-progress" ? "animate-spin" : ""}`} />
             {report.status === "in-progress" ? "In Progress" : report.status.charAt(0).toUpperCase() + report.status.slice(1)}
           </Badge>
