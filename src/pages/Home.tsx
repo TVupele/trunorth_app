@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { AdsBanner } from '@/components/AdsBanner';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useWallet } from '@/hooks/useWallet';
@@ -22,6 +23,7 @@ import {
 } from '@/components/ui/dialog';
 
 export default function Home() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const wallet = useWallet((state) => state.wallet);
   const fetchWalletData = useWallet((state) => state.fetchWalletData);
@@ -79,71 +81,71 @@ export default function Home() {
   const services = [
     {
       icon: <Wallet className="w-5 h-5" />,
-      title: 'Digital Wallet',
-      description: 'Manage your finances, send money, and track transactions',
+      title: t('Digital Wallet'),
+      description: t('Manage your finances'),
       href: ROUTE_PATHS.WALLET,
       variant: 'primary' as const,
     },
     {
       icon: <Users className="w-5 h-5" />,
-      title: 'Social Network',
-      description: 'Connect with friends, share posts, and engage with community',
+      title: t('Social Network'),
+      description: t('Connect with friends'),
       href: ROUTE_PATHS.SOCIAL,
       variant: 'default' as const,
     },
     {
       icon: <Plane className="w-5 h-5" />,
-      title: 'Travel Booking',
-      description: 'Discover and book amazing travel packages across Nigeria',
+      title: t('Travel Booking'),
+      description: t('Discover trips'),
       href: ROUTE_PATHS.TRAVEL,
       variant: 'default' as const,
     },
     {
       icon: <GraduationCap className="w-5 h-5" />,
-      title: 'Tutoring Services',
-      description: 'Find expert tutors for personalized learning sessions',
+      title: t('Tutoring'),
+      description: t('Find expert tutors'),
       href: ROUTE_PATHS.TUTORING,
       variant: 'default' as const,
     },
     {
       icon: <AlertTriangle className="w-5 h-5" />,
-      title: 'Emergency Reporting',
-      description: 'Report emergencies and get immediate assistance',
+      title: t('Emergency Reporting'),
+      description: t('Report incidents quickly'),
       href: ROUTE_PATHS.EMERGENCY,
       variant: 'accent' as const,
     },
     {
       icon: <Heart className="w-5 h-5" />,
-      title: 'Donations',
-      description: 'Support meaningful causes and community campaigns',
+      title: t('Donations'),
+      description: t('Support meaningful causes'),
       href: ROUTE_PATHS.DONATIONS,
       variant: 'default' as const,
     },
     {
       icon: <ShoppingBag className="w-5 h-5" />,
-      title: 'Marketplace',
-      description: 'Shop for products from trusted sellers',
+      title: t('Marketplace'),
+      description: t('Shop for products'),
       href: ROUTE_PATHS.MARKETPLACE,
       variant: 'default' as const,
     },
     {
       icon: <Calendar className="w-5 h-5" />,
-      title: 'Event Tickets',
-      description: 'Book tickets for concerts, conferences, and events',
+      title: t('Events'),
+      description: t('Book tickets'),
       href: ROUTE_PATHS.EVENTS,
       variant: 'default' as const,
     },
     {
       icon: <Church className="w-5 h-5" />,
-      title: 'Religious Services',
-      description: 'Register for prayers, sermons, and religious events',
+      title: t('Religious Services'),
+      description: t('Register for services'),
       href: ROUTE_PATHS.RELIGIOUS_SERVICES,
       variant: 'default' as const,
     },
     {
       icon: <Bot className="w-5 h-5" />,
-      title: 'AI Assistant',
-      description: 'Get help navigating the app and finding information',
+      title: t('AI Assistant'),
+      description: t('Get help'),
       href: ROUTE_PATHS.AI_ASSISTANT,
       variant: 'default' as const,
     },
@@ -153,9 +155,19 @@ export default function Home() {
   if (isVendor) {
     services.push({
       icon: <Store className="w-5 h-5" />,
-      title: 'Vendor Dashboard',
-      description: 'Manage your products, orders, and earnings',
+      title: t('Vendors'),
+      description: t('Manage your products'),
       href: ROUTE_PATHS.VENDOR_DASHBOARD,
+      variant: 'primary' as const,
+    });
+  }
+
+  if (isTutor) {
+    services.push({
+      icon: <GraduationCap className="w-5 h-5" />,
+      title: t('Tutors'),
+      description: t('Manage your courses'),
+      href: ROUTE_PATHS.TUTOR_DASHBOARD,
       variant: 'primary' as const,
     });
   }
@@ -183,10 +195,10 @@ export default function Home() {
           className="mb-4 md:mb-6"
         >
           <h1 className="text-xl md:text-2xl font-bold text-foreground mb-1">
-            Welcome back, {user?.fullName ? user.fullName.split(' ')[0] : ''}!
+            {t('Welcome back')}, {user?.fullName ? user.fullName.split(' ')[0] : ''}!
           </h1>
           <p className="text-muted-foreground text-sm">
-            Your all-in-one platform for services, community, and growth
+            {t('Your all-in-one platform')}
           </p>
         </motion.div>
 
@@ -204,16 +216,16 @@ export default function Home() {
                   <div className="flex items-center gap-3">
                     <BadgeCheck className="h-8 w-8 text-primary" />
                     <div>
-                      <h3 className="font-semibold">Become a Vendor or Tutor</h3>
-                      <p className="text-sm text-muted-foreground">Get approved to sell products or offer tutoring services on the platform</p>
+                      <h3 className="font-semibold">{t('Become a Vendor or Tutor')}</h3>
+                      <p className="text-sm text-muted-foreground">{t('Get approved to sell products')}</p>
                     </div>
                   </div>
                   <div className="flex gap-2">
                     <Button onClick={() => openApprovalDialog('vendor')} variant="default" size="sm">
-                      <Store className="h-4 w-4 mr-2" />Become a Vendor
+                      <Store className="h-4 w-4 mr-2" />{t('Become a Vendor')}
                     </Button>
                     <Button onClick={() => openApprovalDialog('tutor')} variant="outline" size="sm">
-                      <GraduationCap className="h-4 w-4 mr-2" />Become a Tutor
+                      <GraduationCap className="h-4 w-4 mr-2" />{t('Become a Tutor')}
                     </Button>
                   </div>
                 </div>
@@ -225,7 +237,7 @@ export default function Home() {
         {walletError && (
           <Alert variant="destructive" className="mb-4">
             <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>Wallet Error</AlertTitle>
+            <AlertTitle>{t('Wallet Error')}</AlertTitle>
             <AlertDescription>{walletError}</AlertDescription>
           </Alert>
         )}
@@ -233,7 +245,7 @@ export default function Home() {
         {statsError && (
           <Alert variant="destructive" className="mb-4">
             <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>Stats Error</AlertTitle>
+            <AlertTitle>{t('Stats Error')}</AlertTitle>
             <AlertDescription>{statsError}</AlertDescription>
           </Alert>
         )}
@@ -247,7 +259,7 @@ export default function Home() {
           <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-accent/10">
             <CardHeader className="pb-1 pt-3 px-4">
               <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-                <MessageSquare className="w-3.5 h-3.5" />Unread Messages
+                <MessageSquare className="w-3.5 h-3.5" />{t('Unread Messages')}
               </CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-3">
@@ -256,14 +268,14 @@ export default function Home() {
               ) : (
                 <div className="text-2xl font-bold text-accent">{stats.unreadMessages}</div>
               )}
-              <p className="text-xs text-muted-foreground mt-0.5">New conversations</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{t('New conversations')}</p>
             </CardContent>
           </Card>
 
           <Card className="border-secondary/20 bg-gradient-to-br from-secondary/5 to-secondary/10">
             <CardHeader className="pb-1 pt-3 px-4">
               <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-                <TrendingUp className="w-3.5 h-3.5" />Upcoming Bookings
+                <TrendingUp className="w-3.5 h-3.5" />{t('Upcoming Bookings')}
               </CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-3">
@@ -272,7 +284,7 @@ export default function Home() {
               ) : (
                 <div className="text-2xl font-bold text-secondary">{stats.upcomingBookings}</div>
               )}
-              <p className="text-xs text-muted-foreground mt-0.5">Active reservations</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{t('Active reservations')}</p>
             </CardContent>
           </Card>
         </motion.div>
@@ -286,17 +298,17 @@ export default function Home() {
       <Dialog open={showApprovalDialog} onOpenChange={setShowApprovalDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Become a {approvalType === 'vendor' ? 'Vendor' : 'Tutor'}</DialogTitle>
+            <DialogTitle>{t('Become a')} {approvalType === 'vendor' ? t('Vendors') : t('Tutors')}</DialogTitle>
             <DialogDescription>
               {approvalType === 'vendor'
-                ? 'As a vendor, you will be able to list and sell products on the marketplace. Your request will need admin approval before becoming active.'
-                : 'As a tutor, you will be able to offer tutoring sessions and manage your courses. Your request will need admin approval before becoming active.'}
+                ? t('Vendor description')
+                : t('Tutor description')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowApprovalDialog(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setShowApprovalDialog(false)}>{t('Cancel')}</Button>
             <Button onClick={handleRequestApproval} disabled={isApproving}>
-              {isApproving ? 'Submitting...' : `Submit ${approvalType === 'vendor' ? 'Vendor' : 'Tutor'} Request`}
+              {isApproving ? t('Submitting') : t('Submit')} {approvalType === 'vendor' ? t('Vendor Request') : t('Tutor Request')}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { ArrowUpRight, ArrowDownLeft, Plus, Search, CreditCard, Building, Wallet as WalletIcon } from 'lucide-react';
 import { useWallet } from '@/hooks/useWallet';
 import { useAuth } from '@/hooks/useAuth';
@@ -20,6 +21,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 
 export default function Wallet() {
+  const { t } = useTranslation();
   const balance = useWallet((state) => state.balance);
   const currency = useWallet((state) => state.currency);
   const transactions = useWallet((state) => state.transactions);
@@ -190,8 +192,8 @@ export default function Wallet() {
       >
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl md:text-4xl font-bold tracking-tight">Wallet</h1>
-            <p className="text-sm md:text-base text-muted-foreground mt-1 md:mt-2">Manage your finances and transactions</p>
+            <h1 className="text-2xl md:text-4xl font-bold tracking-tight">{t('Wallet')}</h1>
+            <p className="text-sm md:text-base text-muted-foreground mt-1 md:mt-2">{t('Manage your finances')}</p>
           </div>
         </div>
 
@@ -204,27 +206,27 @@ export default function Wallet() {
           </Alert>
         )}
 
-        <Card className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-0 shadow-lg max-w-2xl">
-          <CardContent className="pt-4">
-            <div className="space-y-3">
-              <div className="text-sm font-medium opacity-90">Total Balance</div>
-              <div className="font-mono text-2xl md:text-3xl font-bold">
-                {formatCurrency(balance, currency)}
-              </div>
-              <div className="flex flex-wrap gap-2 pt-1">
-                {/* Top Up Dialog */}
-                <Dialog open={topUpDialogOpen} onOpenChange={setTopUpDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="secondary" size="sm" className="gap-1 flex-1">
-                      <Plus className="h-3 w-3" />
-                      Top Up
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>Top Up Wallet</DialogTitle>
-                      <DialogDescription>Add funds to your wallet balance</DialogDescription>
-                    </DialogHeader>
+          <Card className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-0 shadow-lg max-w-2xl">
+            <CardContent className="pt-4">
+              <div className="space-y-3">
+                <div className="text-sm font-medium opacity-90">{t('Total Balance')}</div>
+                <div className="font-mono text-2xl md:text-3xl font-bold">
+                  {formatCurrency(balance, currency)}
+                </div>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {/* Top Up Dialog */}
+                  <Dialog open={topUpDialogOpen} onOpenChange={setTopUpDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="secondary" size="sm" className="gap-1 flex-1">
+                        <Plus className="h-3 w-3" />
+                        {t('Top Up')}
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>{t('Top Up Wallet')}</DialogTitle>
+                        <DialogDescription>{t('Add funds to your wallet balance')}</DialogDescription>
+                      </DialogHeader>
                     <div className="space-y-4 py-4">
                       <div className="space-y-2">
                         <Label htmlFor="topup-amount">Amount ({currency})</Label>
@@ -338,18 +340,18 @@ export default function Wallet() {
                 </Dialog>
 
                 {/* Send Money Dialog */}
-                <Dialog open={sendMoneyDialogOpen} onOpenChange={setSendMoneyDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="secondary" size="sm" className="gap-1 flex-1">
-                      <ArrowUpRight className="h-3 w-3" />
-                      Send
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Send Money</DialogTitle>
-                      <DialogDescription>Transfer funds to another user</DialogDescription>
-                    </DialogHeader>
+                  <Dialog open={sendMoneyDialogOpen} onOpenChange={setSendMoneyDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="secondary" size="sm" className="gap-1 flex-1">
+                        <ArrowUpRight className="h-3 w-3" />
+                        {t('Send')}
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>{t('Send Money')}</DialogTitle>
+                        <DialogDescription>{t('Transfer funds to another user')}</DialogDescription>
+                      </DialogHeader>
                     <div className="space-y-4 py-4">
                       <div className="space-y-2">
                         <Label htmlFor="recipient">Recipient Email</Label>
@@ -372,18 +374,18 @@ export default function Wallet() {
                 </Dialog>
 
                 {/* Request Money Dialog */}
-                <Dialog open={requestMoneyDialogOpen} onOpenChange={setRequestMoneyDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="secondary" size="sm" className="gap-1 flex-1">
-                      <ArrowDownLeft className="h-3 w-3" />
-                      Request
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Request Money</DialogTitle>
-                      <DialogDescription>Request money from another user</DialogDescription>
-                    </DialogHeader>
+                  <Dialog open={requestMoneyDialogOpen} onOpenChange={setRequestMoneyDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="secondary" size="sm" className="gap-1 flex-1">
+                        <ArrowDownLeft className="h-3 w-3" />
+                        {t('Request')}
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>{t('Request Money')}</DialogTitle>
+                        <DialogDescription>{t('Request money from another user')}</DialogDescription>
+                      </DialogHeader>
                     <div className="space-y-4 py-4">
                       <div className="space-y-2">
                         <Label htmlFor="request-recipient">From (Email)</Label>
@@ -410,23 +412,23 @@ export default function Wallet() {
         </Card>
 
         <div className="max-w-2xl space-y-4">
-          <h2 className="text-lg font-semibold">Transaction History</h2>
+          <h2 className="text-lg font-semibold">{t('Transaction History')}</h2>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search transactions..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
+              <Input placeholder={t('Search transactions')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
             </div>
           </div>
 
           <div className="w-full overflow-x-auto pb-2 no-scrollbar">
             <Tabs value={activeFilter} onValueChange={(value) => setActiveFilter(value as Transaction['type'] | 'all')}>
               <TabsList className="inline-flex w-max min-w-full">
-                <TabsTrigger value="all" className="flex-1">All</TabsTrigger>
-                <TabsTrigger value="send" className="flex-1">Sent</TabsTrigger>
-                <TabsTrigger value="receive" className="flex-1">Received</TabsTrigger>
-                <TabsTrigger value="top-up" className="flex-1">Top-up</TabsTrigger>
-                <TabsTrigger value="payment" className="flex-1">Payment</TabsTrigger>
-                <TabsTrigger value="request" className="flex-1">Request</TabsTrigger>
+                <TabsTrigger value="all" className="flex-1">{t('All')}</TabsTrigger>
+                <TabsTrigger value="send" className="flex-1">{t('Sent')}</TabsTrigger>
+                <TabsTrigger value="receive" className="flex-1">{t('Received')}</TabsTrigger>
+                <TabsTrigger value="top-up" className="flex-1">{t('Top Up')}</TabsTrigger>
+                <TabsTrigger value="payment" className="flex-1">{t('Payment')}</TabsTrigger>
+                <TabsTrigger value="request" className="flex-1">{t('Request')}</TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
@@ -434,7 +436,7 @@ export default function Wallet() {
           <ul className="space-y-3">
             {filteredTransactions.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
-                <p>No transactions found</p>
+                <p>{t('No transactions found')}</p>
               </div>
             ) : (
               filteredTransactions.map((transaction) => (

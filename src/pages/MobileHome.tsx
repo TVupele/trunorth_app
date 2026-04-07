@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { 
   Menu, X, User, Settings, Wallet, Users, Plane, GraduationCap, 
@@ -23,6 +24,7 @@ interface MobileHomeProps {
 }
 
 export default function MobileHome({ onNavigate }: MobileHomeProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const wallet = useWallet((state) => state.wallet);

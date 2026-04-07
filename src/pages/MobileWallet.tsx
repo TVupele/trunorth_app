@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { ArrowUpRight, ArrowDownLeft, Plus, Search, CreditCard, Building, Wallet as WalletIcon, Menu } from 'lucide-react';
 import { useWallet } from '@/hooks/useWallet';
 import { useAuth } from '@/hooks/useAuth';
@@ -20,6 +21,7 @@ import { ROUTE_PATHS } from '@/lib/index';
 import { useAuth as useAuthHook } from '@/hooks/useAuth';
 
 export default function MobileWallet() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, logout } = useAuthHook();
   const balance = useWallet((state) => state.balance);

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   Users, ShoppingBag, Calendar, Heart, Church, GraduationCap, Store,
   Plus, Pencil, Trash2, Check, X, BarChart3, TrendingUp, DollarSign, Image
@@ -56,6 +57,7 @@ interface AdBanner {
 }
 
 export default function Admin() {
+  const { t } = useTranslation();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [users, setUsers] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
@@ -238,39 +240,39 @@ export default function Admin() {
     <div className="min-h-screen bg-background p-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-7xl mx-auto space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage all aspects of the TruNORTH Super App</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t('Admin Dashboard')}</h1>
+          <p className="text-muted-foreground">{t('Manage all aspects')}</p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">Total Users</CardTitle><Users className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats?.totalUsers || 0}</div></CardContent></Card>
-          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">Vendors</CardTitle><Store className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats?.totalVendors || 0}</div></CardContent></Card>
-          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">Tutors</CardTitle><GraduationCap className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats?.totalTutors || 0}</div></CardContent></Card>
-          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">Products</CardTitle><ShoppingBag className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats?.totalProducts || 0}</div></CardContent></Card>
-          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">Events</CardTitle><Calendar className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats?.totalEvents || 0}</div></CardContent></Card>
-          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">Active Campaigns</CardTitle><Heart className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats?.activeCampaigns || 0}</div></CardContent></Card>
-          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">Total Donations</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(stats?.totalDonations || 0)}</div></CardContent></Card>
-          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">Revenue</CardTitle><TrendingUp className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(stats?.totalRevenue || 0)}</div></CardContent></Card>
+          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">{t('Total Users')}</CardTitle><Users className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats?.totalUsers || 0}</div></CardContent></Card>
+          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">{t('Vendors')}</CardTitle><Store className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats?.totalVendors || 0}</div></CardContent></Card>
+          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">{t('Tutors')}</CardTitle><GraduationCap className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats?.totalTutors || 0}</div></CardContent></Card>
+          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">{t('Products')}</CardTitle><ShoppingBag className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats?.totalProducts || 0}</div></CardContent></Card>
+          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">{t('Events')}</CardTitle><Calendar className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats?.totalEvents || 0}</div></CardContent></Card>
+          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">{t('Active Campaigns')}</CardTitle><Heart className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats?.activeCampaigns || 0}</div></CardContent></Card>
+          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">{t('Total Donations')}</CardTitle><DollarSign className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(stats?.totalDonations || 0)}</div></CardContent></Card>
+          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">{t('Revenue')}</CardTitle><TrendingUp className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{formatCurrency(stats?.totalRevenue || 0)}</div></CardContent></Card>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="flex flex-wrap">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="pending">Pending Approvals {pendingRequests.length > 0 && `(${pendingRequests.length})`}</TabsTrigger>
-            <TabsTrigger value="users">Users</TabsTrigger>
-            <TabsTrigger value="products">Products</TabsTrigger>
-            <TabsTrigger value="events">Events</TabsTrigger>
-            <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
-            <TabsTrigger value="services">Services</TabsTrigger>
-            <TabsTrigger value="banners">Ad Banners</TabsTrigger>
+            <TabsTrigger value="overview">{t('Overview')}</TabsTrigger>
+            <TabsTrigger value="pending">{t('Pending Approvals')} {pendingRequests.length > 0 && `(${pendingRequests.length})`}</TabsTrigger>
+            <TabsTrigger value="users">{t('Users')}</TabsTrigger>
+            <TabsTrigger value="products">{t('Products')}</TabsTrigger>
+            <TabsTrigger value="events">{t('Events')}</TabsTrigger>
+            <TabsTrigger value="campaigns">{t('Campaigns')}</TabsTrigger>
+            <TabsTrigger value="services">{t('Services')}</TabsTrigger>
+            <TabsTrigger value="banners">{t('Ad Banners')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-4">
             <Card>
-              <CardHeader><CardTitle>Recent Users</CardTitle><CardDescription>Latest registered users</CardDescription></CardHeader>
+              <CardHeader><CardTitle>{t('Recent Activity')}</CardTitle><CardDescription>{t('Latest registered users')}</CardDescription></CardHeader>
               <CardContent>
                 <Table>
-                  <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Email</TableHead><TableHead>Role</TableHead><TableHead>Verified</TableHead></TableRow></TableHeader>
+                  <TableHeader><TableRow><TableHead>{t('Name')}</TableHead><TableHead>Email</TableHead><TableHead>{t('Role')}</TableHead><TableHead>{t('Verified')}</TableHead></TableRow></TableHeader>
                   <TableBody>
                     {users.slice(0, 5).map((u) => (
                       <TableRow key={u.id}>
@@ -288,13 +290,13 @@ export default function Admin() {
 
           <TabsContent value="pending" className="space-y-4">
             <Card>
-              <CardHeader><CardTitle>Pending Approvals</CardTitle><CardDescription>Vendor and Tutor requests waiting for approval</CardDescription></CardHeader>
+              <CardHeader><CardTitle>{t('Pending Approvals')}</CardTitle><CardDescription>{t('Vendor and Tutor requests waiting for approval')}</CardDescription></CardHeader>
               <CardContent>
                 {pendingRequests.length === 0 ? (
-                  <p className="text-muted-foreground">No pending requests</p>
+                  <p className="text-muted-foreground">{t('No pending requests')}</p>
                 ) : (
                   <Table>
-                    <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Email</TableHead><TableHead>Request Type</TableHead><TableHead>Date</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
+                    <TableHeader><TableRow><TableHead>{t('Name')}</TableHead><TableHead>Email</TableHead><TableHead>{t('Request Type')}</TableHead><TableHead>{t('Date')}</TableHead><TableHead>{t('Actions')}</TableHead></TableRow></TableHeader>
                     <TableBody>
                       {pendingRequests.map((req) => (
                         <TableRow key={req.id}>
@@ -304,10 +306,10 @@ export default function Admin() {
                           <TableCell>{new Date(req.created_at).toLocaleDateString()}</TableCell>
                           <TableCell className="flex gap-1">
                             <Button variant="ghost" size="sm" onClick={() => handleApproveRequest(req.id, req.request_type)}>
-                              <Check className="h-4 w-4 text-green-500 mr-1" />Approve
+                              <Check className="h-4 w-4 text-green-500 mr-1" />{t('Approve')}
                             </Button>
                             <Button variant="ghost" size="sm" onClick={() => handleRejectRequest(req.id)}>
-                              <X className="h-4 w-4 text-red-500 mr-1" />Reject
+                              <X className="h-4 w-4 text-red-500 mr-1" />{t('Reject')}
                             </Button>
                           </TableCell>
                         </TableRow>
@@ -321,7 +323,7 @@ export default function Admin() {
 
           <TabsContent value="users" className="space-y-4">
             <Card>
-              <CardHeader><CardTitle>User Management</CardTitle><CardDescription>Manage all users and their roles</CardDescription></CardHeader>
+              <CardHeader><CardTitle>{t('User Management')}</CardTitle><CardDescription>{t('Manage all users and their roles')}</CardDescription></CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Email</TableHead><TableHead>Role</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
@@ -355,8 +357,8 @@ export default function Admin() {
           <TabsContent value="products" className="space-y-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
-                <div><CardTitle>Product Management</CardTitle><CardDescription>Manage marketplace products</CardDescription></div>
-                <Button onClick={() => openCreateDialog('products')}><Plus className="h-4 w-4 mr-2" />Add Product</Button>
+                <div><CardTitle>{t('Product Management')}</CardTitle><CardDescription>{t('Manage marketplace products')}</CardDescription></div>
+                <Button onClick={() => openCreateDialog('products')}><Plus className="h-4 w-4 mr-2" />{t('Add Product')}</Button>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -383,8 +385,8 @@ export default function Admin() {
           <TabsContent value="events" className="space-y-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
-                <div><CardTitle>Event Management</CardTitle><CardDescription>Manage events and tickets</CardDescription></div>
-                <Button onClick={() => openCreateDialog('events')}><Plus className="h-4 w-4 mr-2" />Add Event</Button>
+                <div><CardTitle>{t('Event Management')}</CardTitle><CardDescription>{t('Manage events and tickets')}</CardDescription></div>
+                <Button onClick={() => openCreateDialog('events')}><Plus className="h-4 w-4 mr-2" />{t('Add Event')}</Button>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -412,8 +414,8 @@ export default function Admin() {
           <TabsContent value="campaigns" className="space-y-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
-                <div><CardTitle>Campaign Management</CardTitle><CardDescription>Manage donation campaigns</CardDescription></div>
-                <Button onClick={() => openCreateDialog('campaigns')}><Plus className="h-4 w-4 mr-2" />Add Campaign</Button>
+                <div><CardTitle>{t('Campaign Management')}</CardTitle><CardDescription>{t('Manage donation campaigns')}</CardDescription></div>
+                <Button onClick={() => openCreateDialog('campaigns')}><Plus className="h-4 w-4 mr-2" />{t('Add Campaign')}</Button>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -440,8 +442,8 @@ export default function Admin() {
           <TabsContent value="services" className="space-y-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
-                <div><CardTitle>Religious Services Management</CardTitle><CardDescription>Manage religious services</CardDescription></div>
-                <Button onClick={() => openCreateDialog('religious-services')}><Plus className="h-4 w-4 mr-2" />Add Service</Button>
+                <div><CardTitle>{t('Religious Services Management')}</CardTitle><CardDescription>{t('Manage religious services')}</CardDescription></div>
+                <Button onClick={() => openCreateDialog('religious-services')}><Plus className="h-4 w-4 mr-2" />{t('Add Service')}</Button>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -468,8 +470,8 @@ export default function Admin() {
           <TabsContent value="banners" className="space-y-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
-                <div><CardTitle>Ad Banners Management</CardTitle><CardDescription>Manage homepage advertisement banners</CardDescription></div>
-                <Button onClick={() => openCreateDialog('ad-banners')}><Plus className="h-4 w-4 mr-2" />Add Banner</Button>
+                <div><CardTitle>{t('Ad Banners')}</CardTitle><CardDescription>{t('Manage homepage advertisement banners')}</CardDescription></div>
+                <Button onClick={() => openCreateDialog('ad-banners')}><Plus className="h-4 w-4 mr-2" />{t('Add Banner')}</Button>
               </CardHeader>
               <CardContent>
                 <Table>

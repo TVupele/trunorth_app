@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Users, ShoppingBag, Calendar, Heart, Store, Plus, Check, X,
@@ -45,6 +46,7 @@ interface AdBanner {
 }
 
 export default function MobileAdmin() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [stats, setStats] = useState<AdminStats | null>(null);

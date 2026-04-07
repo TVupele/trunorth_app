@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function Register() {
+  const { t } = useTranslation();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -54,15 +56,15 @@ export default function Register() {
     <div className="min-h-screen flex items-center justify-center bg-background">
       <Card className="mx-auto max-w-sm">
         <CardHeader>
-          <CardTitle className="text-xl">Sign Up</CardTitle>
+          <CardTitle className="text-xl">{t('Sign Up')}</CardTitle>
           <CardDescription>
-            Enter your information to create an account
+            {t('Create your account')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="full-name">Full Name</Label>
+              <Label htmlFor="full-name">{t('Full Name')}</Label>
               <Input
                 id="full-name"
                 placeholder="Max Robinson"
@@ -73,7 +75,7 @@ export default function Register() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('Email Address')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -85,7 +87,7 @@ export default function Register() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('Password')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -96,7 +98,7 @@ export default function Register() {
               />
             </div>
             <Button type="submit" className="w-full" onClick={handleRegister} disabled={isLoading}>
-              {isLoading ? 'Creating account...' : 'Create an account'}
+              {isLoading ? t('Creating account') : t('Create an account')}
             </Button>
             <div className="relative my-4">
               <div className="absolute inset-0 flex items-center">
@@ -104,20 +106,20 @@ export default function Register() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
-                  Or continue with
+                  {t('Or continue with')}
                 </span>
               </div>
             </div>
             <a href={`${import.meta.env.VITE_API_URL || 'https://trunorth-super-app.onrender.com'}/api/auth/google`} className="w-full">
               <Button variant="outline" className="w-full">
-                Sign up with Google
+                {t('Sign up with Google')}
               </Button>
             </a>
           </div>
           <div className="mt-4 text-center text-sm">
-            Already have an account?{' '}
+            {t('Already have an account')}?{' '}
             <Link to="/login" className="underline">
-              Sign in
+              {t('Sign In')}
             </Link>
           </div>
         </CardContent>
