@@ -536,16 +536,37 @@ export default function Admin() {
                 <div><Label>Ticket Price</Label><Input type="number" value={editDialog.data?.ticket_price || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, ticket_price: e.target.value } })} /></div>
                 <div><Label>Total Seats</Label><Input type="number" value={editDialog.data?.total_seats || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, total_seats: e.target.value } })} /></div>
                 <div><Label>Category</Label><Input value={editDialog.data?.category || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, category: e.target.value } })} /></div>
-                <div><Label>Image URL (Required for Ad Banner)</Label><Input value={editDialog.data?.image_url || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, image_url: e.target.value } })} /></div>
-                </>
-                )}
-                {editDialog.type === 'campaigns' && (              <>
+                <div className="space-y-2">
+                  <Label>Event Image</Label>
+                  <div className="flex items-center gap-2">
+                    <label className="flex items-center gap-2 cursor-pointer bg-primary px-3 py-2 rounded-md text-primary-foreground hover:bg-primary/90 text-sm">
+                      <input type="file" accept="image/*" onChange={handleImageFileChange} className="hidden" />
+                      Choose Image
+                    </label>
+                    {editDialog.data?.image_url && <span className="text-xs text-muted-foreground">Image selected</span>}
+                  </div>
+                  {editDialog.data?.image_url && <img src={editDialog.data.image_url} alt="Preview" className="h-20 w-20 object-cover rounded" />}
+                </div>
+              </>
+            )}
+                {editDialog.type === 'campaigns' && (              
+              <>
                 <div><Label>Title</Label><Input value={editDialog.data?.title || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, title: e.target.value } })} /></div>
                 <div><Label>Description</Label><Textarea value={editDialog.data?.description || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, description: e.target.value } })} /></div>
                 <div><Label>Goal Amount</Label><Input type="number" value={editDialog.data?.goal_amount || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, goal_amount: e.target.value } })} /></div>
                 <div><Label>End Date</Label><Input type="date" value={editDialog.data?.end_date ? new Date(editDialog.data.end_date).toISOString().slice(0, 10) : ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, end_date: e.target.value } })} /></div>
                 <div><Label>Category</Label><Input value={editDialog.data?.category || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, category: e.target.value } })} /></div>
-                <div><Label>Image URL</Label><Input value={editDialog.data?.image_url || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, image_url: e.target.value } })} /></div>
+                <div className="space-y-2">
+                  <Label>Campaign Image</Label>
+                  <div className="flex items-center gap-2">
+                    <label className="flex items-center gap-2 cursor-pointer bg-primary px-3 py-2 rounded-md text-primary-foreground hover:bg-primary/90 text-sm">
+                      <input type="file" accept="image/*" onChange={handleImageFileChange} className="hidden" />
+                      Choose Image
+                    </label>
+                    {editDialog.data?.image_url && <span className="text-xs text-muted-foreground">Image selected</span>}
+                  </div>
+                  {editDialog.data?.image_url && <img src={editDialog.data.image_url} alt="Preview" className="h-20 w-20 object-cover rounded" />}
+                </div>
               </>
             )}
             {editDialog.type === 'religious-services' && (
