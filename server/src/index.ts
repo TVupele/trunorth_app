@@ -28,6 +28,7 @@ import paymentsRoutes from './routes/payments';
 import vendorRoutes from './routes/vendor';
 import tutorManagementRoutes from './routes/tutorManagement';
 import emergencyRoutes from './routes/emergency';
+import notificationsRoutes from './routes/notifications';
 
 // Load environment variables
 dotenv.config();
@@ -77,6 +78,7 @@ app.use('/api/payments', paymentsRoutes);
 app.use('/api/vendor', vendorRoutes);
 app.use('/api/tutor-management', tutorManagementRoutes);
 app.use('/api/emergency', emergencyRoutes);
+app.use('/api/notifications', notificationsRoutes);
 
 // Simple root endpoint (Health Check)
 app.get('/', (req, res) => {

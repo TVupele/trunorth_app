@@ -260,7 +260,7 @@ const resources = {
       "Create": "Ƙirƙiri",
       "Name": "Suna",
       "Price": "Farashi",
-      "Category": "R分类",
+      "Category": "Rasa",
       "Stock": "Ado",
       "Title": "Taken",
       "Date": "Kwanan",
