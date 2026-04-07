@@ -205,15 +205,13 @@ export default function Wallet() {
         )}
 
         <Card className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-0 shadow-lg max-w-2xl">
-          <CardHeader>
-            <CardTitle className="text-lg font-medium opacity-90">Total Balance</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              <div className="font-mono text-3xl md:text-5xl font-bold tracking-tight">
+          <CardContent className="pt-4">
+            <div className="space-y-3">
+              <div className="text-sm font-medium opacity-90">Total Balance</div>
+              <div className="font-mono text-2xl md:text-3xl font-bold">
                 {formatCurrency(balance, currency)}
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 pt-1">
                 {/* Top Up Dialog */}
                 <Dialog open={topUpDialogOpen} onOpenChange={setTopUpDialogOpen}>
                   <DialogTrigger asChild>
@@ -411,13 +409,9 @@ export default function Wallet() {
           </CardContent>
         </Card>
 
-        <Card className="max-w-2xl">
-          <CardHeader>
-            <CardTitle>Transaction History</CardTitle>
-            <CardDescription>View and filter your recent transactions</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex flex-col sm:flex-row gap-4">
+        <div className="max-w-2xl space-y-4">
+          <h2 className="text-lg font-semibold">Transaction History</h2>
+          <div className="flex flex-col sm:flex-row gap-4">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input placeholder="Search transactions..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
@@ -448,8 +442,8 @@ export default function Wallet() {
                 ))
               )}
             </ul>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </motion.div>
     </div>
   );

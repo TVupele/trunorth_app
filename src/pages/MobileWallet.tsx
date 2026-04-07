@@ -129,18 +129,18 @@ export default function MobileWallet() {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <div className="bg-gradient-to-b from-primary to-primary/90 text-primary-foreground p-4 pt-16 rounded-b-3xl">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-gradient-to-b from-primary to-primary/90 text-primary-foreground p-3 pt-12 rounded-b-2xl">
+        <div className="flex items-center justify-between mb-2">
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-white/20">
-                <Menu className="h-6 w-6" />
+                <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-72 p-0">
               <div className="p-4 border-b">
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-12 w-12">
+                  <Avatar className="h-10 w-10">
                     <AvatarImage src={(user as any)?.avatar_url} alt={user?.fullName} />
                     <AvatarFallback>{user?.fullName?.charAt(0) || 'U'}</AvatarFallback>
                   </Avatar>
@@ -172,21 +172,21 @@ export default function MobileWallet() {
             </SheetContent>
           </Sheet>
           
-          <div className="flex-1 text-center px-4">
-            <p className="text-sm opacity-80">Total Balance</p>
-            <p className="text-2xl font-bold font-mono">{formatCurrency(balance, currency)}</p>
+          <div className="flex-1 text-center px-2">
+            <p className="text-xs opacity-80">Total Balance</p>
+            <p className="text-xl font-bold font-mono">{formatCurrency(balance, currency)}</p>
           </div>
           
           <Link to={ROUTE_PATHS.PROFILE}>
-            <Avatar className="h-10 w-10 border-2 border-white/30">
+            <Avatar className="h-8 w-8 border-2 border-white/30">
               <AvatarImage src={(user as any)?.avatar_url} alt={user?.fullName} />
-              <AvatarFallback className="bg-white/20 text-primary-foreground">{user?.fullName?.charAt(0) || 'U'}</AvatarFallback>
+              <AvatarFallback className="bg-white/20 text-primary-foreground text-sm">{user?.fullName?.charAt(0) || 'U'}</AvatarFallback>
             </Avatar>
           </Link>
         </div>
         
         {/* Action Buttons */}
-        <div className="flex gap-3 mt-4">
+        <div className="flex gap-2 mt-2">
           <Dialog open={topUpDialogOpen} onOpenChange={setTopUpDialogOpen}>
             <DialogTrigger asChild>
               <Button className="flex-1 bg-white text-primary hover:bg-white/90 font-semibold">
