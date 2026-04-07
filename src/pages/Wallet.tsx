@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, ArrowDownLeft, Plus, Search, TrendingUp, CreditCard, Building, Wallet as WalletIcon } from 'lucide-react';
+import { ArrowUpRight, ArrowDownLeft, Plus, Search, CreditCard, Building, Wallet as WalletIcon } from 'lucide-react';
 import { useWallet } from '@/hooks/useWallet';
 import { useAuth } from '@/hooks/useAuth';
 import { TransactionListItem } from '@/components/TransactionListItem';
@@ -15,7 +15,6 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -24,7 +23,6 @@ export default function Wallet() {
   const balance = useWallet((state) => state.balance);
   const currency = useWallet((state) => state.currency);
   const transactions = useWallet((state) => state.transactions);
-  const monthlySpending = useWallet((state) => state.monthlySpending);
   const isLoading = useWallet((state) => state.isLoading);
   const error = useWallet((state) => state.error);
   const fetchWalletData = useWallet((state) => state.fetchWalletData);
@@ -206,7 +204,7 @@ export default function Wallet() {
           </Alert>
         )}
 
-        <Card className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-0 shadow-lg">
+        <Card className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-0 shadow-lg max-w-2xl">
           <CardHeader>
             <CardTitle className="text-lg font-medium opacity-90">Total Balance</CardTitle>
           </CardHeader>
@@ -413,75 +411,45 @@ export default function Wallet() {
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Transaction History</CardTitle>
-              <CardDescription>View and filter your recent transactions</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="Search transactions..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
+        <Card className="max-w-2xl">
+          <CardHeader>
+            <CardTitle>Transaction History</CardTitle>
+            <CardDescription>View and filter your recent transactions</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input placeholder="Search transactions..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
+              </div>
+            </div>
+
+            <div className="w-full overflow-x-auto pb-2 no-scrollbar">
+              <Tabs value={activeFilter} onValueChange={(value) => setActiveFilter(value as Transaction['type'] | 'all')}>
+                <TabsList className="inline-flex w-max min-w-full">
+                  <TabsTrigger value="all" className="flex-1">All</TabsTrigger>
+                  <TabsTrigger value="send" className="flex-1">Sent</TabsTrigger>
+                  <TabsTrigger value="receive" className="flex-1">Received</TabsTrigger>
+                  <TabsTrigger value="top-up" className="flex-1">Top-up</TabsTrigger>
+                  <TabsTrigger value="payment" className="flex-1">Payment</TabsTrigger>
+                  <TabsTrigger value="request" className="flex-1">Request</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+
+            <ul className="space-y-3">
+              {filteredTransactions.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  <p>No transactions found</p>
                 </div>
-              </div>
-
-              <div className="w-full overflow-x-auto pb-2 no-scrollbar">
-                <Tabs value={activeFilter} onValueChange={(value) => setActiveFilter(value as Transaction['type'] | 'all')}>
-                  <TabsList className="inline-flex w-max min-w-full">
-                    <TabsTrigger value="all" className="flex-1">All</TabsTrigger>
-                    <TabsTrigger value="send" className="flex-1">Sent</TabsTrigger>
-                    <TabsTrigger value="receive" className="flex-1">Received</TabsTrigger>
-                    <TabsTrigger value="top-up" className="flex-1">Top-up</TabsTrigger>
-                    <TabsTrigger value="payment" className="flex-1">Payment</TabsTrigger>
-                    <TabsTrigger value="request" className="flex-1">Request</TabsTrigger>
-                  </TabsList>
-                </Tabs>
-              </div>
-
-              <ul className="space-y-3">
-                {filteredTransactions.length === 0 ? (
-                  <div className="text-center py-12 text-muted-foreground">
-                    <p>No transactions found</p>
-                  </div>
-                ) : (
-                  filteredTransactions.map((transaction) => (
-                    <TransactionListItem key={transaction.id} transaction={transaction} />
-                  ))
-                )}
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5" />
-                Monthly Spending
-              </CardTitle>
-              <CardDescription>Your spending trend over the last 6 months</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={monthlySpending}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis dataKey="month" className="text-xs" />
-                  <YAxis className="text-xs" />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: 'hsl(var(--card))',
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '8px',
-                    }}
-                    formatter={(value: number) => formatCurrency(value, currency)}
-                  />
-                  <Bar dataKey="spending" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </div>
+              ) : (
+                filteredTransactions.map((transaction) => (
+                  <TransactionListItem key={transaction.id} transaction={transaction} />
+                ))
+              )}
+            </ul>
+          </CardContent>
+        </Card>
       </motion.div>
     </div>
   );

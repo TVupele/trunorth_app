@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, ArrowDownLeft, Plus, Search, TrendingUp, CreditCard, Building, Wallet as WalletIcon, Menu } from 'lucide-react';
+import { ArrowUpRight, ArrowDownLeft, Plus, Search, CreditCard, Building, Wallet as WalletIcon, Menu } from 'lucide-react';
 import { useWallet } from '@/hooks/useWallet';
 import { useAuth } from '@/hooks/useAuth';
 import { formatCurrency } from '@/lib/index';
@@ -172,9 +172,9 @@ export default function MobileWallet() {
             </SheetContent>
           </Sheet>
           
-          <div className="flex-1 text-center">
+          <div className="flex-1 text-center px-4">
             <p className="text-sm opacity-80">Total Balance</p>
-            <p className="text-3xl font-bold font-mono">{formatCurrency(balance, currency)}</p>
+            <p className="text-2xl font-bold font-mono">{formatCurrency(balance, currency)}</p>
           </div>
           
           <Link to={ROUTE_PATHS.PROFILE}>
