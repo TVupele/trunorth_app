@@ -412,37 +412,36 @@ export default function Wallet() {
         <div className="max-w-2xl space-y-4">
           <h2 className="text-lg font-semibold">Transaction History</h2>
           <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Search transactions..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
-              </div>
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="Search transactions..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
             </div>
-
-            <div className="w-full overflow-x-auto pb-2 no-scrollbar">
-              <Tabs value={activeFilter} onValueChange={(value) => setActiveFilter(value as Transaction['type'] | 'all')}>
-                <TabsList className="inline-flex w-max min-w-full">
-                  <TabsTrigger value="all" className="flex-1">All</TabsTrigger>
-                  <TabsTrigger value="send" className="flex-1">Sent</TabsTrigger>
-                  <TabsTrigger value="receive" className="flex-1">Received</TabsTrigger>
-                  <TabsTrigger value="top-up" className="flex-1">Top-up</TabsTrigger>
-                  <TabsTrigger value="payment" className="flex-1">Payment</TabsTrigger>
-                  <TabsTrigger value="request" className="flex-1">Request</TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </div>
-
-            <ul className="space-y-3">
-              {filteredTransactions.length === 0 ? (
-                <div className="text-center py-12 text-muted-foreground">
-                  <p>No transactions found</p>
-                </div>
-              ) : (
-                filteredTransactions.map((transaction) => (
-                  <TransactionListItem key={transaction.id} transaction={transaction} />
-                ))
-              )}
-            </ul>
           </div>
+
+          <div className="w-full overflow-x-auto pb-2 no-scrollbar">
+            <Tabs value={activeFilter} onValueChange={(value) => setActiveFilter(value as Transaction['type'] | 'all')}>
+              <TabsList className="inline-flex w-max min-w-full">
+                <TabsTrigger value="all" className="flex-1">All</TabsTrigger>
+                <TabsTrigger value="send" className="flex-1">Sent</TabsTrigger>
+                <TabsTrigger value="receive" className="flex-1">Received</TabsTrigger>
+                <TabsTrigger value="top-up" className="flex-1">Top-up</TabsTrigger>
+                <TabsTrigger value="payment" className="flex-1">Payment</TabsTrigger>
+                <TabsTrigger value="request" className="flex-1">Request</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+
+          <ul className="space-y-3">
+            {filteredTransactions.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                <p>No transactions found</p>
+              </div>
+            ) : (
+              filteredTransactions.map((transaction) => (
+                <TransactionListItem key={transaction.id} transaction={transaction} />
+              ))
+            )}
+          </ul>
         </div>
       </motion.div>
     </div>
