@@ -71,6 +71,7 @@ export function Layout({ children }: LayoutProps) {
 }
 
 function MobileLayout({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation();
   const [showPostModal, setShowPostModal] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
@@ -139,6 +140,7 @@ function MobileLayout({ children }: { children: React.ReactNode }) {
 }
 
 function MobilePostModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
   return (
     <>
       <motion.div
@@ -157,11 +159,11 @@ function MobilePostModal({ onClose }: { onClose: () => void }) {
       >
         <div className="flex items-center justify-between mb-4">
           <button onClick={onClose} className="text-sm text-muted-foreground">
-            Cancel
+            {t('Cancel')}
           </button>
-          <h3 className="font-semibold">Create Post</h3>
+          <h3 className="font-semibold">{t('Create Post')}</h3>
           <button className="text-sm text-primary font-medium">
-            Post
+            {t('Post')}
           </button>
         </div>
         <div className="space-y-4">
@@ -171,7 +173,7 @@ function MobilePostModal({ onClose }: { onClose: () => void }) {
           />
           <div className="flex gap-4">
             <button className="flex items-center gap-2 text-sm text-muted-foreground">
-              Add Media
+              {t('Add Media')}
             </button>
           </div>
         </div>
