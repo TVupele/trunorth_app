@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, MapPin, Ticket, Search, Filter, X, QrCode, Download } from 'lucide-react';
 import { EventCard } from '@/components/EventCard';
@@ -34,6 +35,7 @@ interface PurchasedTicket {
 const categories = ['All', 'Concert', 'Conference', 'Sports', 'Festival', 'Workshop', 'General'];
 
 export default function Events() {
+  const { t } = useTranslation();
   const balance = useWallet((state) => state.balance);
   const sendMoney = useWallet((state) => state.sendMoney);
   const isLoading = useWallet((state) => state.isLoading);

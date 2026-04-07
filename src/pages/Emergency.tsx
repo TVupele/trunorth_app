@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AlertTriangle, MapPin, Camera, Phone, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,6 +24,7 @@ const emergencyContacts = [
 ];
 
 export default function Emergency() {
+  const { t } = useTranslation();
   const [reports, setReports] = useState<EmergencyReport[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Search, Filter, Star, Clock, BookOpen, Calendar, DollarSign } from 'lucide-react';
 import { TutorCard } from '@/components/TutorCard';
 import { useWallet } from '@/hooks/useWallet';
@@ -44,6 +45,7 @@ interface BookingSession {
 }
 
 export default function Tutoring() {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSubject, setSelectedSubject] = useState<string>('all');
   const [priceRange, setPriceRange] = useState<number[]>([0, 10000]);

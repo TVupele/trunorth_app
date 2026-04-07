@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Search, Filter, Calendar, MapPin, Users, Clock } from 'lucide-react';
 import { ReligiousServiceCard } from '@/components/ReligiousServiceCard';
@@ -22,6 +23,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ReligiousServices() {
+  const { t } = useTranslation();
   const [services, setServices] = useState<ReligiousService[]>([]);
   const [isLoadingServices, setIsLoadingServices] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');

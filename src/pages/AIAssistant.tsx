@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Trash2, Globe, MessageSquare, MapPin, HelpCircle, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -121,6 +122,7 @@ function getAIResponse(query: string, language: Language): string {
 }
 
 export default function AIAssistant() {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',

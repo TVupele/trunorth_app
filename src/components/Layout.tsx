@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useLocation, NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sidebar } from "@/components/Sidebar";
@@ -15,13 +16,14 @@ interface LayoutProps {
 
 const mobileNavItems = [
   { path: ROUTE_PATHS.HOME, label: "Home", icon: Home },
-  { path: ROUTE_PATHS.SOCIAL, label: "Feed", icon: Users },
+  { path: ROUTE_PATHS.SOCIAL, label: "Social", icon: Users },
   { path: "post", label: "Post", icon: Plus, isAction: true },
   { path: ROUTE_PATHS.EVENTS, label: "Events", icon: Calendar },
   { path: ROUTE_PATHS.WALLET, label: "Wallet", icon: Wallet },
 ];
 
 export function Layout({ children }: LayoutProps) {
+  const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const isMobile = useIsMobile();
@@ -117,7 +119,7 @@ function MobileLayout({ children }: { children: React.ReactNode }) {
                   <>
                     <Icon className={`w-5 h-5 ${isActive ? "text-primary" : ""}`} />
                     <span className={`text-xs mt-1 ${isActive ? "text-primary font-medium" : ""}`}>
-                      {item.label}
+                      {t(item.label)}
                     </span>
                   </>
                 )}

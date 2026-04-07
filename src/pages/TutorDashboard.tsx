@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { GraduationCap, DollarSign, Calendar, Star, Pencil, Save } from 'lucide-react';
 import api from '@/lib/api';
@@ -33,6 +34,7 @@ interface TutorProfile {
 }
 
 export default function TutorDashboard() {
+  const { t } = useTranslation();
   const [stats, setStats] = useState<TutorStats | null>(null);
   const [profile, setProfile] = useState<TutorProfile | null>(null);
   const [bookings, setBookings] = useState<any[]>([]);

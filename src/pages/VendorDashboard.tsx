@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Plus, Pencil, Trash2, Package, DollarSign, ShoppingCart, TrendingUp } from 'lucide-react';
 import api from '@/lib/api';
@@ -21,6 +22,7 @@ interface VendorStats {
 }
 
 export default function VendorDashboard() {
+  const { t } = useTranslation();
   const [stats, setStats] = useState<VendorStats | null>(null);
   const [products, setProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);

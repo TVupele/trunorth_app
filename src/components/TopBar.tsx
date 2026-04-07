@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, Bell, User, LogOut, Settings, Wallet, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -28,6 +29,7 @@ interface TopBarProps {
 }
 
 export function TopBar({ onMenuToggle }: TopBarProps) {
+  const { t } = useTranslation();
   const balance = useWallet((state) => state.balance);
   const currency = useWallet((state) => state.currency);
   const transactions = useWallet((state) => state.transactions);
@@ -121,19 +123,19 @@ export function TopBar({ onMenuToggle }: TopBarProps) {
               <DropdownMenuItem asChild>
                 <Link to={ROUTE_PATHS.PROFILE} className="flex items-center gap-2 cursor-pointer">
                   <User className="h-4 w-4" />
-                  <span>Profile</span>
+                  <span>{t('Profile')}</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to={ROUTE_PATHS.SETTINGS} className="flex items-center gap-2 cursor-pointer">
                   <Settings className="h-4 w-4" />
-                  <span>Settings</span>
+                  <span>{t('Settings')}</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive">
                 <LogOut className="h-4 w-4" />
-                <span>Logout</span>
+                <span>{t('Logout')}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Search, Download, Heart, TrendingUp } from 'lucide-react';
 import { CampaignCard } from '@/components/CampaignCard';
@@ -37,6 +38,7 @@ interface DonationHistory {
 }
 
 export default function Donations() {
+  const { t } = useTranslation();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isLoadingCampaigns, setIsLoadingCampaigns] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');

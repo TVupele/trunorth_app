@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, SlidersHorizontal, MapPin, Calendar, Users, Star, X } from 'lucide-react';
 import { TravelPackageCard } from '@/components/TravelPackageCard';
@@ -31,6 +32,7 @@ import { useToast } from '@/hooks/use-toast';
 import api from '@/lib/api';
 
 export default function Travel() {
+  const { t } = useTranslation();
   const balance = useWallet((state) => state.balance);
   const sendMoney = useWallet((state) => state.sendMoney);
   const isWalletLoading = useWallet((state) => state.isLoading);

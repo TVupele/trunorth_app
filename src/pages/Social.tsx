@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Image as ImageIcon, Send, MessageCircle, Heart, Trash2, Plus } from 'lucide-react';
 import { useSocial } from '@/hooks/useSocial';
@@ -15,6 +16,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { formatDate } from '@/lib/index';
 
 export default function Social() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { posts, conversations, messages, fetchPosts, createPost, sendMessage, markMessagesAsRead } = useSocial();
   const [postContent, setPostContent] = useState('');

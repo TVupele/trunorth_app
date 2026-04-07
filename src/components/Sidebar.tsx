@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -44,6 +45,7 @@ const navigationItems = [
 ];
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
+  const { t } = useTranslation();
   const balance = useWallet((state) => state.balance);
   const currency = useWallet((state) => state.currency);
 
@@ -89,7 +91,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <Icon className={`h-5 w-5 ${
                     isActive ? 'text-sidebar-primary-foreground' : 'text-muted-foreground'
                   }`} />
-                  <span>{item.label}</span>
+                  <span>{t(item.label)}</span>
                 </>
               )}
             </NavLink>
