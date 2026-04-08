@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation, NavLink } from "react-router-dom";
+import { useLocation, NavLink, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sidebar } from "@/components/Sidebar";
 import { TopBar } from "@/components/TopBar";
@@ -26,8 +26,21 @@ export function Layout({ children }: LayoutProps) {
   const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const isSocialPage = location.pathname === ROUTE_PATHS.SOCIAL;
+
+  useEffect(() => {
+    if (isMobile) {
+      if (location.pathname === ROUTE_PATHS.HOME) {
+        navigate(ROUTE_PATHS.MOBILE_HOME, { replace: true });
+      } else if (location.pathname === ROUTE_PATHS.WALLET) {
+        navigate(ROUTE_PATHS.MOBILE_WALLET, { replace: true });
+      } else if (location.pathname === ROUTE_PATHS.ADMIN || location.pathname === '/admin') {
+        navigate(ROUTE_PATHS.MOBILE_ADMIN, { replace: true });
+      }
+    }
+  }, [isMobile, location.pathname, navigate]);
 
   const handleMenuToggle = () => {
     setSidebarOpen(!sidebarOpen);
