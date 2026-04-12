@@ -4,6 +4,7 @@ import { useLocation, NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Sidebar } from "@/components/Sidebar";
 import { TopBar } from "@/components/TopBar";
+import { Footer } from "@/components/Footer";
 import { ROUTE_PATHS } from "@/lib/index";
 import { Button } from "@/components/ui/button";
 import { 
