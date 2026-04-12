@@ -1,77 +1,64 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { ArrowUpRight, ArrowDownLeft, Plus, Search, CreditCard, Building, Wallet as WalletIcon, Menu } from 'lucide-react';
+import { Menu, Bell, Send, Search, Home, Compass, AlertTriangle, ArrowUpRight, ArrowDownLeft, Plus, Wallet as WalletIcon } from 'lucide-react';
 import { useWallet } from '@/hooks/useWallet';
 import { useAuth } from '@/hooks/useAuth';
-import { formatCurrency } from '@/lib/index';
+import { formatCurrency, ROUTE_PATHS } from '@/lib/index';
 import api from '@/lib/api';
-import type { Transaction } from '@/lib/index';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Sidebar } from '@/components/Sidebar';
+import { useToast } from '@/hooks/use-toast';
 import { Link, useNavigate, NavLink } from 'react-router-dom';
-import { ROUTE_PATHS } from '@/lib/index';
-import { useAuth as useAuthHook } from '@/hooks/useAuth';
-import { Home, Compass, Bell, Mail, Send, AlertTriangle } from 'lucide-react';
-
-const mobileNavItems = [
-  { path: ROUTE_PATHS.MOBILE_HOME, label: "Home", icon: Home },
-  { path: ROUTE_PATHS.EVENTS, label: "Explore", icon: Compass },
-  { path: '/notifications', label: "Notifications", icon: Bell },
-  { path: ROUTE_PATHS.SOCIAL, label: "Messages", icon: Mail },
-];
+import type { Transaction } from '@/lib/index';
 
 export default function MobileWallet() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user, logout } = useAuthHook();
+  const { user, logout } = useAuth();
   const balance = useWallet((state) => state.balance);
   const currency = useWallet((state) => state.currency);
   const transactions = useWallet((state) => state.transactions);
-  const isLoading = useWallet((state) => state.isLoading);
   const fetchWalletData = useWallet((state) => state.fetchWalletData);
+  const { toast } = useToast();
+  
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilter, setActiveFilter] = useState<Transaction['type'] | 'all'>('all');
-  const [topUpDialogOpen, setTopUpDialogOpen] = useState(false);
-  const [sendMoneyDialogOpen, setSendMoneyDialogOpen] = useState(false);
+  const [showTopUpDialog, setShowTopUpDialog] = useState(false);
+  const [showSendDialog, setShowSendDialog] = useState(false);
   const [topUpAmount, setTopUpAmount] = useState('');
   const [sendAmount, setSendAmount] = useState('');
   const [recipient, setRecipient] = useState('');
-  const [description, setDescription] = useState('');
-  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchWalletData();
+  }, [fetchWalletData]);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await api.get('/notifications');
+        const data = response.data;
+        setNotificationCount(Array.isArray(data) ? data.length : 0);
+      } catch (error) {
+        setNotificationCount(0);
+      }
+    };
+    fetchNotifications();
+  }, []);
 
   const filteredTransactions = transactions.filter((txn) => {
-    const matchesFilter = activeFilter === 'all' || txn.type === activeFilter;
     const matchesSearch = searchQuery === '' ||
-      txn.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      txn.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       txn.recipient?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       txn.sender?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
-
-  const handleSendMoney = async () => {
-    const amount = parseFloat(sendAmount);
-    if (isNaN(amount) || amount <= 0 || !recipient) return;
-    try {
-      await api.post('/wallet/send', { recipient, amount, description });
-      toast({ title: 'Money Sent', description: `${formatCurrency(amount, currency)} sent to ${recipient}` });
-      setSendAmount('');
-      setRecipient('');
-      setDescription('');
-      setSendMoneyDialogOpen(false);
-      fetchWalletData();
-    } catch (err: any) {
-      toast({ title: 'Error', description: err.response?.data?.error || 'Failed to send money', variant: 'destructive' });
-    }
-  };
+    return matchesSearch;
+  }).slice(0, 10);
 
   const handleTopUp = async () => {
     const amount = parseFloat(topUpAmount);
@@ -82,11 +69,26 @@ export default function MobileWallet() {
     try {
       await api.post('/payments/bank-transfer', { amount });
       toast({ title: 'Top-up Successful', description: `${formatCurrency(amount, currency)} added via bank transfer` });
-      setTopUpDialogOpen(false);
+      setShowTopUpDialog(false);
       setTopUpAmount('');
       fetchWalletData();
     } catch (err: any) {
       toast({ title: 'Transfer Error', description: err.response?.data?.error || 'Transfer failed', variant: 'destructive' });
+    }
+  };
+
+  const handleSendMoney = async () => {
+    const amount = parseFloat(sendAmount);
+    if (isNaN(amount) || amount <= 0 || !recipient) return;
+    try {
+      await api.post('/wallet/send', { recipient, amount, description: 'Mobile transfer' });
+      toast({ title: 'Money Sent', description: `${formatCurrency(amount, currency)} sent to ${recipient}` });
+      setShowSendDialog(false);
+      setSendAmount('');
+      setRecipient('');
+      fetchWalletData();
+    } catch (err: any) {
+      toast({ title: 'Error', description: err.response?.data?.error || 'Failed to send money', variant: 'destructive' });
     }
   };
 
@@ -95,8 +97,7 @@ export default function MobileWallet() {
       case 'send': return <ArrowUpRight className="w-4 h-4 text-red-500" />;
       case 'receive': return <ArrowDownLeft className="w-4 h-4 text-green-500" />;
       case 'top-up': return <Plus className="w-4 h-4 text-primary" />;
-      case 'payment': return <CreditCard className="w-4 h-4 text-accent" />;
-      default: return <CreditCard className="w-4 h-4 text-muted-foreground" />;
+      default: return <WalletIcon className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
@@ -110,223 +111,173 @@ export default function MobileWallet() {
     }
   };
 
-  const getAmountPrefix = (type: string) => {
-    switch (type) {
-      case 'send':
-      case 'payment': return '-';
-      case 'receive':
-      case 'top-up': return '+';
-      default: return '';
-    }
-  };
-
-  const getTransactionLabel = (txn: Transaction) => {
-    if (txn.type === 'send' && txn.recipient) return `To: ${txn.recipient}`;
-    if (txn.type === 'receive' && txn.sender) return `From: ${txn.sender}`;
-    return txn.description || txn.type;
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate(ROUTE_PATHS.LOGIN);
-  };
-
-  const menuItems = [
-    { icon: "🏠", label: "Home", href: ROUTE_PATHS.HOME },
-    { icon: "👤", label: "Profile", href: ROUTE_PATHS.PROFILE },
-    { icon: "⚙️", label: "Settings", href: ROUTE_PATHS.SETTINGS },
-  ];
-
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <div className="bg-gradient-to-b from-primary to-primary/90 text-primary-foreground p-3 pt-12 rounded-b-2xl">
-        <div className="flex items-center justify-between mb-2">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-white/20">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-72 p-0">
-              <div className="p-4 border-b">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={(user as any)?.avatar_url} alt={user?.fullName} />
-                    <AvatarFallback>{user?.fullName?.charAt(0) || 'U'}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-semibold">{user?.fullName || 'User'}</p>
-                    <p className="text-sm text-muted-foreground opacity-80">{user?.email}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="p-2">
-                {menuItems.map((item, index) => (
-                  <Link
-                    key={index}
-                    to={item.href}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted text-foreground"
-                  >
-                    <span className="text-xl">{item.icon}</span>
-                    <span>{item.label}</span>
-                  </Link>
-                ))}
-                <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted text-destructive"
-                >
-                  <span>🚪</span>
-                  <span>Logout</span>
-                </button>
-              </div>
-            </SheetContent>
-          </Sheet>
+    <div className="min-h-screen bg-background">
+      {/* Fixed Top Bar */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur border-b border-border">
+        {/* Top Row */}
+        <div className="flex items-center justify-between px-4 py-2">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-10 w-10 hover:bg-muted"
+            onClick={() => setIsSidebarOpen(true)}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
           
-          <div className="flex-1 text-center px-2">
-            <p className="text-xs opacity-80">Total Balance</p>
-            <p className="text-xl font-bold font-mono">{formatCurrency(balance, currency)}</p>
-          </div>
-          
-          <Link to={ROUTE_PATHS.PROFILE}>
-            <Avatar className="h-8 w-8 border-2 border-white/30">
-              <AvatarImage src={(user as any)?.avatar_url} alt={user?.fullName} />
-              <AvatarFallback className="bg-white/20 text-primary-foreground text-sm">{user?.fullName?.charAt(0) || 'U'}</AvatarFallback>
-            </Avatar>
+          <Link to={ROUTE_PATHS.MOBILE_HOME}>
+            <img src="/Logo_Icon.jpeg" alt="TruNORTH" className="h-8 w-auto" />
           </Link>
-        </div>
-        
-        {/* Action Buttons */}
-        <div className="flex gap-2 mt-2">
-          <Dialog open={topUpDialogOpen} onOpenChange={setTopUpDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="flex-1 bg-white text-primary hover:bg-white/90 font-semibold">
-                <Plus className="w-4 h-4 mr-1" />
-                Top Up
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Top Up Wallet</DialogTitle>
-                <DialogDescription>Add funds to your wallet</DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label>Amount ({currency})</Label>
-                  <Input
-                    type="number"
-                    placeholder="Enter amount"
-                    value={topUpAmount}
-                    onChange={(e) => setTopUpAmount(e.target.value)}
-                  />
-                </div>
-                <div className="flex gap-2">
-                  {[5000, 10000, 25000].map((amount) => (
-                    <Button key={amount} variant="outline" size="sm" onClick={() => setTopUpAmount(amount.toString())}>
-                      {formatCurrency(amount, currency)}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setTopUpDialogOpen(false)}>Cancel</Button>
-                <Button onClick={handleTopUp}>Top Up</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
           
-          <Dialog open={sendMoneyDialogOpen} onOpenChange={setSendMoneyDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="flex-1 bg-white text-primary hover:bg-white/90 font-semibold">
-                <ArrowUpRight className="w-4 h-4 mr-1" />
-                Send
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Send Money</DialogTitle>
-                <DialogDescription>Transfer to another user</DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label>Recipient Email</Label>
-                  <Input placeholder="Enter email" value={recipient} onChange={(e) => setRecipient(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Amount ({currency})</Label>
-                  <Input type="number" placeholder="Enter amount" value={sendAmount} onChange={(e) => setSendAmount(e.target.value)} />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setSendMoneyDialogOpen(false)}>Cancel</Button>
-                <Button onClick={handleSendMoney}>Send</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="icon" className="relative h-10 w-10">
+              <Bell className="h-5 w-5" />
+              {notificationCount > 0 && (
+                <span className="absolute top-1 right-1 h-4 w-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
+                  {notificationCount > 9 ? '9+' : notificationCount}
+                </span>
+              )}
+            </Button>
+            <Link to={ROUTE_PATHS.PROFILE}>
+              <Avatar className="h-9 w-9">
+                <AvatarImage src={(user as any)?.avatar_url} alt={user?.fullName} />
+                <AvatarFallback className="text-sm">{user?.fullName?.charAt(0) || 'U'}</AvatarFallback>
+              </Avatar>
+            </Link>
+          </div>
         </div>
-      </div>
-
-      {/* Transaction History */}
-      <div className="p-4">
-        <h2 className="text-lg font-semibold mb-3">Transaction History</h2>
         
-        {/* Search and Filter */}
-        <div className="mb-3">
+        {/* Search Row */}
+        <div className="px-4 pb-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input 
-              placeholder="Search transactions..." 
-              value={searchQuery} 
-              onChange={(e) => setSearchQuery(e.target.value)} 
-              className="pl-10"
+              placeholder="Search transactions" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-muted/50 border-none rounded-full pl-10 h-9 text-sm"
             />
           </div>
         </div>
-        
-        {/* Filter Tabs */}
-        <Tabs value={activeFilter} onValueChange={(value) => setActiveFilter(value as Transaction['type'] | 'all')} className="mb-4">
-          <TabsList className="grid grid-cols-5 w-full">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="send">Sent</TabsTrigger>
-            <TabsTrigger value="receive">Received</TabsTrigger>
-            <TabsTrigger value="top-up">Top-up</TabsTrigger>
-            <TabsTrigger value="payment">Payment</TabsTrigger>
-          </TabsList>
-        </Tabs>
-        
-        {/* Transaction List - Simple list without cards */}
-        <div className="space-y-0">
-          {filteredTransactions.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <p>No transactions found</p>
-            </div>
-          ) : (
-            filteredTransactions.map((txn) => (
-              <div 
-                key={txn.id} 
-                className="flex items-center justify-between py-3 border-b border-border last:border-0 hover:bg-muted/30 px-2 -mx-2 rounded-lg"
-              >
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-                    {getTransactionIcon(txn.type)}
+      </div>
+
+      {/* Sidebar */}
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} mobile />
+
+      {/* Main Content */}
+      <div className="pt-24 pb-20">
+        {/* Wallet Balance Card */}
+        <div className="px-4 pb-2 border-b border-border/50">
+          <Card className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground">
+            <CardContent className="p-4">
+              <p className="text-xs opacity-80">Total Balance</p>
+              <p className="text-2xl font-bold font-mono">{formatCurrency(balance, currency)}</p>
+              <div className="flex gap-2 mt-3">
+                <Dialog open={showTopUpDialog} onOpenChange={setShowTopUpDialog}>
+                  <DialogTrigger asChild>
+                    <Button className="flex-1 bg-white text-primary hover:bg-white/90 h-9 text-sm">
+                      <Plus className="w-4 h-4 mr-1" />
+                      Top Up
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Top Up Wallet</DialogTitle>
+                      <DialogDescription>Add funds to your wallet</DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <Input
+                          type="number"
+                          placeholder="Enter amount"
+                          value={topUpAmount}
+                          onChange={(e) => setTopUpAmount(e.target.value)}
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        {[5000, 10000, 25000].map((amount) => (
+                          <Button key={amount} variant="outline" size="sm" onClick={() => setTopUpAmount(amount.toString())}>
+                            {formatCurrency(amount, currency)}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setShowTopUpDialog(false)}>Cancel</Button>
+                      <Button onClick={handleTopUp}>Top Up</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+                
+                <Dialog open={showSendDialog} onOpenChange={setShowSendDialog}>
+                  <DialogTrigger asChild>
+                    <Button variant="secondary" className="flex-1 h-9 text-sm">
+                      <ArrowUpRight className="w-4 h-4 mr-1" />
+                      Send
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Send Money</DialogTitle>
+                      <DialogDescription>Transfer to another user</DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <Input placeholder="Recipient Email" value={recipient} onChange={(e) => setRecipient(e.target.value)} />
+                      </div>
+                      <div className="space-y-2">
+                        <Input type="number" placeholder="Amount" value={sendAmount} onChange={(e) => setSendAmount(e.target.value)} />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setShowSendDialog(false)}>Cancel</Button>
+                      <Button onClick={handleSendMoney}>Send</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Recent Transactions */}
+        <div className="px-4 py-2">
+          <h2 className="text-lg font-semibold mb-3">Recent Transactions</h2>
+          <div className="space-y-0">
+            {filteredTransactions.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground text-sm">
+                No transactions yet
+              </div>
+            ) : (
+              filteredTransactions.map((txn) => (
+                <div 
+                  key={txn.id} 
+                  className="flex items-center justify-between py-3 border-b border-border last:border-0"
+                >
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                      {getTransactionIcon(txn.type)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm truncate">{txn.description || txn.type}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {txn.timestamp && !isNaN(Date.parse(txn.timestamp)) 
+                          ? new Date(txn.timestamp).toLocaleDateString() 
+                          : 'Pending'}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">{getTransactionLabel(txn)}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {txn.timestamp && !isNaN(Date.parse(txn.timestamp)) 
-                        ? new Date(txn.timestamp).toLocaleDateString() 
-                        : 'Pending'}
+                  <div className="text-right flex-shrink-0">
+                    <p className={`font-mono font-semibold text-sm ${getAmountColor(txn.type)}`}>
+                      {txn.type === 'send' || txn.type === 'payment' ? '-' : '+'}
+                      {formatCurrency(txn.amount, txn.currency)}
                     </p>
                   </div>
                 </div>
-                <div className="text-right flex-shrink-0">
-                  <p className={`font-mono font-semibold text-sm ${getAmountColor(txn.type)}`}>
-                    {getAmountPrefix(txn.type)}{formatCurrency(txn.amount, txn.currency)}
-                  </p>
-                </div>
-              </div>
-            ))
-          )}
+              ))
+            )}
+          </div>
         </div>
       </div>
 

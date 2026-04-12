@@ -95,7 +95,7 @@ function MobileLayout({ children }: { children: React.ReactNode }) {
       <TopBar onMenuToggle={() => setSidebarOpen(true)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} mobile />
 
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto pt-20">
         {children}
       </main>
 
