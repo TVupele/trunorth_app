@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
-import { Menu, Bell, Send, Search, Home, Compass, MessageCircle } from "lucide-react";
+import { Link, useNavigate, NavLink } from "react-router-dom";
+import { Menu, Bell, Send, Search, Home, Compass, AlertTriangle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { ROUTE_PATHS } from "@/lib/index";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input";
 import { Sidebar } from "@/components/Sidebar";
 import { NewsFeed } from "@/components/NewsFeed";
 import { AdsBanner } from "@/components/AdsBanner";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import api from "@/lib/api";
 
 interface MobileHomeProps {
@@ -41,33 +40,23 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* X-style Top Bar */}
+      {/* Fixed Top Bar */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur border-b border-border">
-        <div className="flex items-center justify-between px-3 py-2">
-          {/* Left: Menu & Profile */}
-          <div className="flex items-center gap-2">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-10 w-10 hover:bg-muted"
-              onClick={() => setIsSidebarOpen(true)}
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-            <Link to={ROUTE_PATHS.PROFILE}>
-              <Avatar className="h-9 w-9">
-                <AvatarImage src={(user as any)?.avatar_url} alt={user?.fullName} />
-                <AvatarFallback className="text-sm">{user?.fullName?.charAt(0) || 'U'}</AvatarFallback>
-              </Avatar>
-            </Link>
-          </div>
+        {/* Top Row */}
+        <div className="flex items-center justify-between px-4 py-2">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-10 w-10 hover:bg-muted"
+            onClick={() => setIsSidebarOpen(true)}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
           
-          {/* Center: Logo */}
-          <Link to={ROUTE_PATHS.MOBILE_HOME} className="absolute left-1/2 -translate-x-1/2">
+          <Link to={ROUTE_PATHS.MOBILE_HOME}>
             <img src="/Logo_Icon.jpeg" alt="TruNORTH" className="h-8 w-auto" />
           </Link>
           
-          {/* Right: Actions */}
           <div className="flex items-center gap-1">
             <Button variant="ghost" size="icon" className="relative h-10 w-10">
               <Bell className="h-5 w-5" />
@@ -77,16 +66,22 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
                 </span>
               )}
             </Button>
+            <Link to={ROUTE_PATHS.PROFILE}>
+              <Avatar className="h-9 w-9">
+                <AvatarImage src={(user as any)?.avatar_url} alt={user?.fullName} />
+                <AvatarFallback className="text-sm">{user?.fullName?.charAt(0) || 'U'}</AvatarFallback>
+              </Avatar>
+            </Link>
           </div>
         </div>
         
-        {/* Search Bar */}
-        <div className="px-3 pb-2">
+        {/* Search Row */}
+        <div className="px-4 pb-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input 
               placeholder="Search" 
-              className="w-full bg-muted/50 border-none rounded-full pl-10 h-10 text-sm"
+              className="w-full bg-muted/50 border-none rounded-full pl-10 h-9 text-sm"
             />
           </div>
         </div>
@@ -95,13 +90,11 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
       {/* Sidebar */}
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} mobile />
 
-      {/* Main Content - Full width like X */}
-      <div className="pt-28">
-        {/* Welcome Section */}
-        <div className="px-3 pb-2 border-b border-border/50">
-          <h1 className="text-xl font-bold text-foreground">
-            {t('Home')}
-          </h1>
+      {/* Main Content */}
+      <div className="pt-24 pb-20">
+        {/* Title */}
+        <div className="px-4 pb-2 border-b border-border/50">
+          <h1 className="text-xl font-bold text-foreground">{t('Home')}</h1>
         </div>
 
         {/* Ads Banner */}
@@ -109,9 +102,80 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
           <AdsBanner />
         </div>
 
-        {/* News Feed - X style full width */}
+        {/* News Feed */}
         <NewsFeed />
       </div>
+
+      {/* X-style bottom navigation */}
+      <motion.nav
+        initial={{ y: 50 }}
+        animate={{ y: 0 }}
+        className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur border-t border-border z-50 safe-area-bottom"
+      >
+        <div className="flex items-center justify-around h-14">
+          {/* Home */}
+          <NavLink
+            to={ROUTE_PATHS.MOBILE_HOME}
+            className={({ isActive }) =>
+              `flex flex-col items-center justify-center w-14 h-full ${
+                isActive ? "text-primary" : "text-muted-foreground"
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <Home className={`w-6 h-6 ${isActive ? "text-primary" : "text-muted-foreground"}`} />
+            )}
+          </NavLink>
+
+          {/* Explore */}
+          <NavLink
+            to={ROUTE_PATHS.EVENTS}
+            className={({ isActive }) =>
+              `flex flex-col items-center justify-center w-14 h-full ${
+                isActive ? "text-primary" : "text-muted-foreground"
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <Compass className={`w-6 h-6 ${isActive ? "text-primary" : "text-muted-foreground"}`} />
+            )}
+          </NavLink>
+
+          {/* Post Button - Center */}
+          <button 
+            onClick={() => window.location.href = ROUTE_PATHS.SOCIAL}
+            className="flex items-center justify-center -mt-4"
+          >
+            <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg">
+              <Send className="w-6 h-6 text-primary-foreground" />
+            </div>
+          </button>
+
+          {/* Notifications */}
+          <NavLink
+            to="/notifications"
+            className={({ isActive }) =>
+              `flex flex-col items-center justify-center w-14 h-full ${
+                isActive ? "text-primary" : "text-muted-foreground"
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <Bell className={`w-6 h-6 ${isActive ? "text-primary" : "text-muted-foreground"}`} />
+            )}
+          </NavLink>
+
+          {/* Emergency - Red */}
+          <NavLink
+            to={ROUTE_PATHS.EMERGENCY}
+            className="flex flex-col items-center justify-center w-14 h-full"
+          >
+            <div className="w-10 h-10 rounded-full bg-destructive flex items-center justify-center">
+              <AlertTriangle className="w-5 h-5 text-destructive-foreground" />
+            </div>
+          </NavLink>
+        </div>
+      </motion.nav>
     </div>
   );
 }

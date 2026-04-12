@@ -123,57 +123,57 @@ export default function Donations() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="w-full px-4 py-8 md:px-6 lg:px-8">
+      <div className="w-full px-2 py-4 md:px-4 lg:px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight mb-2">Donations</h1>
-            <p className="text-muted-foreground">Support meaningful causes and make a difference in your community</p>
+          <div className="mb-4">
+            <h1 className="text-2xl font-bold tracking-tight mb-1">Donations</h1>
+            <p className="text-muted-foreground text-sm">Support meaningful causes and make a difference in your community</p>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3 mb-8">
+          <div className="grid gap-3 md:grid-cols-3 mb-4">
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Donated</CardTitle>
-                <Heart className="h-4 w-4 text-muted-foreground" />
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+                <CardTitle className="text-xs font-medium">Total Donated</CardTitle>
+                <Heart className="h-3 w-3 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-xl font-bold">{formatCurrency(totalDonated)}</div>
+                <div className="text-lg font-bold">{formatCurrency(totalDonated)}</div>
                 <p className="text-xs text-muted-foreground">{donationHistory.length} donations made</p>
               </CardContent>
             </Card>
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Campaigns</CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+                <CardTitle className="text-xs font-medium">Active Campaigns</CardTitle>
+                <TrendingUp className="h-3 w-3 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-xl font-bold">{campaigns.length}</div>
+                <div className="text-lg font-bold">{campaigns.length}</div>
                 <p className="text-xs text-muted-foreground">Across {categories.length - 1} categories</p>
               </CardContent>
             </Card>
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Wallet Balance</CardTitle>
-                <div className="h-4 w-4 rounded-full bg-primary" />
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+                <CardTitle className="text-xs font-medium">Wallet Balance</CardTitle>
+                <div className="h-3 w-3 rounded-full bg-primary" />
               </CardHeader>
               <CardContent>
-                <div className="text-xl font-bold font-mono">{formatCurrency(balance)}</div>
+                <div className="text-lg font-bold font-mono">{formatCurrency(balance)}</div>
                 <p className="text-xs text-muted-foreground">Available for donations</p>
               </CardContent>
             </Card>
           </div>
 
-          <Tabs defaultValue="campaigns" className="space-y-6">
+          <Tabs defaultValue="campaigns" className="space-y-4">
             <TabsList>
-              <TabsTrigger value="campaigns">All Campaigns</TabsTrigger>
-              <TabsTrigger value="history">Donation History</TabsTrigger>
+              <TabsTrigger value="campaigns" className="text-xs">All Campaigns</TabsTrigger>
+              <TabsTrigger value="history" className="text-xs">Donation History</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="campaigns" className="space-y-6">
+            <TabsContent value="campaigns" className="space-y-4">
               {featuredCampaigns.length > 0 && (
-                <div className="space-y-4">
-                  <h2 className="text-2xl font-semibold">Featured Campaigns</h2>
-                  <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-3">
+                  <h2 className="text-lg font-semibold">Featured Campaigns</h2>
+                  <div className="grid gap-4 md:grid-cols-2">
                     {featuredCampaigns.map((campaign) => (
                       <motion.div key={campaign.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}>
                         <CampaignCard campaign={campaign} />
@@ -183,19 +183,19 @@ export default function Donations() {
                 </div>
               )}
 
-              <div className="space-y-4">
-                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                  <h2 className="text-2xl font-semibold">All Campaigns</h2>
-                  <div className="flex flex-col gap-3 sm:flex-row">
-                    <div className="relative flex-1 sm:w-64">
-                      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                      <Input placeholder="Search campaigns..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" />
+              <div className="space-y-3">
+                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                  <h2 className="text-lg font-semibold">All Campaigns</h2>
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <div className="relative flex-1 sm:w-48">
+                      <Search className="absolute left-3 top-1/2 h-3 w-3 -translate-y-1/2 text-muted-foreground" />
+                      <Input placeholder="Search campaigns..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-8 h-8 text-sm" />
                     </div>
                     <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                      <SelectTrigger className="w-full sm:w-48"><SelectValue placeholder="Category" /></SelectTrigger>
+                      <SelectTrigger className="w-full sm:w-40 h-8 text-sm"><SelectValue placeholder="Category" /></SelectTrigger>
                       <SelectContent>
                         {categories.map((category) => (
-                          <SelectItem key={category} value={category}>{category.charAt(0).toUpperCase() + category.slice(1)}</SelectItem>
+                          <SelectItem key={category} value={category} className="text-sm">{category.charAt(0).toUpperCase() + category.slice(1)}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>

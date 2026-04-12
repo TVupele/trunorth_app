@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, MapPin, Ticket, Search, Filter, X, QrCode, Download } from 'lucide-react';
+import { Calendar, MapPin, Ticket, Search, Filter, X, QrCode, Download, LayoutGrid, List } from 'lucide-react';
 import { EventCard } from '@/components/EventCard';
 import { useWallet } from '@/hooks/useWallet';
 import api from '@/lib/api';
@@ -51,6 +51,7 @@ export default function Events() {
   const [selectedTicket, setSelectedTicket] = useState<PurchasedTicket | null>(null);
   const [dateFilter, setDateFilter] = useState<string>('');
   const [locationFilter, setLocationFilter] = useState<string>('');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -113,27 +114,27 @@ export default function Events() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="w-full px-4 py-8 md:px-6 lg:px-8">
+      <div className="w-full px-2 py-4 md:px-4 lg:px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold tracking-tight mb-2">Event Tickets</h1>
-            <p className="text-muted-foreground text-lg">Discover and book tickets for concerts, conferences, and more</p>
+          <div className="mb-4">
+            <h1 className="text-2xl font-bold tracking-tight mb-1">Event Tickets</h1>
+            <p className="text-muted-foreground text-sm">Discover and book tickets for concerts, conferences, and more</p>
           </div>
 
           <Tabs defaultValue="browse" className="w-full">
-            <TabsList className="mb-6">
-              <TabsTrigger value="browse">Browse Events</TabsTrigger>
-              <TabsTrigger value="tickets">
+            <TabsList className="mb-4">
+              <TabsTrigger value="browse" className="text-xs">Browse Events</TabsTrigger>
+              <TabsTrigger value="tickets" className="text-xs">
                 My Tickets
-                {purchasedTickets.length > 0 && <Badge variant="secondary" className="ml-2">{purchasedTickets.length}</Badge>}
+                {purchasedTickets.length > 0 && <Badge variant="secondary" className="ml-1 text-xs">{purchasedTickets.length}</Badge>}
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="browse" className="space-y-8">
+            <TabsContent value="browse" className="space-y-4">
               {upcomingEvents.length > 0 && (
                 <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-                  <h2 className="text-2xl font-semibold mb-4">Upcoming Events</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <h2 className="text-lg font-semibold mb-3">Upcoming Events</h2>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3">
                     {upcomingEvents.map((event, index) => (
                       <motion.div key={event.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + index * 0.1 }}>
                         <EventCard event={event} />
@@ -144,44 +145,72 @@ export default function Events() {
               )}
 
               <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-                <div className="flex flex-col gap-4 mb-6">
-                  <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col gap-3 mb-4">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <div className="relative flex-1">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input placeholder="Search events..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                      <Input placeholder="Search events..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-8 h-8 text-sm" />
                     </div>
-                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                      <SelectTrigger className="w-[180px]"><Filter className="h-4 w-4 mr-2" /><SelectValue placeholder="Category" /></SelectTrigger>
-                      <SelectContent>{categories.map((c) => (<SelectItem key={c} value={c}>{c}</SelectItem>))}</SelectContent>
-                    </Select>
+                    <div className="flex gap-2">
+                      <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                        <SelectTrigger className="w-[140px] h-8 text-xs"><Filter className="h-3 w-3 mr-1" /><SelectValue placeholder="Category" /></SelectTrigger>
+                        <SelectContent>{categories.map((c) => (<SelectItem key={c} value={c} className="text-xs">{c}</SelectItem>))}</SelectContent>
+                      </Select>
+                      <div className="flex border rounded-md">
+                        <Button variant={viewMode === 'grid' ? 'secondary' : 'ghost'} size="sm" className="h-8 px-2" onClick={() => setViewMode('grid')}>
+                          <LayoutGrid className="h-3 w-3" />
+                        </Button>
+                        <Button variant={viewMode === 'list' ? 'secondary' : 'ghost'} size="sm" className="h-8 px-2" onClick={() => setViewMode('list')}>
+                          <List className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <div className="flex-1">
-                      <Label htmlFor="date-filter" className="text-sm mb-2 block">Date From</Label>
-                      <Input id="date-filter" type="date" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} />
+                      <Label htmlFor="date-filter" className="text-xs mb-1 block">Date From</Label>
+                      <Input id="date-filter" type="date" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} className="h-8 text-xs" />
                     </div>
                     <div className="flex-1">
-                      <Label htmlFor="location-filter" className="text-sm mb-2 block">Location</Label>
-                      <Input id="location-filter" placeholder="Filter by location..." value={locationFilter} onChange={(e) => setLocationFilter(e.target.value)} />
+                      <Label htmlFor="location-filter" className="text-xs mb-1 block">Location</Label>
+                      <Input id="location-filter" placeholder="Filter by location..." value={locationFilter} onChange={(e) => setLocationFilter(e.target.value)} className="h-8 text-xs" />
                     </div>
                     {(dateFilter || locationFilter) && (
                       <div className="flex items-end">
-                        <Button variant="outline" size="icon" onClick={() => { setDateFilter(''); setLocationFilter(''); }}><X className="h-4 w-4" /></Button>
+                        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => { setDateFilter(''); setLocationFilter(''); }}><X className="h-3 w-3" /></Button>
                       </div>
                     )}
                   </div>
                 </div>
 
                 {isLoadingEvents ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {Array.from({ length: 6 }).map((_, i) => (<Skeleton key={i} className="h-64 w-full rounded-lg" />))}
+                  <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3`}>
+                    {Array.from({ length: 6 }).map((_, i) => (<Skeleton key={i} className="h-40 w-full rounded-lg" />))}
                   </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                ) : viewMode === 'grid' ? (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3">
                     <AnimatePresence mode="popLayout">
                       {filteredEvents.map((event, index) => (
                         <motion.div key={event.id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ delay: index * 0.05 }} layout>
                           <div onClick={() => handleEventClick(event)}><EventCard event={event} /></div>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <AnimatePresence mode="popLayout">
+                      {filteredEvents.map((event, index) => (
+                        <motion.div key={event.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ delay: index * 0.05 }} layout>
+                          <div onClick={() => handleEventClick(event)} className="flex gap-3 p-3 border rounded-lg hover:bg-muted/50">
+                            <img src={event.image} alt={event.title} className="w-20 h-20 rounded-md object-cover" />
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-sm truncate">{event.title}</h3>
+                              <p className="text-xs text-muted-foreground">{new Date(event.date).toLocaleDateString()}</p>
+                              <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin className="h-2 w-2" />{event.location}</p>
+                              <p className="text-sm font-semibold">{formatCurrency(event.ticketPrice)}</p>
+                            </div>
+                          </div>
                         </motion.div>
                       ))}
                     </AnimatePresence>

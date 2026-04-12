@@ -103,56 +103,56 @@ export default function ReligiousServices() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="w-full px-6 py-8">
+      <div className="w-full px-2 py-4">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-2">Religious Services</h1>
-            <p className="text-muted-foreground text-lg">Register for prayer services, sermons, study circles, and religious events</p>
+          <div className="mb-4">
+            <h1 className="text-2xl font-bold mb-1">Religious Services</h1>
+            <p className="text-muted-foreground text-sm">Register for prayer services, sermons, study circles, and religious events</p>
           </div>
 
-          <div className="grid gap-6 mb-8">
+          <div className="grid gap-4 mb-4">
             <Card>
-              <CardHeader><CardTitle className="flex items-center gap-2"><Filter className="h-5 w-5" />Search & Filters</CardTitle></CardHeader>
-              <CardContent className="space-y-4">
+              <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Filter className="h-4 w-4" />Search & Filters</CardTitle></CardHeader>
+              <CardContent className="space-y-3">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="Search services, venues, or descriptions..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                  <Input placeholder="Search services..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-8 h-8 text-sm" />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label>Service Type</Label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs">Service Type</Label>
                     <Select value={serviceTypeFilter} onValueChange={setServiceTypeFilter}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">All Types</SelectItem>
-                        <SelectItem value="prayer">Prayer</SelectItem>
-                        <SelectItem value="sermon">Sermon</SelectItem>
-                        <SelectItem value="study">Study</SelectItem>
-                        <SelectItem value="event">Event</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        <SelectItem value="all" className="text-sm">All Types</SelectItem>
+                        <SelectItem value="prayer" className="text-sm">Prayer</SelectItem>
+                        <SelectItem value="sermon" className="text-sm">Sermon</SelectItem>
+                        <SelectItem value="study" className="text-sm">Study</SelectItem>
+                        <SelectItem value="event" className="text-sm">Event</SelectItem>
+                        <SelectItem value="other" className="text-sm">Other</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
-                    <Label>Denomination</Label>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Denomination</Label>
                     <Select value={denominationFilter} onValueChange={setDenominationFilter}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">All Denominations</SelectItem>
-                        <SelectItem value="Islam">Islam</SelectItem>
-                        <SelectItem value="Christianity">Christianity</SelectItem>
+                        <SelectItem value="all" className="text-sm">All Denominations</SelectItem>
+                        <SelectItem value="Islam" className="text-sm">Islam</SelectItem>
+                        <SelectItem value="Christianity" className="text-sm">Christianity</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
-                    <Label>Date</Label>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Date</Label>
                     <Select value={dateFilter} onValueChange={setDateFilter}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">All Dates</SelectItem>
-                        <SelectItem value="today">Today</SelectItem>
-                        <SelectItem value="tomorrow">Tomorrow</SelectItem>
-                        <SelectItem value="week">This Week</SelectItem>
+                        <SelectItem value="all" className="text-sm">All Dates</SelectItem>
+                        <SelectItem value="today" className="text-sm">Today</SelectItem>
+                        <SelectItem value="tomorrow" className="text-sm">Tomorrow</SelectItem>
+                        <SelectItem value="week" className="text-sm">This Week</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -162,11 +162,11 @@ export default function ReligiousServices() {
           </div>
 
           {myRegisteredServices.length > 0 && (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-8">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-4">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><Calendar className="h-5 w-5" />My Registered Services ({myRegisteredServices.length})</CardTitle>
-                  <CardDescription>Services you have registered for with reminder settings</CardDescription>
+                  <CardTitle className="flex items-center gap-2 text-base"><Calendar className="h-4 w-4" />My Registered Services ({myRegisteredServices.length})</CardTitle>
+                  <CardDescription className="text-xs">Services you have registered for with reminder settings</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">

@@ -108,37 +108,37 @@ export default function Emergency() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Emergency Reporting</h1>
-          <p className="text-muted-foreground text-lg">Report emergencies and track their status in real-time</p>
+      <div className="container mx-auto px-2 py-4 max-w-7xl">
+        <div className="mb-4">
+          <h1 className="text-2xl font-bold mb-1">Emergency Reporting</h1>
+          <p className="text-muted-foreground text-sm">Report emergencies and track their status in real-time</p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3 mb-8">
+        <div className="grid gap-4 lg:grid-cols-3 mb-6">
           <Card className="lg:col-span-2 border-destructive/20 bg-gradient-to-br from-destructive/5 to-background">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">
-                <AlertTriangle className="h-6 w-6 text-destructive" />
+              <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
+                <AlertTriangle className="h-5 w-5 text-destructive" />
                 Report Emergency
               </CardTitle>
-              <CardDescription>Quick access to emergency reporting. Your report will be immediately processed.</CardDescription>
+              <CardDescription className="text-xs">Quick access to emergency reporting. Your report will be immediately processed.</CardDescription>
             </CardHeader>
             <CardContent>
               <Dialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button size="lg" className="w-full bg-destructive hover:bg-destructive/90 text-destructive-foreground text-base md:text-lg h-12 md:h-14">
-                    <AlertTriangle className="mr-2 h-5 w-5" />
+                  <Button size="lg" className="w-full bg-destructive hover:bg-destructive/90 text-destructive-foreground text-sm md:text-base h-10 md:h-12">
+                    <AlertTriangle className="mr-2 h-4 w-4" />
                     Report Emergency Now
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle className="text-2xl">Submit Emergency Report</DialogTitle>
-                    <DialogDescription>Provide detailed information to help emergency responders assist you quickly.</DialogDescription>
+                    <DialogTitle className="text-xl">Submit Emergency Report</DialogTitle>
+                    <DialogDescription className="text-xs">Provide detailed information to help emergency responders assist you quickly.</DialogDescription>
                   </DialogHeader>
-                  <div className="space-y-6 py-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="emergency-type">Emergency Type *</Label>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-1">
+                      <Label htmlFor="emergency-type" className="text-sm">Emergency Type *</Label>
                       <Select value={formData.type} onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value as EmergencyReport['type'] }))}>
                         <SelectTrigger id="emergency-type"><SelectValue /></SelectTrigger>
                         <SelectContent>
@@ -150,8 +150,8 @@ export default function Emergency() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="priority">Priority Level *</Label>
+                    <div className="space-y-1">
+                      <Label htmlFor="priority" className="text-sm">Priority Level *</Label>
                       <Select value={formData.priority} onValueChange={(value) => setFormData((prev) => ({ ...prev, priority: value as EmergencyReport['priority'] }))}>
                         <SelectTrigger id="priority"><SelectValue /></SelectTrigger>
                         <SelectContent>
@@ -162,28 +162,28 @@ export default function Emergency() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="location">Location *</Label>
+                    <div className="space-y-1">
+                      <Label htmlFor="location" className="text-sm">Location *</Label>
                       <div className="flex gap-2">
                         <Input id="location" placeholder="Enter location or use GPS" value={formData.location} onChange={(e) => setFormData((prev) => ({ ...prev, location: e.target.value }))} />
                         <Button type="button" variant="outline" onClick={handleDetectLocation} disabled={isDetectingLocation}><MapPin className="h-4 w-4" /></Button>
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="description">Description *</Label>
-                      <Textarea id="description" placeholder="Describe the emergency situation in detail..." rows={5} value={formData.description} onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))} />
+                    <div className="space-y-1">
+                      <Label htmlFor="description" className="text-sm">Description *</Label>
+                      <Textarea id="description" placeholder="Describe the emergency situation in detail..." rows={3} value={formData.description} onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))} />
                     </div>
-                    <div className="flex gap-3 pt-4">
-                      <Button variant="outline" className="flex-1" onClick={() => setIsReportDialogOpen(false)}>Cancel</Button>
-                      <Button className="flex-1 bg-destructive hover:bg-destructive/90" onClick={handleSubmitReport} disabled={!formData.location || !formData.description}>Submit Report</Button>
+                    <div className="flex gap-3 pt-2">
+                      <Button variant="outline" className="flex-1 h-9" onClick={() => setIsReportDialogOpen(false)}>Cancel</Button>
+                      <Button className="flex-1 h-9 bg-destructive hover:bg-destructive/90" onClick={handleSubmitReport} disabled={!formData.location || !formData.description}>Submit Report</Button>
                     </div>
                   </div>
                 </DialogContent>
               </Dialog>
-              <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-                <p className="text-sm text-muted-foreground">
+              <div className="mt-4 p-3 bg-muted/50 rounded-lg">
+                <p className="text-xs text-muted-foreground">
                   <strong>Important:</strong> For life-threatening emergencies, call emergency services directly at{' '}
-                  <span className="font-mono font-semibold text-foreground">112</span> before submitting a report.
+                  <span className="font-mono font-semibold text-foreground text-xs">112</span> before submitting a report.
                 </p>
               </div>
             </CardContent>
@@ -191,15 +191,15 @@ export default function Emergency() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><Phone className="h-5 w-5" />Emergency Contacts</CardTitle>
-              <CardDescription>Quick dial emergency services</CardDescription>
+              <CardTitle className="flex items-center gap-2 text-base"><Phone className="h-4 w-4" />Emergency Contacts</CardTitle>
+              <CardDescription className="text-xs">Quick dial emergency services</CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-2 gap-3">
+            <CardContent className="grid grid-cols-2 gap-2">
               {emergencyContacts.map((contact) => (
-                <Button key={contact.name} variant="outline" className="w-full h-auto p-3 flex flex-col items-center justify-center hover:bg-primary/5 hover:border-primary" asChild>
+                <Button key={contact.name} variant="outline" className="w-full h-auto p-2 flex flex-col items-center justify-center hover:bg-primary/5 hover:border-primary" asChild>
                   <a href={`tel:${contact.number}`} className="text-center">
-                    <span className="text-3xl">{contact.icon}</span>
-                    <p className="font-semibold mt-1 text-sm">{contact.name}</p>
+                    <span className="text-2xl">{contact.icon}</span>
+                    <p className="font-semibold mt-1 text-xs">{contact.name}</p>
                     <p className="text-xs text-muted-foreground font-mono">{contact.number}</p>
                   </a>
                 </Button>
@@ -208,15 +208,15 @@ export default function Emergency() {
           </Card>
         </div>
 
-        <Separator className="my-8" />
+        <Separator className="my-6" />
 
         <div>
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-2xl font-bold">Your Reports</h2>
-              <p className="text-muted-foreground">Track the status of your emergency reports</p>
+              <h2 className="text-xl font-bold">Your Reports</h2>
+              <p className="text-muted-foreground text-xs">Track the status of your emergency reports</p>
             </div>
-            <Badge variant="secondary" className="text-sm">{reports.length} {reports.length === 1 ? 'Report' : 'Reports'}</Badge>
+            <Badge variant="secondary" className="text-xs">{reports.length} {reports.length === 1 ? 'Report' : 'Reports'}</Badge>
           </div>
 
           {isLoading ? (
