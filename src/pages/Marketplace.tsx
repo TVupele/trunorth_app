@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, ShoppingCart, Star, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, ShoppingCart, Star, X, ChevronLeft, ChevronRight, LayoutGrid, List } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProductCard } from '@/components/ProductCard';
 import { useWallet } from '@/hooks/useWallet';
@@ -38,6 +38,7 @@ export default function Marketplace() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const balance = useWallet((state) => state.balance);
   const sendMoney = useWallet((state) => state.sendMoney);
   const isLoading = useWallet((state) => state.isLoading);
@@ -224,10 +225,28 @@ export default function Marketplace() {
           <div>
             <div className="mb-4 flex items-center justify-between">
               <p className="text-sm text-muted-foreground">{filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'} found</p>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => setViewMode('grid')}
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'list' ? 'default' : 'ghost'}
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => setViewMode('list')}
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
             {isLoadingProducts ? (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {Array.from({ length: 6 }).map((_, i) => (<Skeleton key={i} className="h-64 w-full rounded-lg" />))}
+              <div className={viewMode === 'grid' ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-3" : "space-y-2"}>
+                {Array.from({ length: 6 }).map((_, i) => (<Skeleton key={i} className={viewMode === 'grid' ? "h-48 w-full rounded-lg" : "h-16 w-full rounded-lg"} />))}
               </div>
             ) : filteredProducts.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -236,11 +255,17 @@ export default function Marketplace() {
                 <p className="text-muted-foreground">Try adjusting your filters</p>
               </div>
             ) : (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className={viewMode === 'grid' ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-3" : "space-y-2"}>
                 {filteredProducts.map((product) => (
-                  <motion.div key={product.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
-                    onClick={() => setSelectedProduct(product)} className="cursor-pointer">
-                    <ProductCard product={product} />
+                  <motion.div 
+                    key={product.id} 
+                    initial={{ opacity: 0, y: 10 }} 
+                    animate={{ opacity: 1, y: 0 }} 
+                    transition={{ duration: 0.2 }}
+                    onClick={() => setSelectedProduct(product)} 
+                    className="cursor-pointer"
+                  >
+                    <ProductCard product={product} variant={viewMode} />
                   </motion.div>
                 ))}
               </div>
