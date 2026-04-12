@@ -104,6 +104,10 @@ export const createProduct = async (req: Request, res: Response) => {
     const adminResult = await query("SELECT id FROM users WHERE role = 'admin' LIMIT 1");
     const vendorId = adminResult.rows[0]?.id;
     
+    if (!vendorId) {
+      return res.status(500).json({ error: 'No admin user found.' });
+    }
+    
     const result = await query(
       `INSERT INTO products (vendor_id, name, description, image_url, price, currency, category, stock_quantity)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
@@ -161,15 +165,15 @@ export const getAllEvents = async (req: Request, res: Response) => {
 };
 
 export const createEvent = async (req: Request, res: Response) => {
-  const { title, description, image_url, event_date, location, ticket_price, total_seats, category } = req.body;
+  const { title, description, image_url, event_date, location, ticket_price, total_seats } = req.body;
   if (!title || !event_date) {
     return res.status(400).json({ error: 'Title and event date are required.' });
   }
   try {
     const result = await query(
-      `INSERT INTO events (title, description, image_url, event_date, location, ticket_price, total_seats, available_seats, category)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $7, $8) RETURNING *`,
-      [title, description, image_url, event_date, location, ticket_price || 0, total_seats || 0, category || 'General']
+      `INSERT INTO events (title, description, image_url, event_date, location, ticket_price, total_seats, available_seats)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $7) RETURNING *`,
+      [title, description, image_url, event_date, location, ticket_price || 0, total_seats || 0]
     );
     
     const event = result.rows[0];
@@ -252,10 +256,17 @@ export const createCampaign = async (req: Request, res: Response) => {
     return res.status(400).json({ error: 'Title and goal amount are required.' });
   }
   try {
+    const adminResult = await query("SELECT id FROM users WHERE role = 'admin' LIMIT 1");
+    const adminId = adminResult.rows[0]?.id;
+    
+    if (!adminId) {
+      return res.status(500).json({ error: 'No admin user found.' });
+    }
+    
     const result = await query(
-      `INSERT INTO campaigns (organizer_id, title, description, image_url, goal_amount, end_date, is_active, category)
-       VALUES ((SELECT id FROM users WHERE role = 'admin' LIMIT 1), $1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-      [title, description, image_url, goal_amount, end_date, is_active ?? true, category || 'General']
+      `INSERT INTO campaigns (organizer_id, title, description, image_url, goal_amount, end_date, is_active)
+       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+      [adminId, title, description, image_url, goal_amount, end_date, is_active ?? true]
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {

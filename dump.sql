@@ -10,6 +10,7 @@
 -- Category columns for events and campaigns
 ALTER TABLE public.events ADD COLUMN IF NOT EXISTS category character varying(100) DEFAULT 'General';
 ALTER TABLE public.campaigns ADD COLUMN IF NOT EXISTS category character varying(100) DEFAULT 'General';
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS created_at timestamp with time zone DEFAULT now();
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -306,7 +307,8 @@ CREATE TABLE public.products (
     currency character varying(3) DEFAULT 'NGN'::character varying NOT NULL,
     category character varying(100),
     stock_quantity integer DEFAULT 0 NOT NULL,
-    rating numeric(2,1) DEFAULT 0.0
+    rating numeric(2,1) DEFAULT 0.0,
+    created_at timestamp with time zone DEFAULT now()
 );
 
 

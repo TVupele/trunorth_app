@@ -234,10 +234,10 @@ export default function Admin() {
   const openCreateDialog = (type: string) => {
     setSelectedImageFile(null);
     const defaults: Record<string, any> = {
-      products: { name: '', description: '', price: 0, category: 'General', stock_quantity: 0, image_url: '' },
-      events: { title: '', description: '', event_date: '', location: '', ticket_price: 0, total_seats: 0, category: 'General', image_url: '' },
-      campaigns: { title: '', description: '', goal_amount: 0, end_date: '', category: 'General', image_url: '' },
-      'religious-services': { name: '', type: 'prayer', venue: '', service_time: '', denomination: '', capacity: 0, description: '', organizer: '' },
+      products: { name: '', description: '', price: 0, stock_quantity: 0, image_url: '' },
+      events: { title: '', description: '', event_date: '', location: '', ticket_price: 0, total_seats: 0, image_url: '' },
+      campaigns: { title: '', description: '', goal_amount: 0, end_date: '', image_url: '' },
+      'religious-services': { name: '', type: 'prayer', venue: '', service_time: '', denomination: '', capacity: 0, description: '' },
       'ad-banners': { title: '', description: '', type: 'event', image_url: '', cta: 'Learn More', link: '/', is_active: true, display_order: 0 },
     };
     setEditDialog({ open: true, type, data: defaults[type] || {} });
@@ -532,7 +532,6 @@ export default function Admin() {
                 <div><Label>Name</Label><Input value={editDialog.data?.name || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, name: e.target.value } })} /></div>
                 <div><Label>Description</Label><Textarea value={editDialog.data?.description || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, description: e.target.value } })} /></div>
                 <div><Label>Price</Label><Input type="number" value={editDialog.data?.price || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, price: e.target.value } })} /></div>
-                <div><Label>Category</Label><Input value={editDialog.data?.category || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, category: e.target.value } })} /></div>
                 <div><Label>Stock</Label><Input type="number" value={editDialog.data?.stock_quantity || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, stock_quantity: e.target.value } })} /></div>
                 <div className="space-y-2">
                   <Label>Product Image</Label>
@@ -555,7 +554,6 @@ export default function Admin() {
                 <div><Label>Location</Label><Input value={editDialog.data?.location || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, location: e.target.value } })} /></div>
                 <div><Label>Ticket Price</Label><Input type="number" value={editDialog.data?.ticket_price || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, ticket_price: e.target.value } })} /></div>
                 <div><Label>Total Seats</Label><Input type="number" value={editDialog.data?.total_seats || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, total_seats: e.target.value } })} /></div>
-                <div><Label>Category</Label><Input value={editDialog.data?.category || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, category: e.target.value } })} /></div>
                 <div className="space-y-2">
                   <Label>Event Image</Label>
                   <div className="flex items-center gap-2">
@@ -575,7 +573,6 @@ export default function Admin() {
                 <div><Label>Description</Label><Textarea value={editDialog.data?.description || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, description: e.target.value } })} /></div>
                 <div><Label>Goal Amount</Label><Input type="number" value={editDialog.data?.goal_amount || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, goal_amount: e.target.value } })} /></div>
                 <div><Label>End Date</Label><Input type="date" value={editDialog.data?.end_date ? new Date(editDialog.data.end_date).toISOString().slice(0, 10) : ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, end_date: e.target.value } })} /></div>
-                <div><Label>Category</Label><Input value={editDialog.data?.category || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, category: e.target.value } })} /></div>
                 <div className="space-y-2">
                   <Label>Campaign Image</Label>
                   <div className="flex items-center gap-2">
