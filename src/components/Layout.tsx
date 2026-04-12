@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, NavLink, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Sidebar } from "@/components/Sidebar";
 import { TopBar } from "@/components/TopBar";
 import { Footer } from "@/components/Footer";
 import { ROUTE_PATHS } from "@/lib/index";
 import { Button } from "@/components/ui/button";
 import { Plus, Home, Wallet, Calendar, GraduationCap, AlertTriangle, Heart, Send } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface LayoutProps {
   children: React.ReactNode;
