@@ -1,12 +1,11 @@
-import { Request } from 'express';
+import { User } from '../routes/users';
 
-// Interface for the user object attached to the request
-export interface User {
-  userId: string;
-  role: string;
-}
 
-// Extend the Express Request interface to include the user object
-export interface AuthenticatedRequest extends Request {
-  user?: User;
+declare global {
+  namespace Express {
+    interface Request {
+      user?: User;
+      file?: Express.Multer.File;
+    }
+  }
 }

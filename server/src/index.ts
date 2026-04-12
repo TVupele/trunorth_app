@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import session from 'express-session';
 import passport from 'passport';
+import path from 'path';
 
 // Import database configuration to initialize connection on startup
 import './config/db'; 
@@ -47,6 +48,9 @@ app.use(cors({
 app.options('*', cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Session middleware
 app.use(

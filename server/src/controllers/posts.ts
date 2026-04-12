@@ -42,14 +42,13 @@ export const createPost = async (req: Request, res: Response) => {
 
 export const uploadImage = async (req: Request, res: Response) => {
   const authReq = req as AuthenticatedRequest;
-  const userId = authReq.user?.userId;
   
-  if (!req.file) {
+  if (!authReq.file) {
     return res.status(400).json({ error: 'No image file provided.' });
   }
   
   try {
-    const imageUrl = `/uploads/${req.file.filename}`;
+    const imageUrl = `/uploads/${authReq.file.filename}`;
     res.json({ url: imageUrl });
   } catch (error) {
     console.error('Upload image error:', error);
