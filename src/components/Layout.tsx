@@ -7,7 +7,7 @@ import { TopBar } from "@/components/TopBar";
 import { Footer } from "@/components/Footer";
 import { ROUTE_PATHS } from "@/lib/index";
 import { Button } from "@/components/ui/button";
-import { Plus, Home, Wallet, Users, Calendar } from "lucide-react";
+import { Plus, Home, Wallet, Users, Calendar, AlertTriangle } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface LayoutProps {
@@ -15,10 +15,11 @@ interface LayoutProps {
 }
 
 const mobileNavItems = [
-  { path: ROUTE_PATHS.HOME, label: "Home", icon: Home },
+  { path: ROUTE_PATHS.MOBILE_HOME, label: "Home", icon: Home },
   { path: ROUTE_PATHS.EVENTS, label: "Events", icon: Calendar },
-  { path: ROUTE_PATHS.SOCIAL, label: "Post", icon: Plus, isAction: true },
-  { path: ROUTE_PATHS.WALLET, label: "Wallet", icon: Wallet },
+  { path: 'post', label: "Post", icon: Plus, isAction: true },
+  { path: ROUTE_PATHS.MOBILE_WALLET, label: "Wallet", icon: Wallet },
+  { path: ROUTE_PATHS.EMERGENCY, label: "Emergency", icon: AlertTriangle, isEmergency: true },
 ];
 
 export function Layout({ children }: LayoutProps) {
@@ -114,6 +115,19 @@ function MobileLayout({ children }: { children: React.ReactNode }) {
                 >
                   <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg">
                     <Icon className="w-6 h-6 text-primary-foreground" />
+                  </div>
+                </NavLink>
+              );
+            }
+            if (item.isEmergency) {
+              return (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  className="flex flex-col items-center justify-center w-14 h-12"
+                >
+                  <div className="w-10 h-10 rounded-full bg-destructive flex items-center justify-center">
+                    <Icon className="w-5 h-5 text-destructive-foreground" />
                   </div>
                 </NavLink>
               );

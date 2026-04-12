@@ -55,9 +55,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         >
           <X className="h-5 w-5" />
         </Button>
-        <div className="flex justify-center mb-2">
-          <img src="/Logo_Icon.jpeg" alt="Trunorth" className="h-12 w-auto object-contain" />
-        </div>
       </div>
 
       <Separator className="mx-4" />

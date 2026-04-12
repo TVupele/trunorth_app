@@ -9,7 +9,9 @@
 
 -- Category columns for events and campaigns
 ALTER TABLE public.events ADD COLUMN IF NOT EXISTS category character varying(100) DEFAULT 'General';
+ALTER TABLE public.events ADD COLUMN IF NOT EXISTS description text;
 ALTER TABLE public.campaigns ADD COLUMN IF NOT EXISTS category character varying(100) DEFAULT 'General';
+ALTER TABLE public.campaigns ADD COLUMN IF NOT EXISTS created_at timestamp with time zone DEFAULT now();
 ALTER TABLE public.products ADD COLUMN IF NOT EXISTS created_at timestamp with time zone DEFAULT now();
 
 SET statement_timeout = 0;

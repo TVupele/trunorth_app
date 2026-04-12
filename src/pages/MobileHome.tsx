@@ -17,6 +17,8 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { NewsFeed } from "@/components/NewsFeed";
+import { AdsBanner } from "@/components/AdsBanner";
 import api from "@/lib/api";
 
 interface MobileHomeProps {
@@ -148,8 +150,8 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
               </SheetContent>
             </Sheet>
             
-            <Link to={ROUTE_PATHS.HOME} className="flex items-center">
-              <div className="h-10 w-10 rounded-lg overflow-hidden bg-primary">
+            <Link to={ROUTE_PATHS.MOBILE_HOME} className="flex-1 flex justify-center">
+              <div className="h-10 w-auto max-w-[120px]">
                 <img src="/Logo_Icon.jpeg" alt="TruNORTH" className="h-full w-full object-contain" />
               </div>
             </Link>
@@ -175,7 +177,7 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
       </div>
 
       {/* Main Content */}
-      <div className="pt-24 px-6">
+      <div className="pt-24 px-4">
         {/* Welcome Section - Reduced Size */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -190,90 +192,18 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
           </p>
         </motion.div>
 
-        {/* Wallet Balance Card */}
+        {/* Ads Banner */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="mb-4"
         >
-          <Link to={ROUTE_PATHS.WALLET}>
-            <div className="bg-gradient-to-r from-primary to-primary/80 rounded-2xl p-4 shadow-lg">
-              <p className="text-xs text-primary-foreground/80 mb-1">Wallet Balance</p>
-              {isWalletLoading ? (
-                <Skeleton className="h-8 w-24" />
-              ) : (
-                <p className="text-2xl font-bold text-primary-foreground">
-                  {formatCurrency(balance, currency)}
-                </p>
-              )}
-              <div className="flex gap-3 mt-3">
-                {quickActions.map((action, index) => (
-                  <button
-                    key={index}
-                    onClick={(e) => { e.preventDefault(); action.action(); }}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 rounded-lg text-xs text-primary-foreground"
-                  >
-                    {action.icon}
-                    {action.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </Link>
+          <AdsBanner />
         </motion.div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-accent/10">
-            <CardContent className="py-3 px-4">
-              <div className="flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-accent" />
-                <span className="text-xs text-muted-foreground">Messages</span>
-              </div>
-              {isStatsLoading ? (
-                <Skeleton className="h-6 w-8 mt-1" />
-              ) : (
-                <p className="text-xl font-bold text-accent">{stats.unreadMessages}</p>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="border-secondary/20 bg-gradient-to-br from-secondary/5 to-secondary/10">
-            <CardContent className="py-3 px-4">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-secondary" />
-                <span className="text-xs text-muted-foreground">Bookings</span>
-              </div>
-              {isStatsLoading ? (
-                <Skeleton className="h-6 w-8 mt-1" />
-              ) : (
-                <p className="text-xl font-bold text-secondary">{stats.upcomingBookings}</p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Services Grid */}
+        {/* News Feed */}
         <div className="mb-4">
-          <h2 className="text-base font-semibold mb-3">Services</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {services.map((service, index) => (
-              <Link key={index} to={service.href}>
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.03 }}
-                  className="bg-card rounded-xl p-4 border hover:border-primary/30 transition-colors"
-                >
-                  <div className={`w-10 h-10 rounded-lg ${service.color} flex items-center justify-center text-white mb-2`}>
-                    {service.icon}
-                  </div>
-                  <p className="font-medium text-sm">{service.title}</p>
-                  <p className="text-xs text-muted-foreground">{service.subtitle}</p>
-                </motion.div>
-              </Link>
-            ))}
-          </div>
+          <NewsFeed />
         </div>
 
         {/* Quick Links List */}
