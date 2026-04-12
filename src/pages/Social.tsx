@@ -159,15 +159,6 @@ export default function Social() {
                 </CardContent>
               </Card>
             </motion.div>
-                      className="gap-2 ml-auto"
-                    >
-                      <Send className="h-4 w-4" />
-                      Post
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
 
             <div className="flex items-center gap-4">
               <div className="relative flex-1">
