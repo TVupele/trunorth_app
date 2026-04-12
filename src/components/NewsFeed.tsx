@@ -8,7 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 export function NewsFeed() {
   const [posts, setPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [displayedPosts, setDisplayedPosts] = useState(5);
+  const [displayedPosts, setDisplayedPosts] = useState(3);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -25,24 +25,24 @@ export function NewsFeed() {
   }, []);
 
   const handleLoadMore = () => {
-    setDisplayedPosts((prev) => prev + 5);
+    setDisplayedPosts((prev) => prev + 3);
   };
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
-        <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">News Feed</h2>
-        {Array.from({ length: 3 }).map((_, i) => (<Skeleton key={i} className="h-40 w-full rounded-lg" />))}
+      <div className="space-y-2">
+        <h2 className="text-sm font-semibold text-foreground">Feed</h2>
+        {Array.from({ length: 2 }).map((_, i) => (<Skeleton key={i} className="h-24 w-full rounded-lg" />))}
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">News Feed</h2>
+    <div className="space-y-2">
+      <h2 className="text-sm font-semibold text-foreground">Feed</h2>
       {posts.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          <p>No posts yet. Be the first to share something!</p>
+        <div className="text-center py-6 text-muted-foreground text-xs">
+          <p>No posts yet. Be the first to share!</p>
         </div>
       ) : (
         <>
@@ -50,10 +50,10 @@ export function NewsFeed() {
             {posts.slice(0, displayedPosts).map((post, index) => (
               <motion.div
                 key={post.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
+                transition={{ duration: 0.2, delay: index * 0.03 }}
               >
                 <PostCard post={post} />
               </motion.div>
@@ -61,8 +61,8 @@ export function NewsFeed() {
           </AnimatePresence>
 
           {posts.length > displayedPosts && (
-            <div className="flex justify-center pt-4">
-              <Button onClick={handleLoadMore} variant="outline">Load More Posts</Button>
+            <div className="flex justify-center pt-2">
+              <Button onClick={handleLoadMore} variant="outline" className="text-xs h-8">More</Button>
             </div>
           )}
         </>

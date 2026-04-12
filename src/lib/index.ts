@@ -16,6 +16,7 @@ export const ROUTE_PATHS = {
   AI_ASSISTANT: '/ai-assistant',
   PROFILE: '/profile',
   SETTINGS: '/settings',
+  SOCIAL: '/social',
   MOBILE_HOME: '/mobile',
   MOBILE_FEED: '/mobile/feed',
   MOBILE_WALLET: '/mobile/wallet',

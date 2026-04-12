@@ -1,49 +1,46 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { 
-  Menu, X, User, Settings, Wallet, Users, Plane, GraduationCap, 
-  AlertTriangle, Heart, ShoppingBag, Calendar, Church, Bot, 
-  Bell, LogOut, ChevronRight, Plus, Send, Home, MessageSquare,
-  TrendingUp, Store, BadgeCheck
+  Menu, User, Settings, Wallet, AlertTriangle, Bell, LogOut, 
+  Home, Calendar, Send, Store, Globe
 } from "lucide-react";
-import { useDashboardStats } from "@/hooks/useDashboardStats";
-import { useWallet } from "@/hooks/useWallet";
 import { useAuth } from "@/hooks/useAuth";
-import { ROUTE_PATHS, formatCurrency } from "@/lib/index";
-import { Card, CardContent } from "@/components/ui/card";
+import { ROUTE_PATHS } from "@/lib/index";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NewsFeed } from "@/components/NewsFeed";
 import { AdsBanner } from "@/components/AdsBanner";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import api from "@/lib/api";
 
 interface MobileHomeProps {
   onNavigate?: (path: string) => void;
 }
 
+const servicesGrid = [
+  { title: "Wallet", href: ROUTE_PATHS.WALLET, icon: "W" },
+  { title: "Travel", href: ROUTE_PATHS.TRAVEL, icon: "T" },
+  { title: "Tutor", href: ROUTE_PATHS.TUTORING, icon: "Tu" },
+  { title: "Emergency", href: ROUTE_PATHS.EMERGENCY, icon: "E", isAlert: true },
+  { title: "Donate", href: ROUTE_PATHS.DONATIONS, icon: "D" },
+  { title: "Shop", href: ROUTE_PATHS.MARKETPLACE, icon: "S" },
+  { title: "Events", href: ROUTE_PATHS.EVENTS, icon: "Ev" },
+  { title: "Church", href: ROUTE_PATHS.RELIGIOUS_SERVICES, icon: "C" },
+  { title: "AI", href: ROUTE_PATHS.AI_ASSISTANT, icon: "AI" },
+];
+
 export default function MobileHome({ onNavigate }: MobileHomeProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const wallet = useWallet((state) => state.wallet);
-  const fetchWalletData = useWallet((state) => state.fetchWalletData);
-  const isWalletLoading = useWallet((state) => state.isLoading);
   
-  const stats = useDashboardStats((state) => state.stats);
-  const fetchStats = useDashboardStats((state) => state.fetchStats);
-  const isStatsLoading = useDashboardStats((state) => state.isLoading);
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
 
   useEffect(() => {
-    fetchWalletData();
-    fetchStats();
-    
     const fetchNotifications = async () => {
       try {
         const response = await api.get('/notifications');
@@ -54,72 +51,47 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
       }
     };
     fetchNotifications();
-  }, [fetchWalletData, fetchStats]);
-
-  const balance = wallet?.balance ?? 0;
-  const currency = wallet?.currency ?? "NGN";
+  }, []);
 
   const handleLogout = () => {
     logout();
     navigate(ROUTE_PATHS.LOGIN);
   };
 
-  const isVendor = user?.role === 'vendor';
-  const isTutor = user?.role === 'tutor';
-
-  const services = [
-    { icon: <Wallet className="w-5 h-5" />, title: "Wallet", subtitle: "Manage finances", href: ROUTE_PATHS.WALLET, color: "bg-primary" },
-    { icon: <Users className="w-5 h-5" />, title: "Social", subtitle: "Connect & share", href: ROUTE_PATHS.SOCIAL, color: "bg-blue-500" },
-    { icon: <Plane className="w-5 h-5" />, title: "Travel", subtitle: "Book trips", href: ROUTE_PATHS.TRAVEL, color: "bg-green-500" },
-    { icon: <GraduationCap className="w-5 h-5" />, title: "Tutoring", subtitle: "Learn & teach", href: ROUTE_PATHS.TUTORING, color: "bg-purple-500" },
-    { icon: <AlertTriangle className="w-5 h-5" />, title: "Emergency", subtitle: "Report issues", href: ROUTE_PATHS.EMERGENCY, color: "bg-red-500" },
-    { icon: <Heart className="w-5 h-5" />, title: "Donations", subtitle: "Give support", href: ROUTE_PATHS.DONATIONS, color: "bg-pink-500" },
-    { icon: <ShoppingBag className="w-5 h-5" />, title: "Marketplace", subtitle: "Shop products", href: ROUTE_PATHS.MARKETPLACE, color: "bg-orange-500" },
-    { icon: <Calendar className="w-5 h-5" />, title: "Events", subtitle: "Book tickets", href: ROUTE_PATHS.EVENTS, color: "bg-teal-500" },
-    { icon: <Church className="w-5 h-5" />, title: "Religious", subtitle: "Services", href: ROUTE_PATHS.RELIGIOUS_SERVICES, color: "bg-indigo-500" },
-    { icon: <Bot className="w-5 h-5" />, title: "AI Helper", subtitle: "Get help", href: ROUTE_PATHS.AI_ASSISTANT, color: "bg-cyan-500" },
-    ...(isVendor ? [{ icon: <Store className="w-5 h-5" />, title: "Vendor", subtitle: "Manage shop", href: ROUTE_PATHS.VENDOR_DASHBOARD, color: "bg-amber-500" }] : []),
-    ...(isTutor ? [{ icon: <GraduationCap className="w-5 h-5" />, title: "Tutor", subtitle: "Dashboard", href: ROUTE_PATHS.TUTOR_DASHBOARD, color: "bg-violet-500" }] : []),
-  ];
-
-  const quickActions = [
-    { icon: <Plus className="w-4 h-4" />, label: "Top Up", action: () => {} },
-    { icon: <Send className="w-4 h-4" />, label: "Send", action: () => {} },
-    { icon: <MessageSquare className="w-4 h-4" />, label: "Messages", action: () => {} },
-    { icon: <Calendar className="w-4 h-4" />, label: "Bookings", action: () => {} },
-  ];
+  const isAdmin = user?.role === 'admin';
 
   const menuItems = [
-    { icon: <Home className="w-5 h-5" />, label: "Home", href: ROUTE_PATHS.HOME },
-    { icon: <User className="w-5 h-5" />, label: "Profile", href: ROUTE_PATHS.PROFILE },
-    { icon: <Settings className="w-5 h-5" />, label: "Settings", href: ROUTE_PATHS.SETTINGS },
-    { icon: <Wallet className="w-5 h-5" />, label: "Wallet", href: ROUTE_PATHS.WALLET },
-    { icon: <Bell className="w-5 h-5" />, label: "Notifications", href: "#" },
-    { icon: <LogOut className="w-5 h-5" />, label: "Logout", action: handleLogout },
+    { icon: <Home className="w-4 h-4" />, label: "Home", href: ROUTE_PATHS.MOBILE_HOME },
+    { icon: <Calendar className="w-4 h-4" />, label: "Events", href: ROUTE_PATHS.EVENTS },
+    { icon: <User className="w-4 h-4" />, label: "Profile", href: ROUTE_PATHS.PROFILE },
+    { icon: <Settings className="w-4 h-4" />, label: "Settings", href: ROUTE_PATHS.SETTINGS },
+    { icon: <Wallet className="w-4 h-4" />, label: "Wallet", href: ROUTE_PATHS.MOBILE_WALLET },
+    { icon: <Bell className="w-4 h-4" />, label: "Notifications", href: "#" },
+    { icon: <LogOut className="w-4 h-4" />, label: "Logout", action: handleLogout },
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-16">
       {/* Top Bar */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur border-b border-border">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between px-3 py-2">
+          <div className="flex items-center gap-2">
             <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-10 w-10">
-                  <Menu className="h-5 w-5" />
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Menu className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-72 p-0">
-                <div className="p-4 border-b">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-12 w-12">
+              <SheetContent side="left" className="w-64 p-0">
+                <div className="p-3 border-b">
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-8 w-8">
                       <AvatarImage src={(user as any)?.avatar_url} alt={user?.fullName} />
-                      <AvatarFallback>{user?.fullName?.charAt(0) || 'U'}</AvatarFallback>
+                      <AvatarFallback className="text-xs">{user?.fullName?.charAt(0) || 'U'}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-semibold">{user?.fullName || 'User'}</p>
-                      <p className="text-sm text-muted-foreground">{user?.email}</p>
+                      <p className="text-sm font-medium">{user?.fullName || 'User'}</p>
+                      <p className="text-xs text-muted-foreground">{user?.email}</p>
                     </div>
                   </div>
                 </div>
@@ -130,7 +102,7 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
                         key={index}
                         to={item.href}
                         onClick={() => setIsMenuOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted text-foreground"
+                        className="flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-muted text-foreground text-sm"
                       >
                         {item.icon}
                         <span>{item.label}</span>
@@ -139,7 +111,7 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
                       <button
                         key={index}
                         onClick={() => { item.action?.(); setIsMenuOpen(false); }}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted text-foreground"
+                        className="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-muted text-foreground text-sm"
                       >
                         {item.icon}
                         <span>{item.label}</span>
@@ -150,26 +122,25 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
               </SheetContent>
             </Sheet>
             
-            <Link to={ROUTE_PATHS.MOBILE_HOME} className="flex-1 flex justify-center">
-              <div className="h-10 w-auto max-w-[120px]">
-                <img src="/Logo_Icon.jpeg" alt="TruNORTH" className="h-full w-full object-contain" />
-              </div>
+            <Link to={ROUTE_PATHS.MOBILE_HOME} className="h-8 w-auto">
+              <img src="/Logo_Icon.jpeg" alt="TruNORTH" className="h-full w-auto object-contain" />
             </Link>
           </div>
           
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="relative h-10 w-10">
-              <Bell className="h-5 w-5" />
+          <div className="flex items-center gap-1">
+            <LanguageSwitcher />
+            <Button variant="ghost" size="icon" className="relative h-8 w-8">
+              <Bell className="h-4 w-4" />
               {notificationCount > 0 && (
-                <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                <span className="absolute -top-0.5 -right-0.5 h-4 w-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
                   {notificationCount > 9 ? '9+' : notificationCount}
                 </span>
               )}
             </Button>
             <Link to={ROUTE_PATHS.PROFILE}>
-              <Avatar className="h-10 w-10">
+              <Avatar className="h-8 w-8">
                 <AvatarImage src={(user as any)?.avatar_url} alt={user?.fullName} />
-                <AvatarFallback>{user?.fullName?.charAt(0) || 'U'}</AvatarFallback>
+                <AvatarFallback className="text-xs">{user?.fullName?.charAt(0) || 'U'}</AvatarFallback>
               </Avatar>
             </Link>
           </div>
@@ -177,75 +148,86 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
       </div>
 
       {/* Main Content */}
-      <div className="pt-24 px-4">
-        {/* Welcome Section - Reduced Size */}
+      <div className="pt-14 px-3">
+        {/* Welcome Section */}
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -5 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-4"
+          className="mb-2"
         >
-          <h1 className="text-lg font-bold text-foreground">
-            Welcome back, {user?.fullName ? user.fullName.split(' ')[0] : ''}!
+          <h1 className="text-sm font-semibold text-foreground">
+            {t('Welcome')}, {user?.fullName ? user.fullName.split(' ')[0] : ''}!
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Your all-in-one platform
-          </p>
         </motion.div>
 
         {/* Ads Banner */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="mb-4"
+          className="mb-3"
         >
           <AdsBanner />
         </motion.div>
 
-        {/* News Feed */}
-        <div className="mb-4">
-          <NewsFeed />
+        {/* Services Grid */}
+        <div className="mb-3">
+          <div className="grid grid-cols-5 gap-1.5">
+            {servicesGrid.map((service, index) => (
+              <Link key={index} to={service.href}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.02 }}
+                  className={`flex flex-col items-center justify-center p-2 rounded-lg border ${service.isAlert ? 'bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-800' : 'bg-card border-border'}`}
+                >
+                  <div className={`w-6 h-6 rounded flex items-center justify-center text-[10px] font-bold ${service.isAlert ? 'bg-red-500 text-white' : 'bg-primary text-primary-foreground'}`}>
+                    {service.icon}
+                  </div>
+                  <span className="text-[10px] mt-1">{service.title}</span>
+                </motion.div>
+              </Link>
+            ))}
+          </div>
         </div>
 
-        {/* Quick Links List */}
-        <div className="mb-4">
-          <h2 className="text-base font-semibold mb-3">Quick Access</h2>
-          <div className="space-y-2">
-            <Link to={ROUTE_PATHS.EMERGENCY} className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-950 rounded-xl border border-red-200 dark:border-red-800">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center text-white">
-                  <AlertTriangle className="w-5 h-5" />
+        {/* Quick Links - Only for Admin */}
+        {isAdmin && (
+          <div className="mb-3">
+            <div className="space-y-1.5">
+              <Link to={ROUTE_PATHS.EMERGENCY} className="flex items-center justify-between p-2 bg-red-50 dark:bg-red-950 rounded-lg border border-red-200 dark:border-red-800">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-red-500 rounded flex items-center justify-center text-white">
+                    <AlertTriangle className="w-3 h-3" />
+                  </div>
+                  <p className="text-xs font-medium">Emergency</p>
                 </div>
-                <div>
-                  <p className="font-medium text-sm">Emergency Reporting</p>
-                  <p className="text-xs text-muted-foreground">Report incidents quickly</p>
+              </Link>
+              
+              <Link to={ROUTE_PATHS.ADMIN} className="flex items-center justify-between p-2 bg-card rounded-lg border">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-primary rounded flex items-center justify-center text-primary-foreground">
+                    <Store className="w-3 h-3" />
+                  </div>
+                  <p className="text-xs font-medium">Admin Panel</p>
                 </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-muted-foreground" />
-            </Link>
-            
-            <Link to={ROUTE_PATHS.ADMIN} className="flex items-center justify-between p-3 bg-card rounded-xl border">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-primary-foreground">
-                  <Store className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="font-medium text-sm">Admin Panel</p>
-                  <p className="text-xs text-muted-foreground">Manage platform content</p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-muted-foreground" />
-            </Link>
+              </Link>
+            </div>
           </div>
+        )}
+
+        {/* News Feed */}
+        <div className="mb-2">
+          <NewsFeed />
         </div>
       </div>
 
       {/* Post Button FAB */}
       <Link to={ROUTE_PATHS.SOCIAL}>
         <Button
-          size="lg"
-          className="fixed bottom-20 right-6 h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary/90"
+          size="icon"
+          className="fixed bottom-16 right-4 h-10 w-10 rounded-full shadow-lg bg-primary hover:bg-primary/90"
         >
-          <Send className="h-6 w-6" />
+          <Send className="h-4 w-4" />
         </Button>
       </Link>
     </div>

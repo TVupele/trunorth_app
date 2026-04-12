@@ -101,24 +101,24 @@ export function AdsBanner() {
             <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/30" />
 
             <div className="absolute inset-0 flex items-center">
-              <div className="container mx-auto px-4 md:px-8">
+              <div className="container mx-auto px-3 md:px-8">
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, duration: 0.5 }}
-                  className="max-w-2xl space-y-4"
+                  transition={{ delay: 0.1, duration: 0.3 }}
+                  className="max-w-xl space-y-1"
                 >
-                  <div className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                  <div className="inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
                     {currentSlide.type.charAt(0).toUpperCase() + currentSlide.type.slice(1)}
                   </div>
-                  <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl lg:text-4xl">
+                  <h2 className="text-sm font-bold tracking-tight text-foreground md:text-lg lg:text-xl">
                     {currentSlide.title}
                   </h2>
-                  <p className="text-sm text-muted-foreground md:text-base">
+                  <p className="text-[10px] text-muted-foreground line-clamp-2 md:text-xs">
                     {currentSlide.description}
                   </p>
-                  <div className="pt-1">
-                    <Button asChild size="sm" className="font-semibold text-sm">
+                  <div className="pt-0.5">
+                    <Button asChild size="sm" className="text-xs h-7 px-2">
                       <Link to={currentSlide.link}>{currentSlide.cta}</Link>
                     </Button>
                   </div>
