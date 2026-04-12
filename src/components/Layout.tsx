@@ -4,10 +4,13 @@ import { useLocation, NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Sidebar } from "@/components/Sidebar";
 import { TopBar } from "@/components/TopBar";
-import { Footer } from "@/components/Footer";
 import { ROUTE_PATHS } from "@/lib/index";
 import { Button } from "@/components/ui/button";
-import { Plus, Home, Wallet, Calendar, GraduationCap, AlertTriangle, Heart, Send } from "lucide-react";
+import { 
+  Home, Search, Bell, Mail, Plus, 
+  Calendar, GraduationCap, AlertTriangle, Heart, Send,
+  Compass
+} from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface LayoutProps {
@@ -15,11 +18,10 @@ interface LayoutProps {
 }
 
 const mobileNavItems = [
-  { path: ROUTE_PATHS.EVENTS, label: "Events", icon: Calendar },
-  { path: ROUTE_PATHS.TUTORING, label: "Tutor", icon: GraduationCap },
-  { path: ROUTE_PATHS.SOCIAL, label: "Post", icon: Send, isAction: true },
-  { path: ROUTE_PATHS.DONATIONS, label: "Donate", icon: Heart },
-  { path: ROUTE_PATHS.EMERGENCY, label: "Emergency", icon: AlertTriangle, isEmergency: true },
+  { path: ROUTE_PATHS.MOBILE_HOME, label: "Home", icon: Home },
+  { path: ROUTE_PATHS.EVENTS, label: "Explore", icon: Compass },
+  { path: '/notifications', label: "Notifications", icon: Bell },
+  { path: ROUTE_PATHS.SOCIAL, label: "Messages", icon: Mail },
 ];
 
 export function Layout({ children }: LayoutProps) {
@@ -86,72 +88,49 @@ export function Layout({ children }: LayoutProps) {
 function MobileLayout({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const location = useLocation();
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <TopBar onMenuToggle={() => setSidebarOpen(true)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} mobile />
 
-      <main className="flex-1 px-3 pt-16 pb-16 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto">
         {children}
       </main>
 
+      {/* X-style bottom navigation */}
       <motion.nav
-        initial={{ y: 30 }}
+        initial={{ y: 50 }}
         animate={{ y: 0 }}
-        className="fixed bottom-0 left-0 right-0 bg-background border-t border-border/50 z-40 safe-area-bottom"
+        className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur border-t border-border z-50 safe-area-bottom"
       >
-        <div className="flex items-center justify-around py-1.5 px-1">
+        <div className="flex items-center justify-around h-14">
           {mobileNavItems.map((item) => {
             const Icon = item.icon;
-            if (item.isAction) {
-              return (
-                <NavLink
-                  key={item.label}
-                  to={ROUTE_PATHS.SOCIAL}
-                  className="flex flex-col items-center justify-center w-12 h-10 -mt-1.5"
-                >
-                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-md">
-                    <Icon className="w-4 h-4 text-primary-foreground" />
-                  </div>
-                </NavLink>
-              );
-            }
-            if (item.isEmergency) {
-              return (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className="flex flex-col items-center justify-center w-12 h-10"
-                >
-                  <div className="w-8 h-8 rounded-full bg-destructive flex items-center justify-center">
-                    <Icon className="w-4 h-4 text-destructive-foreground" />
-                  </div>
-                </NavLink>
-              );
-            }
             return (
               <NavLink
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex flex-col items-center justify-center w-12 h-10 ${
+                  `flex flex-col items-center justify-center w-full h-full ${
                     isActive ? "text-primary" : "text-muted-foreground"
                   }`
                 }
               >
                 {({ isActive }) => (
-                  <>
-                    <Icon className={`w-4 h-4 ${isActive ? "text-primary" : ""}`} />
-                    <span className={`text-[10px] mt-0.5 ${isActive ? "text-primary font-medium" : ""}`}>
-                      {t(item.label)}
-                    </span>
-                  </>
+                  <div className="flex flex-col items-center gap-0.5">
+                    <Icon className={`w-6 h-6 ${isActive ? "text-primary" : "text-muted-foreground"}`} />
+                  </div>
                 )}
               </NavLink>
             );
           })}
+          {/* Post button in center */}
+          <button className="flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-md">
+              <Send className="w-5 h-5 text-primary-foreground" />
+            </div>
+          </button>
         </div>
       </motion.nav>
     </div>
