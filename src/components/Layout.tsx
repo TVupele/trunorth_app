@@ -155,7 +155,7 @@ function MobileLayout({ children }: { children: React.ReactNode }) {
         </div>
       </motion.nav>
 
-      <Footer className="md:hidden" />
+      <Footer />
     </div>
   );
 }
