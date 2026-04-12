@@ -4,6 +4,7 @@ import { AuthenticatedRequest } from '../types/express';
 
 export const getPosts = async (req: Request, res: Response) => {
   try {
+    const baseUrl = process.env.API_URL || 'https://trunorth-super-app.onrender.com';
     const postsResult = await query(`
       SELECT 
         p.id, p.content, p.image_url, p.likes_count, p.comments_count, p.created_at,
@@ -12,7 +13,14 @@ export const getPosts = async (req: Request, res: Response) => {
       JOIN users u ON p.user_id = u.id
       ORDER BY p.created_at DESC
     `);
-    res.json(postsResult.rows);
+    
+    // Transform the results to include full image URL
+    const posts = postsResult.rows.map(post => ({
+      ...post,
+      image_url: post.image_url ? `${baseUrl}${post.image_url}` : null
+    }));
+    
+    res.json(posts);
   } catch (error) {
     console.error('Get posts error:', error);
     res.status(500).json({ error: 'Internal server error while fetching posts.' });
@@ -48,6 +56,7 @@ export const uploadImage = async (req: Request, res: Response) => {
   }
   
   try {
+    // Return the relative path - getPosts will prepend the base URL
     const imageUrl = `/uploads/${authReq.file.filename}`;
     res.json({ url: imageUrl });
   } catch (error) {
