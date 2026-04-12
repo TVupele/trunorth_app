@@ -7,18 +7,17 @@ import { TopBar } from "@/components/TopBar";
 import { Footer } from "@/components/Footer";
 import { ROUTE_PATHS } from "@/lib/index";
 import { Button } from "@/components/ui/button";
-import { Plus, Home, Wallet, Users, Calendar, AlertTriangle } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Plus, Home, Wallet, Calendar, GraduationCap, AlertTriangle, Heart, Send } from "lucide-react";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const mobileNavItems = [
-  { path: ROUTE_PATHS.MOBILE_HOME, label: "Home", icon: Home },
   { path: ROUTE_PATHS.EVENTS, label: "Events", icon: Calendar },
-  { path: ROUTE_PATHS.SOCIAL, label: "Post", icon: Plus, isAction: true },
-  { path: ROUTE_PATHS.MOBILE_WALLET, label: "Wallet", icon: Wallet },
+  { path: ROUTE_PATHS.TUTORING, label: "Tutor", icon: GraduationCap },
+  { path: ROUTE_PATHS.SOCIAL, label: "Post", icon: Send, isAction: true },
+  { path: ROUTE_PATHS.DONATIONS, label: "Donate", icon: Heart },
   { path: ROUTE_PATHS.EMERGENCY, label: "Emergency", icon: AlertTriangle, isEmergency: true },
 ];
 
@@ -154,8 +153,6 @@ function MobileLayout({ children }: { children: React.ReactNode }) {
           })}
         </div>
       </motion.nav>
-
-      <Footer />
     </div>
   );
 }
