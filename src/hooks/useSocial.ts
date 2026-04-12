@@ -64,23 +64,43 @@ export const useSocial = create<SocialState>((set, get) => ({
     }
   },
 
-  createPost: (content: string, image?: string) => {
-    const newPost: Post = {
-      id: `post-${Date.now()}`,
-      userId: get().currentUserId,
-      userName: 'Current User',
-      userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser',
-      content,
-      image,
-      likes: 0,
-      comments: [],
-      timestamp: new Date().toISOString(),
-      isLiked: false,
-    };
-
-    set((state) => ({
-      posts: [newPost, ...state.posts],
-    }));
+  createPost: async (content: string, image?: string) => {
+    try {
+      const response = await api.post('/posts', { content, image_url: image });
+      const savedPost = response.data;
+      const newPost: Post = {
+        id: savedPost.id,
+        userId: savedPost.user_id,
+        userName: savedPost.full_name || 'Current User',
+        userAvatar: savedPost.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser',
+        content: savedPost.content,
+        image: savedPost.image_url,
+        likes: 0,
+        comments: [],
+        timestamp: savedPost.created_at,
+        isLiked: false,
+      };
+      set((state) => ({
+        posts: [newPost, ...state.posts],
+      }));
+    } catch (error) {
+      console.error('Failed to create post:', error);
+      const newPost: Post = {
+        id: `post-${Date.now()}`,
+        userId: get().currentUserId,
+        userName: 'Current User',
+        userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser',
+        content,
+        image,
+        likes: 0,
+        comments: [],
+        timestamp: new Date().toISOString(),
+        isLiked: false,
+      };
+      set((state) => ({
+        posts: [newPost, ...state.posts],
+      }));
+    }
   },
 
   addComment: (postId: string, content: string) => {

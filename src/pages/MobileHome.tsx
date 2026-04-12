@@ -2,12 +2,15 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, NavLink } from "react-router-dom";
-import { Menu, Bell, Send, Search, Home, Compass, AlertTriangle } from "lucide-react";
+import { Menu, Bell, Send, Search, Home, Compass, AlertTriangle, Image as ImageIcon, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useSocial } from "@/hooks/useSocial";
 import { ROUTE_PATHS } from "@/lib/index";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Sidebar } from "@/components/Sidebar";
 import { NewsFeed } from "@/components/NewsFeed";
 import { AdsBanner } from "@/components/AdsBanner";
@@ -21,9 +24,14 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { createPost, fetchPosts } = useSocial();
   
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
+  const [showPostDialog, setShowPostDialog] = useState(false);
+  const [postContent, setPostContent] = useState('');
+  const [postImage, setPostImage] = useState<File | null>(null);
+  const [postImagePreview, setPostImagePreview] = useState('');
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -37,6 +45,38 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
     };
     fetchNotifications();
   }, []);
+
+  const handleCreatePost = async () => {
+    if (postContent.trim()) {
+      let imageUrl: string | undefined;
+      if (postImage) {
+        const formData = new FormData();
+        formData.append('image', postImage);
+        try {
+          const response = await api.post('/posts/upload', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          });
+          imageUrl = response.data.url;
+        } catch (error) {
+          console.error('Image upload failed:', error);
+        }
+      }
+      createPost(postContent, imageUrl);
+      setPostContent('');
+      setPostImage(null);
+      setPostImagePreview('');
+      setShowPostDialog(false);
+      setTimeout(() => fetchPosts(), 500);
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPostImage(file);
+      setPostImagePreview(URL.createObjectURL(file));
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -143,7 +183,7 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
 
           {/* Post Button - Center */}
           <button 
-            onClick={() => window.location.href = ROUTE_PATHS.SOCIAL}
+            onClick={() => setShowPostDialog(true)}
             className="flex items-center justify-center -mt-4"
           >
             <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg">
@@ -176,6 +216,57 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
           </NavLink>
         </div>
       </motion.nav>
+
+      {/* Post Dialog Modal */}
+      <Dialog open={showPostDialog} onOpenChange={setShowPostDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Create Post</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <Textarea 
+              placeholder="What's on your mind?" 
+              value={postContent}
+              onChange={(e) => setPostContent(e.target.value)}
+              className="min-h-[120px]"
+            />
+            {postImagePreview && (
+              <div className="relative">
+                <img 
+                  src={postImagePreview} 
+                  alt="Preview" 
+                  className="w-full h-40 object-cover rounded-lg"
+                />
+                <button
+                  onClick={() => {
+                    setPostImage(null);
+                    setPostImagePreview('');
+                  }}
+                  className="absolute top-2 right-2 bg-black/50 rounded-full p-1"
+                >
+                  <X className="h-4 w-4 text-white" />
+                </button>
+              </div>
+            )}
+            <div className="flex gap-2">
+              <label className="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-md bg-muted hover:bg-muted/80 text-sm">
+                <ImageIcon className="h-4 w-4" />
+                <span>Add Image</span>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowPostDialog(false)}>Cancel</Button>
+            <Button onClick={handleCreatePost} disabled={!postContent.trim()}>Post</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
