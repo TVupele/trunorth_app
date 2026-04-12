@@ -17,7 +17,7 @@ interface LayoutProps {
 const mobileNavItems = [
   { path: ROUTE_PATHS.MOBILE_HOME, label: "Home", icon: Home },
   { path: ROUTE_PATHS.EVENTS, label: "Events", icon: Calendar },
-  { path: 'post', label: "Post", icon: Plus, isAction: true },
+  { path: ROUTE_PATHS.SOCIAL, label: "Post", icon: Plus, isAction: true },
   { path: ROUTE_PATHS.MOBILE_WALLET, label: "Wallet", icon: Wallet },
   { path: ROUTE_PATHS.EMERGENCY, label: "Emergency", icon: AlertTriangle, isEmergency: true },
 ];
@@ -85,36 +85,35 @@ export function Layout({ children }: LayoutProps) {
 
 function MobileLayout({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
-  const [showPostModal, setShowPostModal] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <TopBar onMenuToggle={() => setSidebarOpen(true)} />
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} mobile />
 
-      <main className="flex-1 px-4 pt-20 pb-20 overflow-y-auto">
+      <main className="flex-1 px-3 pt-16 pb-16 overflow-y-auto">
         {children}
       </main>
 
       <motion.nav
-        initial={{ y: 60 }}
+        initial={{ y: 30 }}
         animate={{ y: 0 }}
         className="fixed bottom-0 left-0 right-0 bg-background border-t border-border/50 z-40 safe-area-bottom"
       >
-        <div className="flex items-center justify-around py-2 px-2">
+        <div className="flex items-center justify-around py-1.5 px-1">
           {mobileNavItems.map((item) => {
             const Icon = item.icon;
             if (item.isAction) {
               return (
                 <NavLink
                   key={item.label}
-                  to={item.path}
-                  className="flex flex-col items-center justify-center w-14 h-12 -mt-2"
+                  to={ROUTE_PATHS.SOCIAL}
+                  className="flex flex-col items-center justify-center w-12 h-10 -mt-1.5"
                 >
-                  <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg">
-                    <Icon className="w-6 h-6 text-primary-foreground" />
+                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-md">
+                    <Icon className="w-4 h-4 text-primary-foreground" />
                   </div>
                 </NavLink>
               );
@@ -124,10 +123,10 @@ function MobileLayout({ children }: { children: React.ReactNode }) {
                 <NavLink
                   key={item.path}
                   to={item.path}
-                  className="flex flex-col items-center justify-center w-14 h-12"
+                  className="flex flex-col items-center justify-center w-12 h-10"
                 >
-                  <div className="w-10 h-10 rounded-full bg-destructive flex items-center justify-center">
-                    <Icon className="w-5 h-5 text-destructive-foreground" />
+                  <div className="w-8 h-8 rounded-full bg-destructive flex items-center justify-center">
+                    <Icon className="w-4 h-4 text-destructive-foreground" />
                   </div>
                 </NavLink>
               );
@@ -137,15 +136,15 @@ function MobileLayout({ children }: { children: React.ReactNode }) {
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex flex-col items-center justify-center w-14 h-12 ${
+                  `flex flex-col items-center justify-center w-12 h-10 ${
                     isActive ? "text-primary" : "text-muted-foreground"
                   }`
                 }
               >
                 {({ isActive }) => (
                   <>
-                    <Icon className={`w-5 h-5 ${isActive ? "text-primary" : ""}`} />
-                    <span className={`text-xs mt-1 ${isActive ? "text-primary font-medium" : ""}`}>
+                    <Icon className={`w-4 h-4 ${isActive ? "text-primary" : ""}`} />
+                    <span className={`text-[10px] mt-0.5 ${isActive ? "text-primary font-medium" : ""}`}>
                       {t(item.label)}
                     </span>
                   </>
@@ -156,54 +155,7 @@ function MobileLayout({ children }: { children: React.ReactNode }) {
         </div>
       </motion.nav>
 
-      <AnimatePresence>
-        {showPostModal && (
-          <MobilePostModal onClose={() => setShowPostModal(false)} />
-        )}
-      </AnimatePresence>
+      <Footer className="md:hidden" />
     </div>
-  );
-}
-
-function MobilePostModal({ onClose }: { onClose: () => void }) {
-  const { t } = useTranslation();
-  return (
-    <>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      <motion.div
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
-        transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-3xl p-4 pb-8"
-      >
-        <div className="flex items-center justify-between mb-4">
-          <button onClick={onClose} className="text-sm text-muted-foreground">
-            {t('Cancel')}
-          </button>
-          <h3 className="font-semibold">{t('Create Post')}</h3>
-          <button className="text-sm text-primary font-medium">
-            {t('Post')}
-          </button>
-        </div>
-        <div className="space-y-4">
-          <textarea
-            placeholder="What's happening in your community?"
-            className="w-full h-32 p-3 bg-muted rounded-xl resize-none text-sm"
-          />
-          <div className="flex gap-4">
-            <button className="flex items-center gap-2 text-sm text-muted-foreground">
-              {t('Add Media')}
-            </button>
-          </div>
-        </div>
-      </motion.div>
-    </>
   );
 }

@@ -94,69 +94,71 @@ export default function Social() {
     : [];
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-background p-3">
+      <div className="max-w-7xl mx-auto space-y-4">
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.2 }}
         >
-          <h1 className="text-4xl font-bold text-foreground mb-2">Social Network</h1>
-          <p className="text-muted-foreground">Connect, share, and engage with the community</p>
+          <h1 className="text-lg font-bold text-foreground mb-1">Social</h1>
+          <p className="text-xs text-muted-foreground">Connect & share</p>
         </motion.div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
-            <TabsTrigger value="feed">Feed</TabsTrigger>
-            <TabsTrigger value="my-posts">My Posts</TabsTrigger>
-            <TabsTrigger value="messages">
-              Messages
-              {conversations.reduce((acc, conv) => acc + conv.unreadCount, 0) > 0 && (
-                <Badge variant="destructive" className="ml-2">
-                  {conversations.reduce((acc, conv) => acc + conv.unreadCount, 0)}
-                </Badge>
-              )}
-            </TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 mb-4">
+            <TabsTrigger value="feed" className="text-xs py-1.5">Feed</TabsTrigger>
+            <TabsTrigger value="my-posts" className="text-xs py-1.5">My Posts</TabsTrigger>
+            <TabsTrigger value="messages" className="text-xs py-1.5">Messages</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="feed" className="space-y-6">
+          <TabsContent value="feed" className="space-y-4">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
+              transition={{ duration: 0.2, delay: 0.05 }}
             >
-              <Card>
-                <CardHeader>
-                  <CardTitle>Create Post</CardTitle>
+              <Card className="py-2">
+                <CardHeader className="py-2 px-3">
+                  <CardTitle className="text-sm">Create Post</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-2 px-3">
                   <Textarea
                     placeholder="What's on your mind?"
                     value={postContent}
                     onChange={(e) => setPostContent(e.target.value)}
-                    className="min-h-[100px] resize-none"
+                    className="min-h-[60px] resize-none text-sm"
                   />
-                  <div className="flex items-center gap-4">
-                    <label className="flex items-center gap-2 cursor-pointer">
+                  <div className="flex items-center gap-2">
+                    <label className="flex items-center gap-1 cursor-pointer">
                       <input
                         type="file"
                         accept="image/*"
                         onChange={handleImageChange}
                         className="hidden"
                       />
-                      <Button variant="outline" size="sm" type="button">
-                        <ImageIcon className="h-4 w-4" />
-                        <span className="ml-2">Add Image</span>
+                      <Button variant="outline" size="sm" className="h-7 text-xs" type="button">
+                        <ImageIcon className="h-3 w-3" />
+                        <span className="ml-1">Image</span>
                       </Button>
                     </label>
                     {postImagePreview && (
-                      <div className="relative w-12 h-12 rounded-md overflow-hidden">
+                      <div className="relative w-8 h-8 rounded overflow-hidden">
                         <img src={postImagePreview} alt="Preview" className="w-full h-full object-cover" />
                       </div>
                     )}
                     <Button
                       onClick={handleCreatePost}
                       disabled={!postContent.trim()}
+                      size="sm"
+                      className="h-7 text-xs ml-auto"
+                    >
+                      <Send className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
                       className="gap-2 ml-auto"
                     >
                       <Send className="h-4 w-4" />

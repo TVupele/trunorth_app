@@ -11,6 +11,7 @@ import { ROUTE_PATHS } from "@/lib/index";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sidebar } from "@/components/Sidebar";
 import { NewsFeed } from "@/components/NewsFeed";
 import { AdsBanner } from "@/components/AdsBanner";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -37,7 +38,7 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
 
   useEffect(() => {
@@ -60,67 +61,20 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
 
   const isAdmin = user?.role === 'admin';
 
-  const menuItems = [
-    { icon: <Home className="w-4 h-4" />, label: "Home", href: ROUTE_PATHS.MOBILE_HOME },
-    { icon: <Calendar className="w-4 h-4" />, label: "Events", href: ROUTE_PATHS.EVENTS },
-    { icon: <User className="w-4 h-4" />, label: "Profile", href: ROUTE_PATHS.PROFILE },
-    { icon: <Settings className="w-4 h-4" />, label: "Settings", href: ROUTE_PATHS.SETTINGS },
-    { icon: <Wallet className="w-4 h-4" />, label: "Wallet", href: ROUTE_PATHS.MOBILE_WALLET },
-    { icon: <Bell className="w-4 h-4" />, label: "Notifications", href: "#" },
-    { icon: <LogOut className="w-4 h-4" />, label: "Logout", action: handleLogout },
-  ];
-
   return (
-    <div className="min-h-screen bg-background pb-16">
+    <div className="min-h-screen bg-background pb-12">
       {/* Top Bar */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur border-b border-border">
         <div className="flex items-center justify-between px-3 py-2">
           <div className="flex items-center gap-2">
-            <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <Menu className="h-4 w-4" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-64 p-0">
-                <div className="p-3 border-b">
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={(user as any)?.avatar_url} alt={user?.fullName} />
-                      <AvatarFallback className="text-xs">{user?.fullName?.charAt(0) || 'U'}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-sm font-medium">{user?.fullName || 'User'}</p>
-                      <p className="text-xs text-muted-foreground">{user?.email}</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-2">
-                  {menuItems.map((item, index) => (
-                    item.href ? (
-                      <Link
-                        key={index}
-                        to={item.href}
-                        onClick={() => setIsMenuOpen(false)}
-                        className="flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-muted text-foreground text-sm"
-                      >
-                        {item.icon}
-                        <span>{item.label}</span>
-                      </Link>
-                    ) : (
-                      <button
-                        key={index}
-                        onClick={() => { item.action?.(); setIsMenuOpen(false); }}
-                        className="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-muted text-foreground text-sm"
-                      >
-                        {item.icon}
-                        <span>{item.label}</span>
-                      </button>
-                    )
-                  ))}
-                </div>
-              </SheetContent>
-            </Sheet>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8"
+              onClick={() => setIsSidebarOpen(true)}
+            >
+              <Menu className="h-4 w-4" />
+            </Button>
             
             <Link to={ROUTE_PATHS.MOBILE_HOME} className="h-8 w-auto">
               <img src="/Logo_Icon.jpeg" alt="TruNORTH" className="h-full w-auto object-contain" />
@@ -146,6 +100,9 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
           </div>
         </div>
       </div>
+
+      {/* Sidebar */}
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} mobile />
 
       {/* Main Content */}
       <div className="pt-14 px-3">
@@ -225,7 +182,7 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
       <Link to={ROUTE_PATHS.SOCIAL}>
         <Button
           size="icon"
-          className="fixed bottom-16 right-4 h-10 w-10 rounded-full shadow-lg bg-primary hover:bg-primary/90"
+          className="fixed bottom-12 right-4 h-10 w-10 rounded-full shadow-lg bg-primary hover:bg-primary/90"
         >
           <Send className="h-4 w-4" />
         </Button>

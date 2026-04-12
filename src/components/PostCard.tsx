@@ -46,126 +46,106 @@ export function PostCard({ post }: PostCardProps) {
   };
 
   return (
-    <Card className="overflow-hidden border-border hover:shadow-lg transition-all duration-200">
-      <CardHeader className="pb-3">
-        <div className="flex items-center gap-3">
-          <Avatar className="h-10 w-10">
+    <Card className="overflow-hidden border-border hover:shadow-sm transition-all duration-200 py-2">
+      <CardHeader className="pb-2 px-3">
+        <div className="flex items-center gap-2">
+          <Avatar className="h-8 w-8">
             <AvatarImage src={post.userAvatar} alt={authorName} />
-            <AvatarFallback>{authorName.charAt(0)}</AvatarFallback>
+            <AvatarFallback className="text-xs">{authorName.charAt(0)}</AvatarFallback>
           </Avatar>
           <div className="flex-1">
-            <p className="font-semibold text-sm">{authorName}</p>
-            <p className="text-xs text-muted-foreground">{formatDate(post.timestamp)}</p>
+            <p className="font-medium text-xs">{authorName}</p>
+            <p className="text-[10px] text-muted-foreground">{formatDate(post.timestamp)}</p>
           </div>
         </div>
       </CardHeader>
-
-      <CardContent className="pb-3 space-y-3">
-        <p className="text-sm leading-relaxed whitespace-pre-wrap">{post.content}</p>
-        {post.image && (
-          <div className="rounded-lg overflow-hidden max-h-96">
-            <img
-              src={post.image}
-              alt="Post content"
-              className="w-full h-auto object-cover"
-            />
+      <CardContent className="px-3 py-1">
+        <p className="text-xs">{post.content}</p>
+        {post.imageUrl && (
+          <div className="mt-2 rounded-lg overflow-hidden">
+            <img src={post.imageUrl} alt="Post" className="w-full h-auto max-h-48 object-cover" />
           </div>
         )}
       </CardContent>
-
-      <CardFooter className="flex-col items-stretch gap-3 pt-0">
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span>{post.likes} {post.likes === 1 ? 'like' : 'likes'}</span>
-          <span>{post.comments.length} {post.comments.length === 1 ? 'comment' : 'comments'}</span>
-        </div>
-
-        <Separator />
-
-        <div className="flex items-center gap-2">
+      <CardFooter className="px-3 py-1">
+        <div className="flex items-center gap-3">
           <Button
             variant="ghost"
             size="sm"
-            className={`flex-1 gap-2 ${post.isLiked ? 'text-destructive' : ''}`}
             onClick={handleLike}
+            className="h-6 px-1 text-xs"
           >
-            <Heart className={`h-4 w-4 ${post.isLiked ? 'fill-current' : ''}`} />
-            <span className="text-xs font-medium">Like</span>
+            <Heart className={`h-3 w-3 mr-1 ${post.isLiked ? 'fill-red-500 text-red-500' : ''}`} />
+            {post.likes}
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            className="flex-1 gap-2"
             onClick={() => setShowComments(!showComments)}
+            className="h-6 px-1 text-xs"
           >
-            <MessageCircle className="h-4 w-4" />
-            <span className="text-xs font-medium">Comment</span>
+            <MessageCircle className="h-3 w-3 mr-1" />
+            {post.comments}
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            className="flex-1 gap-2"
             onClick={handleShare}
+            className="h-6 px-1 text-xs"
           >
-            <Share2 className="h-4 w-4" />
-            <span className="text-xs font-medium">Share</span>
+            <Send className="h-3 w-3" />
           </Button>
         </div>
-
-        <AnimatePresence>
-          {showComments && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="space-y-3 overflow-hidden"
-            >
-              <Separator />
-
-              <div className="space-y-3 max-h-64 overflow-y-auto">
-                {post.comments.map((comment) => (
-                  <div key={comment.id} className="flex gap-2">
-                    <Avatar className="h-8 w-8 flex-shrink-0">
-                      <AvatarImage src={comment.userAvatar} alt={comment.userName} />
-                      <AvatarFallback>{comment.userName.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 bg-muted rounded-lg px-3 py-2">
-                      <div className="flex items-center gap-2 mb-1">
-                        <p className="font-semibold text-xs">{comment.userName}</p>
-                        <p className="text-xs text-muted-foreground">{formatDate(comment.timestamp)}</p>
-                      </div>
-                      <p className="text-sm">{comment.content}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex gap-2">
-                <Textarea
-                  placeholder="Write a comment..."
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  className="min-h-[60px] resize-none"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleComment();
-                    }
-                  }}
-                />
-                <Button
-                  size="icon"
-                  onClick={handleComment}
-                  disabled={!commentText.trim() || isSubmitting}
-                  className="flex-shrink-0"
-                >
-                  <Send className="h-4 w-4" />
-                </Button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </CardFooter>
+
+      <AnimatePresence>
+        {showComments && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="overflow-hidden px-3 pb-2"
+          >
+            <div className="space-y-2 max-h-32 overflow-y-auto py-1">
+              {post.comments.slice(0, 3).map((comment) => (
+                <div key={comment.id} className="flex gap-1.5">
+                  <Avatar className="h-5 w-5 flex-shrink-0">
+                    <AvatarImage src={comment.userAvatar} alt={comment.userName} />
+                    <AvatarFallback className="text-[8px]">{comment.userName.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 bg-muted rounded px-2 py-1">
+                    <p className="text-[10px]">{comment.content}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-1 mt-1">
+              <Textarea
+                placeholder="Comment..."
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                className="min-h-[40px] resize-none text-xs py-1"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleComment();
+                  }
+                }}
+              />
+              <Button
+                size="icon"
+                onClick={handleComment}
+                disabled={!commentText.trim() || isSubmitting}
+                className="h-8 w-8 flex-shrink-0"
+              >
+                <Send className="h-3 w-3" />
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Card>
   );
 }

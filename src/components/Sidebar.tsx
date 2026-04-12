@@ -24,6 +24,7 @@ import { Separator } from '@/components/ui/separator';
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  mobile?: boolean;
 }
 
 const navigationItems = [
@@ -41,25 +42,25 @@ const navigationItems = [
   { path: ROUTE_PATHS.SETTINGS, label: 'Settings', icon: Settings },
 ];
 
-export function Sidebar({ isOpen, onClose }: SidebarProps) {
+export function Sidebar({ isOpen, onClose, mobile = false }: SidebarProps) {
   const { t } = useTranslation();
 
   const sidebarContent = (
-    <div className="flex h-full flex-col bg-sidebar">
-      <div className="relative pt-6 px-4 pb-4">
+    <div className={`flex h-full flex-col bg-sidebar ${mobile ? 'pt-2' : ''}`}>
+      {mobile && (
         <Button
           variant="ghost"
           size="icon"
-          className="absolute top-2 right-2 lg:hidden text-muted-foreground hover:text-foreground"
+          className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
           onClick={onClose}
         >
-          <X className="h-5 w-5" />
+          <X className="h-4 w-4" />
         </Button>
-      </div>
+      )}
 
       <Separator className="mx-4" />
 
-      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+      <nav className="flex-1 space-y-0.5 overflow-y-auto px-2 py-2">
         {navigationItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -68,7 +69,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               to={item.path}
               onClick={onClose}
               className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
+                `flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs font-medium transition-all duration-200 ${
                   isActive
                     ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-sm'
                     : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
@@ -77,7 +78,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             >
               {({ isActive }) => (
                 <>
-                  <Icon className={`h-5 w-5 ${
+                  <Icon className={`h-4 w-4 ${
                     isActive ? 'text-sidebar-primary-foreground' : 'text-muted-foreground'
                   }`} />
                   <span>{t(item.label)}</span>
@@ -88,11 +89,13 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         })}
       </nav>
 
-      <div className="border-t border-sidebar-border p-4">
-        <p className="text-center text-xs text-muted-foreground">
-          © 2026 Trunorth. All rights reserved.
-        </p>
-      </div>
+      {!mobile && (
+        <div className="border-t border-sidebar-border p-3">
+          <p className="text-center text-[10px] text-muted-foreground">
+            © 2026 Trunorth. All rights reserved.
+          </p>
+        </div>
+      )}
     </div>
   );
 

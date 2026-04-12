@@ -4,7 +4,7 @@ import { ROUTE_PATHS } from '@/lib';
 import { Home } from 'lucide-react';
 
 const footerNavItems = [
-  { path: ROUTE_PATHS.HOME, icon: <Home className="h-6 w-6" />, label: 'Home' },
+  { path: ROUTE_PATHS.HOME, icon: <Home className="h-5 w-5" />, label: 'Home' },
   { path: ROUTE_PATHS.WALLET, icon: '/wallet_icon.jpeg', label: 'Wallet' },
   { path: ROUTE_PATHS.TRAVEL, icon: '/travel_icon.jpeg', label: 'Travel' },
   { path: ROUTE_PATHS.TUTORING, icon: '/tutor_icon.jpeg', label: 'Tutoring' },
@@ -13,23 +13,23 @@ const footerNavItems = [
   { path: ROUTE_PATHS.MARKETPLACE, icon: '/cart_icon.jpeg', label: 'Marketplace' },
 ];
 
-export function Footer() {
+export function Footer({ className = '' }: { className?: string }) {
   const { t } = useTranslation();
   return (
-    <footer className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background/95 backdrop-blur-sm lg:hidden">
-      <nav className="grid grid-cols-4 items-center justify-items-center gap-y-1 py-2">
-        {footerNavItems.map((item) => (
+    <footer className={`fixed bottom-0 left-0 right-0 z-40 border-t bg-background/95 backdrop-blur-sm lg:hidden ${className}`}>
+      <nav className="grid grid-cols-4 items-center justify-items-center gap-y-1 py-1.5">
+        {footerNavItems.slice(0, 8).map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
             className={({ isActive }) =>
-              `flex flex-col items-center gap-1 p-2 text-xs font-medium transition-colors ${
+              `flex flex-col items-center gap-0.5 p-1.5 text-[10px] font-medium transition-colors ${
                 isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
               }`
             }
           >
             {typeof item.icon === 'string' ? (
-              <img src={item.icon} alt={item.label} className="h-6 w-6" />
+              <img src={item.icon} alt={item.label} className="h-5 w-5" />
             ) : (
               item.icon
             )}
