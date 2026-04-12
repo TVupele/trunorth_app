@@ -18,8 +18,6 @@ import {
   X,
 } from 'lucide-react';
 import { ROUTE_PATHS } from '@/lib/index';
-import { useWallet } from '@/hooks/useWallet';
-import { formatCurrency } from '@/lib/index';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
@@ -31,7 +29,6 @@ interface SidebarProps {
 const navigationItems = [
   { path: ROUTE_PATHS.HOME, label: 'Home', icon: Home },
   { path: ROUTE_PATHS.WALLET, label: 'Wallet', icon: Wallet },
-  { path: ROUTE_PATHS.SOCIAL, label: 'Social', icon: Users },
   { path: ROUTE_PATHS.TRAVEL, label: 'Travel', icon: Plane },
   { path: ROUTE_PATHS.TUTORING, label: 'Tutoring', icon: GraduationCap },
   { path: ROUTE_PATHS.EMERGENCY, label: 'Emergency', icon: AlertTriangle },
@@ -46,8 +43,6 @@ const navigationItems = [
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { t } = useTranslation();
-  const balance = useWallet((state) => state.balance);
-  const currency = useWallet((state) => state.currency);
 
   const sidebarContent = (
     <div className="flex h-full flex-col bg-sidebar">
@@ -60,11 +55,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         >
           <X className="h-5 w-5" />
         </Button>
-        <div className="rounded-xl bg-gradient-to-br from-primary to-primary/80 p-4 shadow-lg w-full">
-          <p className="text-xs font-medium text-primary-foreground/80">Wallet Balance</p>
-          <p className="mt-1 font-mono text-2xl font-bold text-primary-foreground">
-            {formatCurrency(balance, currency)}
-          </p>
+        <div className="flex justify-center mb-2">
+          <img src="/Logo_Icon.jpeg" alt="Trunorth" className="h-12 w-auto object-contain" />
         </div>
       </div>
 

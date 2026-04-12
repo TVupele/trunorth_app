@@ -6,7 +6,6 @@ import { Home } from 'lucide-react';
 const footerNavItems = [
   { path: ROUTE_PATHS.HOME, icon: <Home className="h-6 w-6" />, label: 'Home' },
   { path: ROUTE_PATHS.WALLET, icon: '/wallet_icon.jpeg', label: 'Wallet' },
-  { path: ROUTE_PATHS.SOCIAL, icon: '/social_icon.jpeg', label: 'Social' },
   { path: ROUTE_PATHS.TRAVEL, icon: '/travel_icon.jpeg', label: 'Travel' },
   { path: ROUTE_PATHS.TUTORING, icon: '/tutor_icon.jpeg', label: 'Tutoring' },
   { path: ROUTE_PATHS.EMERGENCY, icon: '/emergency_report_icon.jpeg', label: 'Emergency' },

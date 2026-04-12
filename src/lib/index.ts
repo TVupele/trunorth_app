@@ -6,7 +6,6 @@ export const ROUTE_PATHS = {
   VENDOR_DASHBOARD: '/vendor/dashboard',
   TUTOR_DASHBOARD: '/tutor/dashboard',
   WALLET: '/wallet',
-  SOCIAL: '/social',
   TRAVEL: '/travel',
   TUTORING: '/tutoring',
   EMERGENCY: '/emergency',

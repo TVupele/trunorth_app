@@ -7,6 +7,10 @@
 -- Dumped from database version 18.1
 -- Dumped by pg_dump version 18.1
 
+-- Category columns for events and campaigns
+ALTER TABLE public.events ADD COLUMN IF NOT EXISTS category character varying(100) DEFAULT 'General';
+ALTER TABLE public.campaigns ADD COLUMN IF NOT EXISTS category character varying(100) DEFAULT 'General';
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -164,7 +168,8 @@ CREATE TABLE public.campaigns (
     goal_amount numeric(15,2) NOT NULL,
     raised_amount numeric(15,2) DEFAULT 0.00 NOT NULL,
     end_date timestamp with time zone,
-    is_active boolean DEFAULT true NOT NULL
+    is_active boolean DEFAULT true NOT NULL,
+    category character varying(100) DEFAULT 'General'
 );
 
 
@@ -222,12 +227,14 @@ CREATE TABLE public.emergency_reports (
 CREATE TABLE public.events (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     title character varying(255) NOT NULL,
+    description text,
     image_url text,
     event_date timestamp with time zone NOT NULL,
     location text,
     ticket_price numeric(10,2),
     total_seats integer,
-    available_seats integer
+    available_seats integer,
+    category character varying(100) DEFAULT 'General'
 );
 
 

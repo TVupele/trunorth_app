@@ -10,7 +10,7 @@ import { ROUTE_PATHS, formatCurrency } from '@/lib/index';
 import {
   Users, Plane, GraduationCap, AlertTriangle, Heart,
   ShoppingBag, Calendar, Church, Bot, MessageSquare, TrendingUp,
-  Store, BadgeCheck, Wallet,
+  Store, BadgeCheck, Wallet, Send, Image as ImageIcon,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { NewsFeed } from '@/components/NewsFeed';
@@ -21,6 +21,7 @@ import { useToast } from '@/hooks/use-toast';
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function Home() {
   const { t } = useTranslation();
@@ -37,6 +38,11 @@ export default function Home() {
   const [showApprovalDialog, setShowApprovalDialog] = useState(false);
   const [approvalType, setApprovalType] = useState<'vendor' | 'tutor'>('vendor');
   const [isApproving, setIsApproving] = useState(false);
+  const [showPostDialog, setShowPostDialog] = useState(false);
+  const [postContent, setPostContent] = useState('');
+  const [postImage, setPostImage] = useState<File | null>(null);
+  const [postImagePreview, setPostImagePreview] = useState('');
+  const [isCreatingPost, setIsCreatingPost] = useState(false);
 
   useEffect(() => {
     fetchWalletData();
@@ -74,6 +80,47 @@ export default function Home() {
     setShowApprovalDialog(true);
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPostImage(file);
+      setPostImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleCreatePost = async () => {
+    if (!postContent.trim()) return;
+    setIsCreatingPost(true);
+    try {
+      let imageUrl: string | undefined;
+      if (postImage) {
+        const formData = new FormData();
+        formData.append('image', postImage);
+        const response = await api.post('/posts/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        imageUrl = response.data.url;
+      }
+      await api.post('/posts', {
+        content: postContent,
+        image_url: imageUrl
+      });
+      toast({ title: 'Success', description: 'Post created successfully!' });
+      setShowPostDialog(false);
+      setPostContent('');
+      setPostImage(null);
+      setPostImagePreview('');
+    } catch (error: any) {
+      toast({ title: 'Error', description: String(error.response?.data?.error) || 'Failed to create post', variant: 'destructive' });
+    } finally {
+      setIsCreatingPost(false);
+    }
+  };
+
+  const openPostDialog = () => {
+    setShowPostDialog(true);
+  };
+
   const isRegularUser = user?.role === 'user';
   const isVendor = user?.role === 'vendor';
   const isTutor = user?.role === 'tutor';
@@ -85,13 +132,6 @@ export default function Home() {
       description: t('Manage your finances'),
       href: ROUTE_PATHS.WALLET,
       variant: 'primary' as const,
-    },
-    {
-      icon: <Users className="w-5 h-5" />,
-      title: t('Social Network'),
-      description: t('Connect with friends'),
-      href: ROUTE_PATHS.SOCIAL,
-      variant: 'default' as const,
     },
     {
       icon: <Plane className="w-5 h-5" />,
@@ -202,37 +242,30 @@ export default function Home() {
           </p>
         </motion.div>
 
-        {/* Vendor/Tutor Approval Section for regular users */}
-        {isRegularUser && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-            className="mb-4 md:mb-6"
-          >
-            <Card className="border-dashed border-2 border-primary/30 bg-primary/5">
-              <CardContent className="py-4">
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <BadgeCheck className="h-8 w-8 text-primary" />
-                    <div>
-                      <h3 className="font-semibold">{t('Become a Vendor or Tutor')}</h3>
-                      <p className="text-sm text-muted-foreground">{t('Get approved to sell products')}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button onClick={() => openApprovalDialog('vendor')} variant="default" size="sm">
-                      <Store className="h-4 w-4 mr-2" />{t('Become a Vendor')}
-                    </Button>
-                    <Button onClick={() => openApprovalDialog('tutor')} variant="outline" size="sm">
-                      <GraduationCap className="h-4 w-4 mr-2" />{t('Become a Tutor')}
-                    </Button>
+        {/* Create Post Section for all users */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="mb-4 md:mb-6"
+        >
+          <Card className="border-dashed border-2 border-primary/30 bg-primary/5">
+            <CardContent className="py-4">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <Send className="h-8 w-8 text-primary" />
+                  <div>
+                    <h3 className="font-semibold">Share with the Community</h3>
+                    <p className="text-sm text-muted-foreground">Create a post to share updates</p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
+                <Button onClick={openPostDialog} variant="default" size="sm">
+                  <Send className="h-4 w-4 mr-2" />Create Post
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {walletError && (
           <Alert variant="destructive" className="mb-4">
@@ -309,6 +342,49 @@ export default function Home() {
             <Button variant="outline" onClick={() => setShowApprovalDialog(false)}>{t('Cancel')}</Button>
             <Button onClick={handleRequestApproval} disabled={isApproving}>
               {isApproving ? t('Submitting') : t('Submit')} {approvalType === 'vendor' ? t('Vendor Request') : t('Tutor Request')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Post Dialog */}
+      <Dialog open={showPostDialog} onOpenChange={setShowPostDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create Post</DialogTitle>
+            <DialogDescription>Share something with the community</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <Textarea
+              placeholder="What's on your mind?"
+              value={postContent}
+              onChange={(e) => setPostContent(e.target.value)}
+              className="min-h-[100px] resize-none"
+            />
+            <div className="flex items-center gap-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+                <Button variant="outline" size="sm" type="button">
+                  <ImageIcon className="h-4 w-4" />
+                  <span className="ml-2">Add Image</span>
+                </Button>
+              </label>
+              {postImagePreview && (
+                <div className="relative w-12 h-12 rounded-md overflow-hidden">
+                  <img src={postImagePreview} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+              )}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowPostDialog(false)}>Cancel</Button>
+            <Button onClick={handleCreatePost} disabled={!postContent.trim() || isCreatingPost}>
+              {isCreatingPost ? 'Posting...' : 'Post'}
             </Button>
           </DialogFooter>
         </DialogContent>

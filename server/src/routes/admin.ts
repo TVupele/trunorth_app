@@ -2,7 +2,10 @@ import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth';
 import {
   getDashboardStats, getAllUsers, updateUserRole, getPendingApprovals,
-  getAllProducts, getAllEvents, getAllCampaigns, getAllServices,
+  getAllProducts, createProduct, updateProduct, deleteProduct,
+  getAllEvents, createEvent, updateEvent, deleteEvent,
+  getAllCampaigns, createCampaign, updateCampaign, deleteCampaign,
+  getAllServices, createService, updateService, deleteService,
   requestVendorApproval, requestTutorApproval, deleteUser,
   approveVendorRequest, approveTutorRequest, rejectRequest,
   getAllAdBanners, createAdBanner, updateAdBanner, deleteAdBanner
@@ -22,10 +25,30 @@ router.get('/pending-approvals', authMiddleware, getPendingApprovals);
 router.post('/pending-approvals/:requestId/approve', authMiddleware, approveVendorRequest);
 router.post('/pending-approvals/:requestId/approve-tutor', authMiddleware, approveTutorRequest);
 router.post('/pending-approvals/:requestId/reject', authMiddleware, rejectRequest);
+
+// Products management
 router.get('/products', authMiddleware, getAllProducts);
+router.post('/products', authMiddleware, createProduct);
+router.put('/products/:id', authMiddleware, updateProduct);
+router.delete('/products/:id', authMiddleware, deleteProduct);
+
+// Events management
 router.get('/events', authMiddleware, getAllEvents);
+router.post('/events', authMiddleware, createEvent);
+router.put('/events/:id', authMiddleware, updateEvent);
+router.delete('/events/:id', authMiddleware, deleteEvent);
+
+// Campaigns management
 router.get('/campaigns', authMiddleware, getAllCampaigns);
+router.post('/campaigns', authMiddleware, createCampaign);
+router.put('/campaigns/:id', authMiddleware, updateCampaign);
+router.delete('/campaigns/:id', authMiddleware, deleteCampaign);
+
+// Services management
 router.get('/services', authMiddleware, getAllServices);
+router.post('/services', authMiddleware, createService);
+router.put('/services/:id', authMiddleware, updateService);
+router.delete('/services/:id', authMiddleware, deleteService);
 
 // Ad Banners management (admin only)
 router.post('/ad-banners', authMiddleware, createAdBanner);

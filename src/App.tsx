@@ -14,7 +14,6 @@ import { ROUTE_PATHS } from "@/lib/index";
 import { Layout } from "@/components/Layout";
 import Home from "@/pages/Home";
 import Wallet from "@/pages/Wallet";
-import Social from "@/pages/Social";
 import Travel from "@/pages/Travel";
 import Tutoring from "@/pages/Tutoring";
 import Emergency from "@/pages/Emergency";
@@ -121,7 +120,6 @@ const App = () => {
               <Route element={<ProtectedLayout />}>
                 <Route path={ROUTE_PATHS.HOME} element={<Home />} />
                 <Route path={ROUTE_PATHS.WALLET} element={<Wallet />} />
-                <Route path={ROUTE_PATHS.SOCIAL} element={<Social />} />
                 <Route path={ROUTE_PATHS.TRAVEL} element={<Travel />} />
                 <Route path={ROUTE_PATHS.TUTORING} element={<Tutoring />} />
                 <Route path={ROUTE_PATHS.EMERGENCY} element={<Emergency />} />

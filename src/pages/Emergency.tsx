@@ -32,6 +32,8 @@ export default function Emergency() {
     type: 'medical' as EmergencyReport['type'],
     priority: 'medium' as EmergencyReport['priority'],
     location: '',
+    latitude: null as number | null,
+    longitude: null as number | null,
     description: '',
   });
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
@@ -62,6 +64,8 @@ export default function Emergency() {
           setFormData((prev) => ({
             ...prev,
             location: `${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}`,
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
           }));
           setIsDetectingLocation(false);
         },
@@ -82,11 +86,13 @@ export default function Emergency() {
         type: formData.type,
         priority: formData.priority,
         location: formData.location,
+        latitude: formData.latitude,
+        longitude: formData.longitude,
         description: formData.description,
       });
       setReports([response.data, ...reports]);
       setIsReportDialogOpen(false);
-      setFormData({ type: 'medical', priority: 'medium', location: '', description: '' });
+      setFormData({ type: 'medical', priority: 'medium', location: '', latitude: null, longitude: null, description: '' });
       toast({ title: 'Report Submitted', description: 'Your emergency report has been submitted successfully.' });
     } catch (error: any) {
       toast({ title: 'Error', description: String(error.response?.data?.error) || 'Failed to submit report.', variant: 'destructive' });

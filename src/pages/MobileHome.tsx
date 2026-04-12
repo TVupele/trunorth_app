@@ -92,7 +92,6 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
     { icon: <User className="w-5 h-5" />, label: "Profile", href: ROUTE_PATHS.PROFILE },
     { icon: <Settings className="w-5 h-5" />, label: "Settings", href: ROUTE_PATHS.SETTINGS },
     { icon: <Wallet className="w-5 h-5" />, label: "Wallet", href: ROUTE_PATHS.WALLET },
-    { icon: <Users className="w-5 h-5" />, label: "Social", href: ROUTE_PATHS.SOCIAL },
     { icon: <Bell className="w-5 h-5" />, label: "Notifications", href: "#" },
     { icon: <LogOut className="w-5 h-5" />, label: "Logout", action: handleLogout },
   ];

@@ -16,9 +16,8 @@ interface LayoutProps {
 
 const mobileNavItems = [
   { path: ROUTE_PATHS.HOME, label: "Home", icon: Home },
-  { path: ROUTE_PATHS.SOCIAL, label: "Social", icon: Users },
-  { path: "post", label: "Post", icon: Plus, isAction: true },
   { path: ROUTE_PATHS.EVENTS, label: "Events", icon: Calendar },
+  { path: ROUTE_PATHS.SOCIAL, label: "Post", icon: Plus, isAction: true },
   { path: ROUTE_PATHS.WALLET, label: "Wallet", icon: Wallet },
 ];
 
@@ -108,15 +107,15 @@ function MobileLayout({ children }: { children: React.ReactNode }) {
             const Icon = item.icon;
             if (item.isAction) {
               return (
-                <button
+                <NavLink
                   key={item.label}
-                  onClick={() => setShowPostModal(true)}
+                  to={item.path}
                   className="flex flex-col items-center justify-center w-14 h-12 -mt-2"
                 >
                   <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg">
                     <Icon className="w-6 h-6 text-primary-foreground" />
                   </div>
-                </button>
+                </NavLink>
               );
             }
             return (

@@ -95,12 +95,138 @@ export const getAllProducts = async (req: Request, res: Response) => {
   }
 };
 
+export const createProduct = async (req: Request, res: Response) => {
+  const { name, description, image_url, price, currency, category, stock_quantity } = req.body;
+  if (!name || !price) {
+    return res.status(400).json({ error: 'Name and price are required.' });
+  }
+  try {
+    const adminResult = await query("SELECT id FROM users WHERE role = 'admin' LIMIT 1");
+    const vendorId = adminResult.rows[0]?.id;
+    
+    const result = await query(
+      `INSERT INTO products (vendor_id, name, description, image_url, price, currency, category, stock_quantity)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+      [vendorId, name, description, image_url, price, currency || 'NGN', category || 'General', stock_quantity || 0]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Create product error:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+export const updateProduct = async (req: Request, res: Response) => {
+  const { name, description, image_url, price, currency, category, stock_quantity } = req.body;
+  try {
+    const result = await query(
+      `UPDATE products SET name = COALESCE($1, name), description = COALESCE($2, description),
+       image_url = COALESCE($3, image_url), price = COALESCE($4, price),
+       currency = COALESCE($5, currency), category = COALESCE($6, category),
+       stock_quantity = COALESCE($7, stock_quantity)
+       WHERE id = $8 RETURNING *`,
+      [name, description, image_url, price, currency, category, stock_quantity, req.params.id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Product not found.' });
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Update product error:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+export const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    const result = await query('DELETE FROM products WHERE id = $1 RETURNING id', [req.params.id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Product not found.' });
+    }
+    res.json({ message: 'Product deleted successfully.' });
+  } catch (error) {
+    console.error('Delete product error:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
 export const getAllEvents = async (req: Request, res: Response) => {
   try {
     const result = await query('SELECT * FROM events ORDER BY event_date ASC');
     res.json(result.rows);
   } catch (error) {
     console.error('Get all events error:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+export const createEvent = async (req: Request, res: Response) => {
+  const { title, description, image_url, event_date, location, ticket_price, total_seats, category } = req.body;
+  if (!title || !event_date) {
+    return res.status(400).json({ error: 'Title and event date are required.' });
+  }
+  try {
+    const result = await query(
+      `INSERT INTO events (title, description, image_url, event_date, location, ticket_price, total_seats, available_seats, category)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $7, $8) RETURNING *`,
+      [title, description, image_url, event_date, location, ticket_price || 0, total_seats || 0, category || 'General']
+    );
+    
+    const event = result.rows[0];
+    const bannerImageUrl = event.image_url || '/placeholder.svg';
+    await query(
+      `INSERT INTO ad_banners (title, description, type, image_url, cta, link, is_active, display_order)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [
+        event.title,
+        event.description || `Join us for ${event.title}`,
+        'event',
+        bannerImageUrl,
+        'View Event',
+        '/events',
+        true,
+        0
+      ]
+    );
+    
+    res.status(201).json(event);
+  } catch (error) {
+    console.error('Create event error:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+export const updateEvent = async (req: Request, res: Response) => {
+  const { title, description, image_url, event_date, location, ticket_price, total_seats, available_seats, category } = req.body;
+  try {
+    const result = await query(
+      `UPDATE events SET title = COALESCE($1, title), description = COALESCE($2, description),
+       image_url = COALESCE($3, image_url), event_date = COALESCE($4, event_date),
+       location = COALESCE($5, location), ticket_price = COALESCE($6, ticket_price),
+       total_seats = COALESCE($7, total_seats), available_seats = COALESCE($8, available_seats),
+       category = COALESCE($9, category)
+       WHERE id = $10 RETURNING *`,
+      [title, description, image_url, event_date, location, ticket_price, total_seats, available_seats, category, req.params.id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Event not found.' });
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Update event error:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+export const deleteEvent = async (req: Request, res: Response) => {
+  try {
+    const result = await query('DELETE FROM events WHERE id = $1 RETURNING id', [req.params.id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Event not found.' });
+    }
+    res.json({ message: 'Event deleted successfully.' });
+  } catch (error) {
+    console.error('Delete event error:', error);
     res.status(500).json({ error: 'Internal server error.' });
   }
 };
@@ -120,12 +246,115 @@ export const getAllCampaigns = async (req: Request, res: Response) => {
   }
 };
 
+export const createCampaign = async (req: Request, res: Response) => {
+  const { title, description, image_url, goal_amount, end_date, is_active, category } = req.body;
+  if (!title || !goal_amount) {
+    return res.status(400).json({ error: 'Title and goal amount are required.' });
+  }
+  try {
+    const result = await query(
+      `INSERT INTO campaigns (organizer_id, title, description, image_url, goal_amount, end_date, is_active, category)
+       VALUES ((SELECT id FROM users WHERE role = 'admin' LIMIT 1), $1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+      [title, description, image_url, goal_amount, end_date, is_active ?? true, category || 'General']
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Create campaign error:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+export const updateCampaign = async (req: Request, res: Response) => {
+  const { title, description, image_url, goal_amount, end_date, is_active, category } = req.body;
+  try {
+    const result = await query(
+      `UPDATE campaigns SET title = COALESCE($1, title), description = COALESCE($2, description),
+       image_url = COALESCE($3, image_url), goal_amount = COALESCE($4, goal_amount),
+       end_date = COALESCE($5, end_date), is_active = COALESCE($6, is_active), category = COALESCE($7, category)
+       WHERE id = $8 RETURNING *`,
+      [title, description, image_url, goal_amount, end_date, is_active, category, req.params.id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Campaign not found.' });
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Update campaign error:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+export const deleteCampaign = async (req: Request, res: Response) => {
+  try {
+    const result = await query('DELETE FROM campaigns WHERE id = $1 RETURNING id', [req.params.id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Campaign not found.' });
+    }
+    res.json({ message: 'Campaign deleted successfully.' });
+  } catch (error) {
+    console.error('Delete campaign error:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
 export const getAllServices = async (req: Request, res: Response) => {
   try {
     const result = await query('SELECT * FROM religious_services ORDER BY service_time ASC');
     res.json(result.rows);
   } catch (error) {
     console.error('Get all services error:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+export const createService = async (req: Request, res: Response) => {
+  const { name, type, venue, service_time, denomination, capacity, description, organizer } = req.body;
+  if (!name || !service_time) {
+    return res.status(400).json({ error: 'Name and service time are required.' });
+  }
+  try {
+    const result = await query(
+      `INSERT INTO religious_services (name, type, venue, service_time, denomination, capacity, description)
+       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+      [name, type || 'other', venue, service_time, denomination, capacity || 0, description]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Create service error:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+export const updateService = async (req: Request, res: Response) => {
+  const { name, type, venue, service_time, denomination, capacity, description } = req.body;
+  try {
+    const result = await query(
+      `UPDATE religious_services SET name = COALESCE($1, name), type = COALESCE($2, type),
+       venue = COALESCE($3, venue), service_time = COALESCE($4, service_time),
+       denomination = COALESCE($5, denomination), capacity = COALESCE($6, capacity),
+       description = COALESCE($7, description)
+       WHERE id = $8 RETURNING *`,
+      [name, type, venue, service_time, denomination, capacity, description, req.params.id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Service not found.' });
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Update service error:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+export const deleteService = async (req: Request, res: Response) => {
+  try {
+    const result = await query('DELETE FROM religious_services WHERE id = $1 RETURNING id', [req.params.id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Service not found.' });
+    }
+    res.json({ message: 'Service deleted successfully.' });
+  } catch (error) {
+    console.error('Delete service error:', error);
     res.status(500).json({ error: 'Internal server error.' });
   }
 };

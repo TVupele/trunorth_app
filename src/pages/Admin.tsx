@@ -147,12 +147,19 @@ export default function Admin() {
 
   const handleSaveEntity = async () => {
     const { type, data } = editDialog;
+    const endpointMap: Record<string, string> = {
+      products: '/admin/products',
+      events: '/admin/events',
+      campaigns: '/admin/campaigns',
+      'religious-services': '/admin/services',
+    };
+    const endpoint = endpointMap[type] || `/${type}`;
     try {
       if (data.id) {
-        await api.put(`/${type}/${data.id}`, data);
+        await api.put(`${endpoint}/${data.id}`, data);
         toast({ title: 'Success', description: `${type} updated` });
       } else {
-        await api.post(`/${type}`, data);
+        await api.post(endpoint, data);
         toast({ title: 'Success', description: `${type} created` });
       }
       setEditDialog({ open: false, type: '', data: null });
@@ -163,8 +170,15 @@ export default function Admin() {
   };
 
   const handleDeleteEntity = async (type: string, id: string) => {
+    const endpointMap: Record<string, string> = {
+      products: '/admin/products',
+      events: '/admin/events',
+      campaigns: '/admin/campaigns',
+      'religious-services': '/admin/services',
+    };
+    const endpoint = endpointMap[type] || `/${type}`;
     try {
-      await api.delete(`/${type}/${id}`);
+      await api.delete(`${endpoint}/${id}`);
       toast({ title: 'Success', description: 'Deleted successfully' });
       fetchData();
     } catch (error: any) {
@@ -174,12 +188,16 @@ export default function Admin() {
 
   const handleSaveBanner = async () => {
     const { data } = editDialog;
+    const bannerData = {
+      ...data,
+      image_url: data.image_url || '',
+    };
     try {
       if (data.id) {
-        await api.put(`/admin/ad-banners/${data.id}`, data);
+        await api.put(`/admin/ad-banners/${data.id}`, bannerData);
         toast({ title: 'Success', description: 'Banner updated' });
       } else {
-        await api.post('/admin/ad-banners', data);
+        await api.post('/admin/ad-banners', bannerData);
         toast({ title: 'Success', description: 'Banner created' });
       }
       setEditDialog({ open: false, type: '', data: null });
