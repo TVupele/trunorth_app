@@ -26,25 +26,11 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
   const { user } = useAuth();
   const { createPost, fetchPosts } = useSocial();
   
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [notificationCount, setNotificationCount] = useState(0);
-  const [showPostDialog, setShowPostDialog] = useState(false);
-  const [postContent, setPostContent] = useState('');
-  const [postImage, setPostImage] = useState<File | null>(null);
-  const [postImagePreview, setPostImagePreview] = useState('');
-
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const response = await api.get('/notifications');
-        const data = response.data;
-        setNotificationCount(Array.isArray(data) ? data.length : 0);
-      } catch (error) {
-        setNotificationCount(0);
-      }
-    };
-    fetchNotifications();
-  }, []);
+   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+   const [showPostDialog, setShowPostDialog] = useState(false);
+   const [postContent, setPostContent] = useState('');
+   const [postImage, setPostImage] = useState<File | null>(null);
+   const [postImagePreview, setPostImagePreview] = useState('');
 
   const handleCreatePost = async () => {
     if (postContent.trim()) {
@@ -93,26 +79,29 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
             <Menu className="h-5 w-5" />
           </Button>
           
-          <Link to={ROUTE_PATHS.MOBILE_HOME}>
-            <img src="/Logo_Icon.jpeg" alt="TruNORTH" className="h-8 w-auto" />
-          </Link>
-          
-          <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" className="relative h-10 w-10">
-              <Bell className="h-5 w-5" />
-              {notificationCount > 0 && (
-                <span className="absolute top-1 right-1 h-4 w-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
-                  {notificationCount > 9 ? '9+' : notificationCount}
-                </span>
-              )}
-            </Button>
-            <Link to={ROUTE_PATHS.PROFILE}>
-              <Avatar className="h-9 w-9">
-                <AvatarImage src={(user as any)?.avatar_url} alt={user?.fullName} />
-                <AvatarFallback className="text-sm">{user?.fullName?.charAt(0) || 'U'}</AvatarFallback>
-              </Avatar>
+            <Link to={ROUTE_PATHS.MOBILE_HOME}>
+              <img src="/Logo_Icon.jpeg" alt="TruNORTH" className="h-8 w-auto" />
             </Link>
-          </div>
+            
+             <div className="flex items-center gap-1">
+               <Button variant="ghost" size="icon" className="relative h-10 w-10">
+                 <Bell className="h-5 w-5" />
+                 {notificationCount > 0 && (
+                   <span className="absolute top-1 right-1 h-4 w-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
+                     {notificationCount > 9 ? '9+' : notificationCount}
+                   </span>
+                 )}
+               </Button>
+             </div>
+            
+             <div className="flex items-center gap-1">
+               <Link to={ROUTE_PATHS.PROFILE}>
+                 <Avatar className="h-9 w-9">
+                   <AvatarImage src={(user as any)?.avatar_url} alt={user?.fullName} />
+                   <AvatarFallback className="text-sm">{user?.fullName?.charAt(0) || 'U'}</AvatarFallback>
+                 </Avatar>
+               </Link>
+             </div>
         </div>
         
         {/* Search Row */}
