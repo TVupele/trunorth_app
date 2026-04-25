@@ -2,10 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { AuthenticatedRequest } from '../types/express';
 
-const JWT_SECRET = process.env.JWT_SECRET!;
-
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
+    const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key';
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({ error: 'Authorization token is required.' });

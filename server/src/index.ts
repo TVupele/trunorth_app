@@ -2,6 +2,10 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+
+// Load environment variables immediately
+dotenv.config();
+
 import session from 'express-session';
 import passport from 'passport';
 import path from 'path';
@@ -30,9 +34,6 @@ import vendorRoutes from './routes/vendor';
 import tutorManagementRoutes from './routes/tutorManagement';
 import emergencyRoutes from './routes/emergency';
 import notificationsRoutes from './routes/notifications';
-
-// Load environment variables
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;

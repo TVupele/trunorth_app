@@ -40,4 +40,21 @@ api.interceptors.request.use(
   }
 );
 
+// Response interceptor to handle global errors like 401 Unauthorized
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      // Clear auth state if we get a 401
+      useAuth.getState().logout();
+      
+      // Optionally redirect to login, but we use hash router so this is a basic approach
+      if (window.location.hash !== '#/login' && window.location.hash !== '#/register') {
+        window.location.hash = '#/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;
