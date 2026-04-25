@@ -26,6 +26,12 @@ router.get('/profile', authMiddleware, async (req: Request, res: Response) => {
 
     const userProfile = userResult.rows[0];
 
+    // Prepend base URL to avatar_url if it exists and is a relative path
+    const baseUrl = process.env.API_URL || `${req.protocol}://${req.get('host')}`;
+    if (userProfile.avatar_url && userProfile.avatar_url.startsWith('/uploads/')) {
+      userProfile.avatar_url = `${baseUrl}${userProfile.avatar_url}`;
+    }
+
     res.status(200).json(userProfile);
   } catch (error) {
     console.error('Fetch profile error:', error);
@@ -37,23 +43,37 @@ router.get('/profile', authMiddleware, async (req: Request, res: Response) => {
 router.put('/profile', authMiddleware, async (req: Request, res: Response) => {
     const authReq = req as AuthenticatedRequest;
     const userId = authReq.user?.userId;
-    const { fullName, bio, phoneNumber } = req.body;
+    let { fullName, bio, phoneNumber, avatarUrl } = req.body;
 
     if (!userId) {
         return res.status(401).json({ error: 'Authentication error.' });
     }
 
     try {
+        const baseUrl = process.env.API_URL || `${req.protocol}://${req.get('host')}`;
+        
+        // Strip base URL if present to store only relative path
+        if (avatarUrl && avatarUrl.startsWith(baseUrl)) {
+            avatarUrl = avatarUrl.substring(baseUrl.length);
+        }
+
         const updateResult = await query(
-            'UPDATE users SET full_name = $1, bio = $2, phone_number = $3, updated_at = now() WHERE id = $4 RETURNING id, email, full_name, avatar_url, bio, phone_number, role, is_verified, created_at, updated_at',
-            [fullName, bio, phoneNumber, userId]
+            'UPDATE users SET full_name = $1, bio = $2, phone_number = $3, avatar_url = $4, updated_at = now() WHERE id = $5 RETURNING id, email, full_name, avatar_url, bio, phone_number, role, is_verified, created_at, updated_at',
+            [fullName, bio, phoneNumber, avatarUrl, userId]
         );
 
         if (updateResult.rows.length === 0) {
             return res.status(404).json({ error: 'User not found or could not be updated.' });
         }
 
-        res.status(200).json(updateResult.rows[0]);
+        const userProfile = updateResult.rows[0];
+        
+        // Prepend base URL to avatar_url if it exists and is a relative path
+        if (userProfile.avatar_url && userProfile.avatar_url.startsWith('/uploads/')) {
+            userProfile.avatar_url = `${baseUrl}${userProfile.avatar_url}`;
+        }
+
+        res.status(200).json(userProfile);
     } catch (error) {
         console.error('Update profile error:', error);
         res.status(500).json({ error: 'Internal server error while updating profile.' });

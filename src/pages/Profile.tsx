@@ -15,6 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { formatDate } from '@/lib/index';
 import api from '@/lib/api';
+import { useAuth } from '@/hooks/useAuth';
 import { useTranslation } from 'react-i18next';
 
 // Define the type for the user profile data
@@ -35,22 +36,27 @@ const fetchProfile = async (): Promise<UserProfile> => {
   return data;
 };
 
-const updateProfile = async (profileData: Partial<UserProfile>): Promise<UserProfile> => {
-  const { data } = await api.put('/users/profile', profileData);
-  return data;
-};
+const updateProfile = async (profileData: Partial<UserProfile> & { avatarUrl?: string }): Promise<UserProfile> => {
+   const { data } = await api.put('/users/profile', profileData);
+   return data;
+ };
 
 export default function Profile() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { updateUser } = useAuth();
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
     bio: '',
     phoneNumber: '',
+    avatarUrl: undefined as string | undefined
   });
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
   const { data: profile, isLoading, isError, error } = useQuery<UserProfile, Error>({
     queryKey: ['profile'],
@@ -61,10 +67,13 @@ export default function Profile() {
     mutationFn: updateProfile,
     onSuccess: (updatedProfile) => {
       queryClient.setQueryData(['profile'], updatedProfile);
+      updateUser({
+        fullName: updatedProfile.full_name,
+        avatarUrl: updatedProfile.avatar_url || undefined,
+      });
       toast({ title: 'Success', description: 'Profile updated successfully!' });
       setIsEditing(false);
-    },
-    onError: (err: any) => {
+    },    onError: (err: any) => {
       toast({
         title: 'Error',
         description: err.response?.data?.error || 'Failed to update profile.',
@@ -73,34 +82,66 @@ export default function Profile() {
     },
   });
 
-  useEffect(() => {
-    if (profile) {
-      setFormData({
-        fullName: profile.full_name || '',
-        bio: profile.bio || '',
-        phoneNumber: profile.phone_number || '',
-      });
-    }
-  }, [profile]);
+   useEffect(() => {
+     if (profile) {
+       setFormData({
+         fullName: profile.full_name || '',
+         bio: profile.bio || '',
+         phoneNumber: profile.phone_number || '',
+         avatarUrl: profile.avatar_url
+       });
+       setAvatarPreview(profile.avatar_url || null);
+     }
+   }, [profile]);
 
-  const handleSave = () => {
-    updateMutation.mutate({
-        fullName: formData.fullName,
-        bio: formData.bio,
-        phoneNumber: formData.phoneNumber,
-    });
-  };
+   const handleSave = async () => {
+     let avatarUrl = formData.avatarUrl || undefined;
+     
+     // If a new avatar file is selected, upload it first
+     if (avatarFile) {
+       try {
+         setIsUploadingAvatar(true);
+         const formDataObj = new FormData();
+         formDataObj.append('image', avatarFile);
+         const response = await api.post('/posts/upload', formDataObj, {
+           headers: { 'Content-Type': 'multipart/form-data' }
+         });
+         avatarUrl = response.data.url;
+       } catch (error: any) {
+         toast({
+           title: 'Error',
+           description: String(error.response?.data?.error) || 'Failed to upload avatar',
+           variant: 'destructive',
+         });
+         setIsUploadingAvatar(false);
+         return;
+       } finally {
+         setIsUploadingAvatar(false);
+       }
+     }
+     
+     updateMutation.mutate({
+         fullName: formData.fullName,
+         bio: formData.bio,
+         phoneNumber: formData.phoneNumber,
+         avatarUrl: avatarUrl
+     });
+   };
 
-  const handleCancel = () => {
-    if (profile) {
-      setFormData({
-        fullName: profile.full_name || '',
-        bio: profile.bio || '',
-        phoneNumber: profile.phone_number || '',
-      });
-    }
-    setIsEditing(false);
-  };
+   const handleCancel = () => {
+     if (profile) {
+       setFormData({
+         fullName: profile.full_name || '',
+         bio: profile.bio || '',
+         phoneNumber: profile.phone_number || '',
+         avatarUrl: profile.avatar_url
+       });
+       setAvatarFile(null);
+       setAvatarPreview(profile.avatar_url || null);
+     }
+     setIsEditing(false);
+     setIsUploadingAvatar(false);
+   };
 
   if (isLoading) {
     return <ProfileSkeleton />;
@@ -154,18 +195,37 @@ export default function Profile() {
                 <CardDescription>{t('Update your profile details and avatar')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="flex items-center gap-6">
-                  <div className="relative">
-                    <Avatar className="h-24 w-24">
-                      <AvatarImage src={profile.avatar_url || undefined} alt={profile.full_name} />
-                      <AvatarFallback>{profile.full_name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                    </Avatar>
-                    {isEditing && (
-                      <Button size="icon" variant="secondary" className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full">
-                        <Camera className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
+                 <div className="flex items-center gap-6">
+                   <div className="relative">
+                     <Avatar className="h-24 w-24">
+                       <AvatarImage src={avatarPreview || profile.avatar_url || undefined} alt={profile.full_name} />
+                       <AvatarFallback>{profile.full_name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                     </Avatar>
+                     {isEditing && (
+                       <div className="absolute bottom-0 right-0">
+                         <label className="cursor-pointer">
+                           <input
+                             type="file"
+                             accept="image/*"
+                             onChange={(e) => {
+                               const file = e.target.files?.[0];
+                               if (file) {
+                                 setAvatarFile(file);
+                                 setAvatarPreview(URL.createObjectURL(file));
+                               }
+                             }}
+                             className="hidden"
+                           />
+                           <Button type="button" size="icon" variant="secondary" className="h-8 w-8 rounded-full pointer-events-none">
+                             <Camera className="h-4 w-4" />
+                           </Button>
+                         </label>
+                         {isUploadingAvatar && (
+                           <div className="absolute -bottom-4 -right-4 h-4 w-4 border-2 border-t-transparent border-white rounded-full animate-spin" />
+                         )}
+                       </div>
+                     )}
+                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <h3 className="text-xl font-semibold">{profile.full_name}</h3>

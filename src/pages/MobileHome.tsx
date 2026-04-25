@@ -31,6 +31,20 @@ export default function MobileHome({ onNavigate }: MobileHomeProps) {
    const [postContent, setPostContent] = useState('');
    const [postImage, setPostImage] = useState<File | null>(null);
    const [postImagePreview, setPostImagePreview] = useState('');
+   const [notificationCount, setNotificationCount] = useState(0);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await api.get('/notifications');
+        const data = response.data;
+        setNotificationCount(Array.isArray(data) ? data.length : 0);
+      } catch (error) {
+        setNotificationCount(0);
+      }
+    };
+    fetchNotifications();
+  }, []);
 
   const handleCreatePost = async () => {
     if (postContent.trim()) {

@@ -4,7 +4,7 @@ import { AuthenticatedRequest } from '../types/express';
 
 export const getPosts = async (req: Request, res: Response) => {
   try {
-    const baseUrl = process.env.API_URL || 'https://trunorth-super-app.onrender.com';
+    const baseUrl = process.env.API_URL || `${req.protocol}://${req.get('host')}`;
     const postsResult = await query(`
       SELECT 
         p.id, p.content, p.image_url, p.likes_count, p.comments_count, p.created_at,
@@ -56,8 +56,9 @@ export const uploadImage = async (req: Request, res: Response) => {
   }
   
   try {
-    // Return the relative path - getPosts will prepend the base URL
-    const imageUrl = `/uploads/${authReq.file.filename}`;
+    const baseUrl = process.env.API_URL || `${req.protocol}://${req.get('host')}`;
+    // Return the full URL
+    const imageUrl = `${baseUrl}/uploads/${authReq.file.filename}`;
     res.json({ url: imageUrl });
   } catch (error) {
     console.error('Upload image error:', error);

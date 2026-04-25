@@ -105,7 +105,7 @@ export function TopBar({ onMenuToggle }: TopBarProps) {
               <Button variant="ghost" className="gap-2 px-2">
                 <Avatar className="h-8 w-8">
                   {/* Assuming your backend might eventually send an avatar property, otherwise it falls back */}
-                  <AvatarImage src={(user as any)?.avatar_url} alt={user?.fullName} />
+                  <AvatarImage src={user?.avatarUrl} alt={user?.fullName} />
                   <AvatarFallback>{user?.fullName?.charAt(0) || <User className="h-4 w-4"/>}</AvatarFallback>
                 </Avatar>
                 <span className="hidden md:inline-block font-medium">{user?.fullName?.split(' ')[0] || 'User'}</span>

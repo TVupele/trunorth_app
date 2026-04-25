@@ -7,6 +7,7 @@ export interface User {
   email: string;
   fullName: string;
   role: string;
+  avatarUrl?: string;
 }
 
 interface AuthState {
@@ -19,6 +20,7 @@ interface AuthState {
   logout: () => void;
   initAuth: () => Promise<void>;
   setAuthToken: (token: string) => Promise<void>;
+  updateUser: (userData: Partial<User>) => void;
 }
 
 export const useAuth = create<AuthState>()(
@@ -29,6 +31,13 @@ export const useAuth = create<AuthState>()(
         user: null,
         isAuthenticated: false,
         isLoading: true,
+
+        updateUser: (userData: Partial<User>) => {
+          const { user } = get();
+          if (user) {
+            set({ user: { ...user, ...userData } });
+          }
+        },
 
         setAuthToken: async (token: string) => {
           set({ token });
@@ -80,6 +89,7 @@ export const useAuth = create<AuthState>()(
                 email: userProfile.email,
                 fullName: userProfile.full_name,
                 role: userProfile.role,
+                avatarUrl: userProfile.avatar_url,
               };
               set({ user, isAuthenticated: true, isLoading: false });
             } catch {
