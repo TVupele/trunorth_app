@@ -88,7 +88,7 @@ export function TopBar({ onMenuToggle }: TopBarProps) {
         <div className="flex items-center gap-2 sm:gap-4">
            <LanguageSwitcher />
 
-           <Button variant="ghost" size="icon" className="relative">
+           <Button variant="ghost" size="icon" className="relative hidden md:flex">
              <Bell className="h-5 w-5" />
              {notificationCount > 0 && (
                <Badge
