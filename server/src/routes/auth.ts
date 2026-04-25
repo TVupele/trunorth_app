@@ -100,6 +100,50 @@ router.post('/login', async (req, res) => {
       { expiresIn: '7d' }
     );
 
+    // Track login history
+    const userAgent = req.headers['user-agent'] || '';
+    const rawIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.ip || '';
+    const ipAddress = Array.isArray(rawIp) ? rawIp[0] : rawIp.split(',')[0].trim();
+
+    // Basic User-Agent parsing
+    let browser = 'Unknown Browser';
+    let os = 'Unknown OS';
+    if (userAgent.includes('Firefox')) browser = 'Firefox';
+    else if (userAgent.includes('Edg')) browser = 'Edge';
+    else if (userAgent.includes('Chrome')) browser = 'Chrome';
+    else if (userAgent.includes('Safari')) browser = 'Safari';
+
+    if (userAgent.includes('Win')) os = 'Windows';
+    else if (userAgent.includes('Mac')) os = 'MacOS';
+    else if (userAgent.includes('Android')) os = 'Android';
+    else if (userAgent.includes('iPhone')) os = 'iPhone';
+    else if (userAgent.includes('iPad')) os = 'iPad';
+    else if (userAgent.includes('Linux')) os = 'Linux';
+    
+    const device = `${browser} on ${os}`;
+
+    // Basic Location by IP
+    let location = 'Unknown Location';
+    try {
+      if (ipAddress && ipAddress !== '127.0.0.1' && ipAddress !== '::1' && !ipAddress.startsWith('192.168.')) {
+        const geoResponse = await fetch(`http://ip-api.com/json/${ipAddress}`);
+        const geoData: any = await geoResponse.json();
+        if (geoData && geoData.status === 'success') {
+          location = `${geoData.city}, ${geoData.country}`;
+        }
+      } else {
+        location = 'Local Network';
+      }
+    } catch (e) {
+      console.error('GeoIP fetch error:', e);
+    }
+
+    // Save to database (fire and forget, so it doesn't block the response if it fails)
+    query(
+      'INSERT INTO login_history (user_id, device, location, ip_address) VALUES ($1, $2, $3, $4)',
+      [user.id, device, location, ipAddress]
+    ).catch(err => console.error('Failed to save login history:', err));
+
     res.status(200).json({
       message: 'Login successful!',
       token,

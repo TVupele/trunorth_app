@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { User, Lock, Bell, Globe, Moon, Sun, Shield, Eye, History, Mail, Smartphone, Check } from 'lucide-react';
@@ -11,12 +11,23 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
+import api from '@/lib/api';
+import { formatDate } from '@/lib/index';
+
+interface LoginHistoryItem {
+  id: string;
+  device: string;
+  location: string;
+  ip_address: string;
+  created_at: string;
+}
 
 export default function Settings() {
   const { t } = useTranslation();
   const { toast } = useToast();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [language, setLanguage] = useState<'en' | 'ha'>('en');
+  const [loginHistory, setLoginHistory] = useState<LoginHistoryItem[]>([]);
   const [notifications, setNotifications] = useState({
     wallet: { push: true, email: true, sms: false },
     social: { push: true, email: false, sms: false },
@@ -37,6 +48,18 @@ export default function Settings() {
     twoFactorAuth: false,
     loginAlerts: true,
   });
+
+  useEffect(() => {
+    const fetchLoginHistory = async () => {
+      try {
+        const response = await api.get('/users/login-history');
+        setLoginHistory(response.data || []);
+      } catch (error) {
+        console.error('Failed to fetch login history', error);
+      }
+    };
+    fetchLoginHistory();
+  }, []);
 
   const handlePasswordChange = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -383,27 +406,27 @@ export default function Settings() {
                   </div>
                   <Card>
                     <CardContent className="p-4 space-y-3">
-                      {[
-                        { device: 'Chrome on Windows', location: 'Lagos, Nigeria', time: '2 hours ago', current: true },
-                        { device: 'Safari on iPhone', location: 'Abuja, Nigeria', time: '1 day ago', current: false },
-                        { device: 'Chrome on Android', location: 'Kano, Nigeria', time: '3 days ago', current: false },
-                      ].map((login, index) => (
-                        <div key={index} className="flex items-start justify-between p-3 rounded-lg bg-muted/50">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <p className="font-medium text-sm">{login.device}</p>
-                              {login.current && (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                                  <Check className="w-3 h-3" />
-                                  Current
-                                </span>
-                              )}
+                      {loginHistory.length > 0 ? (
+                        loginHistory.map((login, index) => (
+                          <div key={login.id} className="flex items-start justify-between p-3 rounded-lg bg-muted/50">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <p className="font-medium text-sm">{login.device}</p>
+                                {index === 0 && (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                                    <Check className="w-3 h-3" />
+                                    Current
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground">{login.location}</p>
                             </div>
-                            <p className="text-xs text-muted-foreground">{login.location}</p>
+                            <p className="text-xs text-muted-foreground">{formatDate(login.created_at)}</p>
                           </div>
-                          <p className="text-xs text-muted-foreground">{login.time}</p>
-                        </div>
-                      ))}
+                        ))
+                      ) : (
+                        <p className="text-sm text-muted-foreground text-center py-4">No login history available yet.</p>
+                      )}
                     </CardContent>
                   </Card>
                 </div>

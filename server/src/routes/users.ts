@@ -80,4 +80,26 @@ router.put('/profile', authMiddleware, async (req: Request, res: Response) => {
     }
 });
 
+// GET /api/users/login-history - Fetches the logged-in user's login history
+router.get('/login-history', authMiddleware, async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user?.userId;
+
+    if (!userId) {
+        return res.status(401).json({ error: 'Authentication error.' });
+    }
+
+    try {
+        const historyResult = await query(
+            'SELECT id, device, location, ip_address, created_at FROM login_history WHERE user_id = $1 ORDER BY created_at DESC LIMIT 10',
+            [userId]
+        );
+
+        res.status(200).json(historyResult.rows);
+    } catch (error) {
+        console.error('Fetch login history error:', error);
+        res.status(500).json({ error: 'Internal server error while fetching login history.' });
+    }
+});
+
 export default router;
