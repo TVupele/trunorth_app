@@ -2,7 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
-import { getPosts, createPost, uploadImage, likePost, unlikePost, addComment } from '../controllers/posts';
+import { getPosts, createPost, uploadImage, likePost, unlikePost, addComment, retweetPost, unretweetPost } from '../controllers/posts';
 import { authMiddleware } from '../middleware/auth';
 
 const router = Router();
