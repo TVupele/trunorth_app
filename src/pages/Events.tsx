@@ -23,6 +23,7 @@ interface PurchasedTicket {
   id: string;
   eventId: string;
   eventTitle: string;
+  eventImage?: string;
   eventDate: string;
   eventTime: string;
   eventLocation: string;
@@ -53,22 +54,47 @@ export default function Events() {
   const [locationFilter, setLocationFilter] = useState<string>('');
    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-   const fetchEvents = async () => {
-     setIsLoadingEvents(true);
-     try {
-       const response = await api.get('/events');
-       setEvents(response.data);
-     } catch (error) {
-       console.error('Failed to fetch events:', error);
-       toast.error('Failed to load events.');
-     } finally {
-       setIsLoadingEvents(false);
-     }
-   };
+    const fetchEvents = async () => {
+      setIsLoadingEvents(true);
+      try {
+        const response = await api.get('/events');
+        setEvents(response.data);
+      } catch (error) {
+        console.error('Failed to fetch events:', error);
+        toast.error('Failed to load events.');
+      } finally {
+        setIsLoadingEvents(false);
+      }
+    };
 
-   useEffect(() => {
-     fetchEvents();
-   }, []);
+    const fetchBookings = async () => {
+      try {
+        const response = await api.get('/bookings/event-tickets');
+        // Transform backend booking data to match PurchasedTicket interface
+        const tickets = response.data.map((booking: any) => ({
+          id: booking.id,
+          eventId: booking.event_id || booking.eventId,
+          eventTitle: booking.event_title || booking.eventTitle,
+          eventImage: booking.event_image || booking.eventImage,
+          eventDate: booking.event_date || booking.eventDate,
+          eventLocation: booking.location || booking.eventLocation,
+          quantity: booking.quantity,
+          totalAmount: parseFloat(booking.total_amount || booking.totalAmount),
+          qrCode: booking.qr_code || booking.qrCode,
+          purchaseDate: booking.booking_date || booking.purchaseDate,
+          // Calculate time from event_date or use default
+          eventTime: new Date(booking.event_date || booking.eventDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+        }));
+        setPurchasedTickets(tickets);
+      } catch (error) {
+        console.error('Failed to fetch bookings:', error);
+      }
+    };
+
+    useEffect(() => {
+      fetchEvents();
+      fetchBookings();
+    }, []);
 
   const filteredEvents = useMemo(() => {
     return events.filter((event) => {
@@ -89,7 +115,7 @@ export default function Events() {
       .slice(0, 3);
   }, [events]);
 
-  const handlePurchaseTicket = async () => {
+   const handlePurchaseTicket = async () => {
     if (!selectedEvent) return;
 
     // Pre-check for sufficient balance locally for better UX
@@ -105,33 +131,21 @@ export default function Events() {
 
     try {
       // Call the backend purchaseTicket API
-      await api.post('/events/purchase', {
+      const response = await api.post('/events/purchase', {
         event_id: selectedEvent.id,
         quantity: ticketQuantity,
       });
 
-      // Refresh events and wallet after purchase
-      await Promise.all([fetchEvents(), fetchWalletData()]);
+      // Success! Refresh both events (for seat count) and bookings (for My Tickets tab)
+      await Promise.all([fetchEvents(), fetchBookings()]);
 
-      // Add ticket to local state
-      const newTicket: PurchasedTicket = {
-        id: `ticket-${Date.now()}`,
-        eventId: selectedEvent.id,
-        eventTitle: selectedEvent.title,
-        eventDate: selectedEvent.date,
-        eventTime: selectedEvent.time,
-        eventLocation: selectedEvent.location,
-        quantity: ticketQuantity,
-        totalAmount,
-        qrCode: `TRUNORTH-${selectedEvent.id}-${Date.now()}`,
-        purchaseDate: new Date().toISOString(),
-      };
-      setPurchasedTickets((prev) => [newTicket, ...prev]);
+      toast.success('Ticket purchased successfully!', {
+        description: `Booking ID: ${response.data.bookingId}`,
+      });
 
       setShowPurchaseDialog(false);
       setSelectedEvent(null);
       setTicketQuantity(1);
-      toast.success('Ticket purchased successfully!');
     } catch (error: any) {
       const errorMsg = error.response?.data?.error || 'Failed to purchase ticket';
       toast.error(errorMsg);

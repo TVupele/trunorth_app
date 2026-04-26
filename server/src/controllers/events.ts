@@ -151,6 +151,15 @@ export const purchaseTicket = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Not enough seats available.' });
     }
 
+    // Check if user already booked this event
+    const existingBooking = await query(
+      'SELECT id FROM bookings WHERE user_id = $1 AND entity_type = $2 AND entity_id = $3',
+      [userId, 'event', event_id]
+    );
+    if (existingBooking.rows.length > 0) {
+      return res.status(400).json({ error: 'You have already booked this event.' });
+    }
+
     const totalAmount = parseFloat(event.ticket_price) * quantity;
 
     const walletResult = await query('SELECT * FROM wallets WHERE user_id = $1', [userId]);
@@ -160,18 +169,44 @@ export const purchaseTicket = async (req: Request, res: Response) => {
 
     const wallet = walletResult.rows[0];
 
-    await query('UPDATE wallets SET balance = balance - $1 WHERE id = $2', [totalAmount, wallet.id]);
-    await query(
-      'INSERT INTO transactions (wallet_id, type, status, amount, description) VALUES ($1, $2, $3, $4, $5)',
-      [wallet.id, 'payment', 'completed', totalAmount, `Ticket purchase for ${event.title} (${quantity}x)`]
-    );
-    await query('UPDATE events SET available_seats = available_seats - $1 WHERE id = $2', [quantity, event_id]);
-    await query(
-      'INSERT INTO bookings (user_id, entity_type, entity_id, status) VALUES ($1, $2, $3, $4)',
-      [userId, 'event', event_id, 'confirmed']
-    );
+    // Start transaction
+    await query('BEGIN');
+    try {
+      // Deduct from wallet
+      await query('UPDATE wallets SET balance = balance - $1 WHERE id = $2', [totalAmount, wallet.id]);
 
-    res.status(200).json({ message: 'Ticket purchased successfully!', totalAmount });
+      // Create payment transaction
+      const txResult = await query(
+        `INSERT INTO transactions (wallet_id, type, status, amount, description, related_entity_id) 
+         VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+        [wallet.id, 'payment', 'completed', totalAmount, `Ticket purchase for ${event.title} (${quantity}x)`, event_id]
+      );
+      const transactionId = txResult.rows[0].id;
+
+      // Decrease available seats
+      await query('UPDATE events SET available_seats = available_seats - $1 WHERE id = $2', [quantity, event_id]);
+
+      // Generate unique QR code
+      const qrCode = `TN-${event_id.substring(0, 8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
+
+      // Create booking
+      await query(
+        `INSERT INTO bookings (user_id, entity_type, entity_id, quantity, total_amount, qr_code, transaction_id, status) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [userId, 'event', event_id, quantity, totalAmount, qrCode, transactionId, 'confirmed']
+      );
+
+      await query('COMMIT');
+
+      res.status(200).json({ 
+        message: 'Ticket purchased successfully!', 
+        totalAmount,
+        bookingId: qrCode
+      });
+    } catch (innerError) {
+      await query('ROLLBACK');
+      throw innerError;
+    }
   } catch (error) {
     console.error('Purchase ticket error:', error);
     res.status(500).json({ error: 'Internal server error.' });

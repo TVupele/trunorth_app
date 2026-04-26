@@ -34,6 +34,7 @@ import vendorRoutes from './routes/vendor';
 import tutorManagementRoutes from './routes/tutorManagement';
 import emergencyRoutes from './routes/emergency';
 import notificationsRoutes from './routes/notifications';
+import bookingsRoutes from './routes/bookings';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -85,6 +86,7 @@ app.use('/api/vendor', vendorRoutes);
 app.use('/api/tutor-management', tutorManagementRoutes);
 app.use('/api/emergency', emergencyRoutes);
 app.use('/api/notifications', notificationsRoutes);
+app.use('/api/bookings', bookingsRoutes);
 
 // Simple root endpoint (Health Check)
 app.get('/', (req, res) => {

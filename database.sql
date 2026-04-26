@@ -227,7 +227,11 @@ CREATE TABLE bookings (
     entity_id UUID NOT NULL,
     booking_date TIMESTAMPTZ DEFAULT now() NOT NULL,
     status VARCHAR(50) DEFAULT 'confirmed', -- confirmed, cancelled
-    transaction_id UUID REFERENCES transactions(id)
+    quantity INT DEFAULT 1 NOT NULL,
+    total_amount DECIMAL(15, 2) NOT NULL,
+    qr_code VARCHAR(255) UNIQUE,
+    transaction_id UUID REFERENCES transactions(id),
+    CONSTRAINT unique_user_event_booking UNIQUE(user_id, entity_type, entity_id)
 );
 
 CREATE TABLE donations (
