@@ -2,22 +2,21 @@ import axios from 'axios';
 import { useAuth } from '@/hooks/useAuth';
 
 const getApiBaseUrl = () => {
-  const API_URL = "https://trunorth-super-app.onrender.com";
-  const apiUrl = import.meta.env.VITE_API_URL || API_URL;
-  if (apiUrl) {
+  // In development, use relative /api (proxied to localhost:3001 via vite.config.ts)
+  // In production, use the full API_URL from env
+  if (import.meta.env.PROD) {
+    const API_URL = "https://trunorth-super-app.onrender.com";
+    const apiUrl = import.meta.env.VITE_API_URL || API_URL;
     try {
-      // Use the URL constructor for a robust way to combine base URL and path
       const url = new URL(apiUrl);
       url.pathname = '/api';
-      // Return the URL as a string, removing any trailing slash for consistency
       return url.toString().replace(/\/$/, '');
     } catch (error) {
       console.error('Invalid VITE_API_URL:', apiUrl, error);
-      // Fallback to relative path on error
       return '/api';
     }
   }
-  // For local development or when VITE_API_URL is not set, use a relative path
+  // Development: use relative path which Vite proxies to localhost:3001
   return '/api';
 };
 
