@@ -47,54 +47,68 @@ export const useSocial = create<SocialState>((set, get) => ({
    fetchPosts: async () => {
      try {
        const response = await api.get('/posts');
-       set({ posts: response.data });
+       const posts = response.data.map((post: any) => ({
+         id: post.id,
+         userId: post.user_id,
+         userName: post.full_name,
+         userAvatar: post.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Falcon',
+         content: post.content,
+         imageUrl: post.imageUrl || post.image_url,
+         likes: post.likes_count || post.likes || 0,
+         comments: post.comments || [],
+         retweets: post.retweets_count || post.retweets || 0,
+         isLiked: post.isLiked || false,
+         isRetweeted: post.isRetweeted || false,
+         timestamp: post.created_at || post.timestamp,
+       }));
+       set({ posts });
      } catch (error) {
        console.error('Failed to fetch posts', error);
      }
    },
 
-  createPost: async (content: string, image?: string) => {
-    try {
-      const response = await api.post('/posts', { content, image_url: image });
-      const savedPost = response.data;
-      const newPost: Post = {
-        id: savedPost.id,
-        userId: savedPost.user_id,
-        userName: savedPost.full_name || 'Current User',
-        userAvatar: savedPost.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser',
-        content: savedPost.content,
-        imageUrl: savedPost.imageUrl,
-        likes: savedPost.likes_count || 0,
-        comments: savedPost.comments || [],
-        retweets: savedPost.retweets_count || 0,
-        isLiked: savedPost.isLiked || false,
-        isRetweeted: savedPost.isRetweeted || false,
-        timestamp: savedPost.created_at,
-      };
-      set((state) => ({
-        posts: [newPost, ...state.posts],
-      }));
-    } catch (error) {
-      console.error('Failed to create post:', error);
-      const newPost: Post = {
-        id: `post-${Date.now()}`,
-        userId: get().currentUserId,
-        userName: 'Current User',
-        userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser',
-        content,
-        imageUrl: image,
-        likes: 0,
-        comments: [],
-        retweets: 0,
-        isLiked: false,
-        isRetweeted: false,
-        timestamp: new Date().toISOString(),
-      };
-      set((state) => ({
-        posts: [newPost, ...state.posts],
-      }));
-    }
-  },
+   createPost: async (content: string, image?: string) => {
+     try {
+       const response = await api.post('/posts', { content, image_url: image });
+       const savedPost = response.data;
+       const newPost: Post = {
+         id: savedPost.id,
+         userId: savedPost.user_id,
+         userName: savedPost.full_name || 'Current User',
+         userAvatar: savedPost.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser',
+         content: savedPost.content,
+         imageUrl: savedPost.imageUrl || savedPost.image_url,
+         likes: savedPost.likes_count || savedPost.likes || 0,
+         comments: savedPost.comments || [],
+         retweets: savedPost.retweets_count || savedPost.retweets || 0,
+         isLiked: savedPost.isLiked || false,
+         isRetweeted: savedPost.isRetweeted || false,
+         timestamp: savedPost.created_at || savedPost.timestamp,
+       };
+       set((state) => ({
+         posts: [newPost, ...state.posts],
+       }));
+     } catch (error) {
+       console.error('Failed to create post:', error);
+       const newPost: Post = {
+         id: `post-${Date.now()}`,
+         userId: get().currentUserId,
+         userName: 'Current User',
+         userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser',
+         content,
+         imageUrl: image,
+         likes: 0,
+         comments: [],
+         retweets: 0,
+         isLiked: false,
+         isRetweeted: false,
+         timestamp: new Date().toISOString(),
+       };
+       set((state) => ({
+         posts: [newPost, ...state.posts],
+       }));
+     }
+   },
 
    addComment: async (postId: string, content: string) => {
      const newComment = {
