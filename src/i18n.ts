@@ -479,28 +479,48 @@ const resources = {
       "Enter your email to reset": "Shigar da imel ɗinka don sake saiti",
       "Continue": "Ci gaba",
       
-      // Misc
-      "Featured": "Abin da aka fi so",
-      "Popular": "Shahararri",
-      "New": "Sabuwa",
-      "Trending": "Abu mai zafi",
-      "Recommended": "Abin da aka ba da shawarar",
-      "See More": "Duba sama",
-      "Load More": "Loading more",
-      "Share": "Raba",
-      "Like": "Kunna",
-      "Comment": "Sharhi",
-      "Reply": "amsa",
-      "Post": "Post",
-      "Create Post": "Ƙirƙiri Post",
-      "Add Media": "Ƙara media",
-      "Update": "Sabunta",
-      "Confirm": "Tabbatar",
-      "Yes": "I",
-      "No": "A'a"
+       // Misc
+       "Featured": "Abin da aka fi so",
+       "Popular": "Shahararri",
+       "New": "Sabuwa",
+       "Trending": "Abu mai zafi",
+       "Recommended": "Abin da aka ba da shawarar",
+       "See More": "Duba sama",
+       "Load More": "Loading more",
+       "Share": "Raba",
+       "Like": "Kunna",
+       "Comment": "Sharhi",
+       "Reply": "amsa",
+       "Post": "Post",
+       "Create Post": "Ƙirƙiri Post",
+       "Add Media": "Ƙara media",
+       "Update": "Sabunta",
+       "Confirm": "Tabbatar",
+       "Yes": "I",
+       "No": "A'a",
+
+       // Social Page
+       "Social": "Kungiya",
+       "Connect & share": "Huda da raba",
+       "Feed": "Feed",
+       "My Posts": "Sakonnina",
+       "Messages": "Saƙonni",
+       "Create Post": "Ƙirƙiri Post",
+       "What's on your mind?": "Menene a cikin ranka?",
+       "Image": "Hoton",
+       "Search posts and users...": "Bincika sakonnin da masu amfani...",
+       "Load More Posts": "Ƙara Post",
+       "No posts found matching your search.": "Ba a samu post ba daidai da bincikanka ba.",
+       "You haven't created any posts yet.": "Ba ka ƙirƙiri ko wanne post ba.",
+       "Create Your First Post": "Ƙirƙiri Farkon Post ɗinka",
+       "Conversations": "Tattaunawa",
+       "No conversations yet": "Babu tattaunawa yanzu",
+       "Select a conversation": "Zaɓi tattaunawa",
+       "Select a conversation to start messaging": "Zaɓi tattaunawa don fara aikawa",
+        "Type a message...": "Rubuta saƙo..."
+      }
     }
-  }
-};
+  };
 
 i18n
   .use(initReactI18next)

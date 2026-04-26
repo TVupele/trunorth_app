@@ -23,7 +23,7 @@ export default function Social() {
   const [postImage, setPostImage] = useState<File | null>(null);
   const [postImagePreview, setPostImagePreview] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('feed');
+  const [activeTab, setActiveTab] = useState<'feed' | 'my-posts' | 'messages'>('feed');
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [messageContent, setMessageContent] = useState('');
   const [displayedPosts, setDisplayedPosts] = useState(10);
@@ -96,21 +96,21 @@ export default function Social() {
   return (
     <div className="min-h-screen bg-background p-3">
       <div className="max-w-7xl mx-auto space-y-4">
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          <h1 className="text-lg font-bold text-foreground mb-1">Social</h1>
-          <p className="text-xs text-muted-foreground">Connect & share</p>
-        </motion.div>
+         <motion.div
+           initial={{ opacity: 0, y: -10 }}
+           animate={{ opacity: 1, y: 0 }}
+           transition={{ duration: 0.2 }}
+         >
+           <h1 className="text-lg font-bold text-foreground mb-1">{t('Social')}</h1>
+           <p className="text-xs text-muted-foreground">{t('Connect & share')}</p>
+         </motion.div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-4">
-            <TabsTrigger value="feed" className="text-xs py-1.5">Feed</TabsTrigger>
-            <TabsTrigger value="my-posts" className="text-xs py-1.5">My Posts</TabsTrigger>
-            <TabsTrigger value="messages" className="text-xs py-1.5">Messages</TabsTrigger>
-          </TabsList>
+         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+           <TabsList className="grid w-full grid-cols-3 mb-4">
+             <TabsTrigger value="feed" className="text-xs py-1.5">{t('Feed')}</TabsTrigger>
+             <TabsTrigger value="my-posts" className="text-xs py-1.5">{t('My Posts')}</TabsTrigger>
+             <TabsTrigger value="messages" className="text-xs py-1.5">{t('Messages')}</TabsTrigger>
+           </TabsList>
 
           <TabsContent value="feed" className="space-y-4">
             <motion.div
@@ -118,30 +118,30 @@ export default function Social() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, delay: 0.05 }}
             >
-              <Card className="py-2">
-                <CardHeader className="py-2 px-3">
-                  <CardTitle className="text-sm">Create Post</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2 px-3">
-                  <Textarea
-                    placeholder="What's on your mind?"
-                    value={postContent}
-                    onChange={(e) => setPostContent(e.target.value)}
-                    className="min-h-[60px] resize-none text-sm"
-                  />
-                  <div className="flex items-center gap-2">
-                    <label className="flex items-center gap-1 cursor-pointer">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="hidden"
-                      />
-                      <Button variant="outline" size="sm" className="h-7 text-xs" type="button">
-                        <ImageIcon className="h-3 w-3" />
-                        <span className="ml-1">Image</span>
-                      </Button>
-                    </label>
+               <Card className="py-2">
+                 <CardHeader className="py-2 px-3">
+                   <CardTitle className="text-sm">{t('Create Post')}</CardTitle>
+                 </CardHeader>
+                 <CardContent className="space-y-2 px-3">
+                   <Textarea
+                     placeholder={t("What's on your mind?")}
+                     value={postContent}
+                     onChange={(e) => setPostContent(e.target.value)}
+                     className="min-h-[60px] resize-none text-sm"
+                   />
+                   <div className="flex items-center gap-2">
+                     <label className="flex items-center gap-1 cursor-pointer">
+                       <input
+                         type="file"
+                         accept="image/*"
+                         onChange={handleImageChange}
+                         className="hidden"
+                       />
+                       <Button variant="outline" size="sm" className="h-7 text-xs" type="button">
+                         <ImageIcon className="h-3 w-3" />
+                         <span className="ml-1">{t('Image')}</span>
+                       </Button>
+                     </label>
                     {postImagePreview && (
                       <div className="relative w-8 h-8 rounded overflow-hidden">
                         <img src={postImagePreview} alt="Preview" className="w-full h-full object-cover" />
@@ -160,17 +160,17 @@ export default function Social() {
               </Card>
             </motion.div>
 
-            <div className="flex items-center gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search posts and users..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
+             <div className="flex items-center gap-4">
+               <div className="relative flex-1">
+                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                 <Input
+                   placeholder={t("Search posts and users...")}
+                   value={searchQuery}
+                   onChange={(e) => setSearchQuery(e.target.value)}
+                   className="pl-10"
+                 />
+               </div>
+             </div>
 
             <div className="space-y-4">
               <AnimatePresence mode="popLayout">
@@ -188,19 +188,19 @@ export default function Social() {
               </AnimatePresence>
             </div>
 
-            {filteredPosts.length > displayedPosts && (
-              <div className="flex justify-center pt-4">
-                <Button onClick={handleLoadMore} variant="outline">
-                  Load More Posts
-                </Button>
-              </div>
-            )}
+             {filteredPosts.length > displayedPosts && (
+               <div className="flex justify-center pt-4">
+                 <Button onClick={handleLoadMore} variant="outline">
+                   {t('Load More Posts')}
+                 </Button>
+               </div>
+             )}
 
-            {filteredPosts.length === 0 && (
-              <Card className="p-12 text-center">
-                <p className="text-muted-foreground">No posts found matching your search.</p>
-              </Card>
-            )}
+             {filteredPosts.length === 0 && (
+               <Card className="p-12 text-center">
+                 <p className="text-muted-foreground">{t('No posts found matching your search.')}</p>
+               </Card>
+             )}
           </TabsContent>
 
           <TabsContent value="my-posts" className="space-y-4">
@@ -218,23 +218,23 @@ export default function Social() {
                   </motion.div>
                 ))}
               </AnimatePresence>
-            ) : (
-              <Card className="p-12 text-center">
-                <p className="text-muted-foreground mb-4">You haven't created any posts yet.</p>
-                <Button onClick={() => setActiveTab('feed')}>Create Your First Post</Button>
-              </Card>
-            )}
+             ) : (
+               <Card className="p-12 text-center">
+                 <p className="text-muted-foreground mb-4">{t("You haven't created any posts yet.")}</p>
+                 <Button onClick={() => setActiveTab('feed')}>{t('Create Your First Post')}</Button>
+               </Card>
+             )}
           </TabsContent>
 
           <TabsContent value="messages">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="md:col-span-1">
-                <CardHeader>
-                  <CardTitle>Conversations</CardTitle>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <ScrollArea className="h-[600px]">
-                    {conversations.length > 0 ? (
+               <Card className="md:col-span-1">
+                 <CardHeader>
+                   <CardTitle>{t('Conversations')}</CardTitle>
+                 </CardHeader>
+                 <CardContent className="p-0">
+                   <ScrollArea className="h-[600px]">
+                     {conversations.length > 0 ? (
                       <div className="space-y-1 p-4">
                         {conversations.map((conversation) => (
                           <motion.div
@@ -281,27 +281,27 @@ export default function Social() {
                               </div>
                             </button>
                           </motion.div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="p-8 text-center text-muted-foreground">
-                        No conversations yet
-                      </div>
-                    )}
+                         ))}
+                       </div>
+                     ) : (
+                       <div className="p-8 text-center text-muted-foreground">
+                         {t('No conversations yet')}
+                       </div>
+                     )}
                   </ScrollArea>
                 </CardContent>
               </Card>
 
-              <Card className="md:col-span-2">
-                <CardHeader>
-                  <CardTitle>
-                    {selectedConversation
-                      ? conversations.find((c) => c.id === selectedConversation)?.participantName
-                      : 'Select a conversation'}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {selectedConversation ? (
+               <Card className="md:col-span-2">
+                 <CardHeader>
+                   <CardTitle>
+                     {selectedConversation
+                       ? conversations.find((c) => c.id === selectedConversation)?.participantName
+                       : t('Select a conversation')}
+                   </CardTitle>
+                 </CardHeader>
+                 <CardContent className="space-y-4">
+                   {selectedConversation ? (
                     <>
                       <ScrollArea className="h-[480px] pr-4">
                         <div className="space-y-4">
@@ -331,19 +331,19 @@ export default function Social() {
                         </div>
                       </ScrollArea>
 
-                      <div className="flex items-center gap-2">
-                        <Input
-                          placeholder="Type a message..."
-                          value={messageContent}
-                          onChange={(e) => setMessageContent(e.target.value)}
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                              e.preventDefault();
-                              handleSendMessage();
-                            }
-                          }}
-                          className="flex-1"
-                        />
+                       <div className="flex items-center gap-2">
+                         <Input
+                           placeholder={t('Type a message...')}
+                           value={messageContent}
+                           onChange={(e) => setMessageContent(e.target.value)}
+                           onKeyPress={(e) => {
+                             if (e.key === 'Enter' && !e.shiftKey) {
+                               e.preventDefault();
+                               handleSendMessage();
+                             }
+                           }}
+                           className="flex-1"
+                         />
                         <Button
                           onClick={handleSendMessage}
                           disabled={!messageContent.trim()}
@@ -353,11 +353,11 @@ export default function Social() {
                         </Button>
                       </div>
                     </>
-                  ) : (
-                    <div className="h-[540px] flex items-center justify-center text-muted-foreground">
-                      Select a conversation to start messaging
-                    </div>
-                  )}
+                   ) : (
+                     <div className="h-[540px] flex items-center justify-center text-muted-foreground">
+                       {t('Select a conversation to start messaging')}
+                     </div>
+                   )}
                 </CardContent>
               </Card>
             </div>
