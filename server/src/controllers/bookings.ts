@@ -36,11 +36,11 @@ export const getMyBookings = async (req: Request, res: Response) => {
       eventImage: row.event_image,
       eventDate: row.event_date,
       eventLocation: row.location,
+      eventTime: new Date(row.event_date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
       quantity: row.quantity,
       totalAmount: parseFloat(row.total_amount),
       qrCode: row.qr_code,
       purchaseDate: row.booking_date,
-      ticketPrice: parseFloat(row.ticket_price),
     }));
 
     res.json(bookings);
