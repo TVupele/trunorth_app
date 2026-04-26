@@ -52,6 +52,9 @@ export default function Register() {
     }
   };
 
+  const apiUrl = import.meta.env.VITE_API_URL || 'https://trunorth-super-app.onrender.com';
+  const googleAuthUrl = `${apiUrl.replace(/\/+$/, '')}/api/auth/google`;
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <Card className="mx-auto max-w-sm">
@@ -110,7 +113,7 @@ export default function Register() {
                 </span>
               </div>
             </div>
-            <a href={`${import.meta.env.VITE_API_URL || 'https://trunorth-super-app.onrender.com'}/api/auth/google`} className="w-full">
+            <a href={googleAuthUrl} className="w-full">
               <Button variant="outline" className="w-full gap-2">
                 <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
