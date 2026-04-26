@@ -5,6 +5,26 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle, MapPin, Clock, CheckCircle2, Loader2, XCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 
 interface EmergencyReportCardProps {
   report: EmergencyReport;
@@ -32,6 +52,7 @@ const typeLabels = {
 };
 
 export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
+  const [showDetails, setShowDetails] = useState(false);
   const priorityStyle = priorityConfig[report.priority] || priorityConfig.medium;
   const PriorityIcon = priorityStyle.icon;
   const statusStyle = statusConfig[report.status] || statusConfig.pending;
@@ -111,7 +132,7 @@ export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
       </CardContent>
 
       <CardFooter className="pt-3 border-t border-border">
-        <Button variant="outline" className="w-full" size="sm">
+        <Button variant="outline" className="w-full" size="sm" onClick={() => setShowDetails(true)}>
           View Details
         </Button>
       </CardFooter>
@@ -136,13 +157,120 @@ export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
     );
   }
 
+   return (
+     <>
+       <motion.div
+         initial={{ opacity: 0, y: 20 }}
+         animate={{ opacity: 1, y: 0 }}
+         transition={{ duration: 0.3 }}
+       >
+         {cardContent}
+       </motion.div>
+
+       <EmergencyReportDetailsDialog
+         report={report}
+         open={showDetails}
+         onOpenChange={setShowDetails}
+       />
+     </>
+   );
+ }
+
+// Full Report Details Dialog Component
+function EmergencyReportDetailsDialog({ report, open, onOpenChange }: { report: EmergencyReport; open: boolean; onOpenChange: (open: boolean) => void }) {
+  const priorityStyle = priorityConfig[report.priority] || priorityConfig.medium;
+  const PriorityIcon = priorityStyle.icon;
+  const statusStyle = statusConfig[report.status] || statusConfig.pending;
+  const StatusIcon = statusStyle.icon;
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      {cardContent}
-    </motion.div>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-destructive" />
+            {typeLabels[report.type] || report.type} Report
+          </DialogTitle>
+          <DialogDescription>
+            Submitted on {formatDate(report.timestamp)}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-6 py-4">
+          {/* Status and Priority Badges */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <Badge variant={priorityStyle.variant} className={priorityStyle.bg}>
+              <PriorityIcon className="w-3 h-3 mr-1" />
+              {report.priority.toUpperCase()} PRIORITY
+            </Badge>
+            <Badge variant={statusStyle.variant}>
+              <StatusIcon className={`w-3 h-3 mr-1 ${report.status === "in-progress" ? "animate-spin" : ""}`} />
+              {report.status === "in-progress" ? "In Progress" : report.status.charAt(0).toUpperCase() + report.status.slice(1)}
+            </Badge>
+          </div>
+
+          {/* Description */}
+          <div className="space-y-2">
+            <h4 className="font-semibold">Description</h4>
+            <p className="text-sm text-foreground bg-muted p-3 rounded-md">{report.description}</p>
+          </div>
+
+          {/* Location */}
+          <div className="space-y-2">
+            <h4 className="font-semibold flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-muted-foreground" />
+              Location
+            </h4>
+            <p className="text-sm text-foreground bg-muted p-3 rounded-md font-mono">
+              {report.location || 'Not specified'}
+            </p>
+            {report.coordinates && (
+              <p className="text-xs text-muted-foreground">
+                GPS: {report.coordinates.lat.toFixed(6)}, {report.coordinates.lng.toFixed(6)}
+              </p>
+            )}
+          </div>
+
+          {/* Photos */}
+          {report.photos && report.photos.length > 0 && (
+            <div className="space-y-2">
+              <h4 className="font-semibold">Evidence Photos ({report.photos.length})</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {report.photos.map((photo, index) => (
+                  <div key={index} className="relative aspect-square rounded-md overflow-hidden border border-border">
+                    <img src={photo} alt={`Evidence ${index + 1}`} className="w-full h-full object-cover" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Timeline */}
+          <div className="space-y-2">
+            <h4 className="font-semibold">Status Timeline</h4>
+            <div className="flex items-center gap-2 p-4 bg-muted/50 rounded-lg">
+              <div className="flex flex-col items-center gap-1">
+                <div className="w-3 h-3 rounded-full bg-primary" />
+                <span className="text-xs">Reported</span>
+              </div>
+              <div className="flex-1 h-px bg-border" />
+              <div className="flex flex-col items-center gap-1">
+                <div className={`w-3 h-3 rounded-full ${report.status !== "pending" ? "bg-primary" : "bg-muted"}`} />
+                <span className="text-xs">In Progress</span>
+              </div>
+              <div className="flex-1 h-px bg-border" />
+              <div className="flex flex-col items-center gap-1">
+                <div className={`w-3 h-3 rounded-full ${report.status === "resolved" ? "bg-primary" : "bg-muted"}`} />
+                <span className="text-xs">Resolved</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button onClick={() => onOpenChange(false)}>Close</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
