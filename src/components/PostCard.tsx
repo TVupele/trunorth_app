@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Heart, MessageCircle, Repeat2, Share2, Send } from 'lucide-react';
 import { Post, formatDate } from '@/lib/index';
 import { useSocial } from '@/hooks/useSocial';
