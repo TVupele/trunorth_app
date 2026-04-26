@@ -315,7 +315,7 @@ export default function Events() {
       </div>
 
       <Dialog open={showPurchaseDialog} onOpenChange={setShowPurchaseDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>Purchase Ticket</DialogTitle><DialogDescription>Complete your ticket purchase for {selectedEvent?.title}</DialogDescription></DialogHeader>
           {selectedEvent && (
             <div className="space-y-6">

@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { Heart, MessageCircle, Share2, Send } from 'lucide-react';
+import { Heart, MessageCircle, Repeat2, Share2, Send } from 'lucide-react';
 import { Post, formatDate } from '@/lib/index';
 import { useSocial } from '@/hooks/useSocial';
 import { useAuth } from '@/hooks/useAuth';
@@ -9,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useToast } from '@/hooks/use-toast';
 
 interface PostCardProps {
   post: Post;
@@ -16,7 +16,8 @@ interface PostCardProps {
 
 export function PostCard({ post }: PostCardProps) {
   const { user } = useAuth();
-  const { toggleLike, addComment } = useSocial();
+  const { toggleLike, toggleRetweet, addComment } = useSocial();
+  const { toast } = useToast();
   const authorName = post.userId === user?.id ? (user?.fullName || 'You') : post.userName;
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
@@ -26,9 +27,17 @@ export function PostCard({ post }: PostCardProps) {
     toggleLike(post.id);
   };
 
+  const handleRetweet = () => {
+    toggleRetweet(post.id);
+    toast({
+      title: post.isRetweeted ? 'Retweet removed' : 'Retweeted!',
+      duration: 1500,
+    });
+  };
+
   const handleComment = async () => {
     if (!commentText.trim()) return;
-    
+
     setIsSubmitting(true);
     addComment(post.id, commentText);
     setCommentText('');
@@ -36,11 +45,22 @@ export function PostCard({ post }: PostCardProps) {
     setShowComments(true);
   };
 
-  const handleShare = () => {
+  const handleShare = async () => {
     if (navigator.share) {
-      navigator.share({
-        title: `Post by ${post.userName}`,
-        text: post.content,
+      try {
+        await navigator.share({
+          title: `Post by ${post.userName}`,
+          text: post.content,
+          url: window.location.href,
+        });
+      } catch (err) {
+        // User cancelled or share failed
+        console.log('Share failed:', err);
+      }
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(`${post.content}\n\nShared via TruNorth`).then(() => {
+        toast({ title: 'Copied to clipboard', duration: 2000 });
       }).catch(() => {});
     }
   };
@@ -85,7 +105,16 @@ export function PostCard({ post }: PostCardProps) {
             className="h-6 px-1 text-xs"
           >
             <MessageCircle className="h-3 w-3 mr-1" />
-            {post.comments}
+            {post.comments.length}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleRetweet}
+            className={`h-6 px-1 text-xs ${post.isRetweeted ? 'text-green-600' : ''}`}
+          >
+            <Repeat2 className={`h-3 w-3 mr-1 ${post.isRetweeted ? 'fill-green-500 text-green-500' : ''}`} />
+            {post.retweets}
           </Button>
           <Button
             variant="ghost"
@@ -93,7 +122,7 @@ export function PostCard({ post }: PostCardProps) {
             onClick={handleShare}
             className="h-6 px-1 text-xs"
           >
-            <Send className="h-3 w-3" />
+            <Share2 className="h-3 w-3" />
           </Button>
         </div>
       </CardFooter>

@@ -25,6 +25,7 @@ import ReligiousServices from "@/pages/ReligiousServices";
 import AIAssistant from "@/pages/AIAssistant";
 import Profile from "@/pages/Profile";
 import Settings from "@/pages/Settings";
+import Notifications from "@/pages/Notifications";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import Admin from "@/pages/Admin";
@@ -122,6 +123,7 @@ const App = () => {
                 <Route path={ROUTE_PATHS.HOME} element={<Home />} />
                 <Route path={ROUTE_PATHS.WALLET} element={<Wallet />} />
                 <Route path={ROUTE_PATHS.SOCIAL} element={<Social />} />
+                <Route path={ROUTE_PATHS.NOTIFICATIONS} element={<Notifications />} />
                 <Route path={ROUTE_PATHS.TRAVEL} element={<Travel />} />
                 <Route path={ROUTE_PATHS.TUTORING} element={<Tutoring />} />
                 <Route path={ROUTE_PATHS.EMERGENCY} element={<Emergency />} />

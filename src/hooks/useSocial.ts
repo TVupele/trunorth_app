@@ -32,6 +32,7 @@ interface SocialState {
   createPost: (content: string, image?: string) => void;
   addComment: (postId: string, content: string) => void;
   toggleLike: (postId: string) => void;
+  toggleRetweet: (postId: string) => void;
   sendMessage: (recipientId: string, recipientName: string, recipientAvatar: string, content: string) => void;
   markMessagesAsRead: (conversationId: string) => void;
   deletePost: (postId: string) => void;
@@ -43,26 +44,14 @@ export const useSocial = create<SocialState>((set, get) => ({
   messages: {},
   currentUserId: 'user-1',
 
-  fetchPosts: async () => {
-    try {
-      const response = await api.get('/posts');
-      const posts = response.data.map((post: any) => ({
-        id: post.id,
-        userId: post.user_id,
-        userName: post.full_name,
-        userAvatar: post.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=default',
-        content: post.content,
-        image: post.image_url,
-        likes: post.likes_count,
-        comments: [], // Comments will be fetched separately
-        timestamp: post.created_at,
-        isLiked: false, // This will be handled later
-      }));
-      set({ posts });
-    } catch (error) {
-      console.error('Failed to fetch posts', error);
-    }
-  },
+   fetchPosts: async () => {
+     try {
+       const response = await api.get('/posts');
+       set({ posts: response.data });
+     } catch (error) {
+       console.error('Failed to fetch posts', error);
+     }
+   },
 
   createPost: async (content: string, image?: string) => {
     try {
@@ -74,11 +63,13 @@ export const useSocial = create<SocialState>((set, get) => ({
         userName: savedPost.full_name || 'Current User',
         userAvatar: savedPost.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser',
         content: savedPost.content,
-        image: savedPost.image_url,
-        likes: 0,
-        comments: [],
+        imageUrl: savedPost.imageUrl,
+        likes: savedPost.likes_count || 0,
+        comments: savedPost.comments || [],
+        retweets: savedPost.retweets_count || 0,
+        isLiked: savedPost.isLiked || false,
+        isRetweeted: savedPost.isRetweeted || false,
         timestamp: savedPost.created_at,
-        isLiked: false,
       };
       set((state) => ({
         posts: [newPost, ...state.posts],
@@ -91,11 +82,13 @@ export const useSocial = create<SocialState>((set, get) => ({
         userName: 'Current User',
         userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser',
         content,
-        image,
+        imageUrl: image,
         likes: 0,
         comments: [],
-        timestamp: new Date().toISOString(),
+        retweets: 0,
         isLiked: false,
+        isRetweeted: false,
+        timestamp: new Date().toISOString(),
       };
       set((state) => ({
         posts: [newPost, ...state.posts],
@@ -103,38 +96,133 @@ export const useSocial = create<SocialState>((set, get) => ({
     }
   },
 
-  addComment: (postId: string, content: string) => {
-    const newComment: Comment = {
-      id: `comment-${Date.now()}`,
-      userId: get().currentUserId,
-      userName: 'Current User',
-      userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser',
-      content,
-      timestamp: new Date().toISOString(),
-    };
+   addComment: async (postId: string, content: string) => {
+     const newComment = {
+       id: `comment-temp-${Date.now()}`,
+       userId: get().currentUserId,
+       userName: 'Current User',
+       userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser',
+       content,
+       timestamp: new Date().toISOString(),
+     };
 
-    set((state) => ({
-      posts: state.posts.map((post) =>
-        post.id === postId
-          ? { ...post, comments: [...post.comments, newComment] }
-          : post
-      ),
-    }));
-  },
+     // Optimistically add comment
+     set((state) => ({
+       posts: state.posts.map((post) =>
+         post.id === postId
+           ? {
+               ...post,
+               comments: [...post.comments, newComment],
+             }
+           : post
+       ),
+     }));
 
-  toggleLike: (postId: string) => {
-    set((state) => ({
-      posts: state.posts.map((post) =>
-        post.id === postId
-          ? {
-              ...post,
-              isLiked: !post.isLiked,
-              likes: post.isLiked ? post.likes - 1 : post.likes + 1,
-            }
-          : post
-      ),
-    }));
-  },
+     try {
+       const response = await api.post(`/posts/${postId}/comment`, { content });
+       const realComment = response.data.comment;
+       set((state) => ({
+         posts: state.posts.map((post) =>
+           post.id === postId
+             ? {
+                 ...post,
+                 comments: post.comments.map((c) =>
+                   c.id === newComment.id ? realComment : c
+                 ),
+               }
+             : post
+         ),
+       }));
+     } catch (error) {
+       set((state) => ({
+         posts: state.posts.map((post) =>
+           post.id === postId
+             ? {
+                 ...post,
+                 comments: post.comments.filter((c) => c.id !== newComment.id),
+               }
+             : post
+         ),
+       }));
+       console.error('Failed to add comment:', error);
+     }
+   },
+
+   toggleLike: async (postId: string) => {
+     const post = get().posts.find(p => p.id === postId);
+     if (!post) return;
+
+     set((state) => ({
+       posts: state.posts.map((p) =>
+         p.id === postId
+           ? {
+               ...p,
+               isLiked: !p.isLiked,
+               likes: p.isLiked ? p.likes - 1 : p.likes + 1,
+             }
+           : p
+       ),
+     }));
+
+     try {
+       if (post.isLiked) {
+         await api.delete(`/posts/${postId}/like`);
+       } else {
+         await api.post(`/posts/${postId}/like`);
+       }
+     } catch (error) {
+       set((state) => ({
+         posts: state.posts.map((p) =>
+           p.id === postId
+             ? {
+                 ...p,
+                 isLiked: !p.isLiked,
+                 likes: p.isLiked ? p.likes + 1 : p.likes - 1,
+               }
+             : p
+         ),
+       }));
+       console.error('Failed to toggle like:', error);
+     }
+   },
+
+   toggleRetweet: async (postId: string) => {
+     const post = get().posts.find(p => p.id === postId);
+     if (!post) return;
+
+     set((state) => ({
+       posts: state.posts.map((p) =>
+         p.id === postId
+           ? {
+               ...p,
+               isRetweeted: !p.isRetweeted,
+               retweets: p.isRetweeted ? p.retweets - 1 : p.retweets + 1,
+             }
+           : p
+       ),
+     }));
+
+     try {
+       if (post.isRetweeted) {
+         await api.delete(`/posts/${postId}/retweet`);
+       } else {
+         await api.post(`/posts/${postId}/retweet`);
+       }
+     } catch (error) {
+       set((state) => ({
+         posts: state.posts.map((p) =>
+           p.id === postId
+             ? {
+                 ...p,
+                 isRetweeted: !p.isRetweeted,
+                 retweets: p.isRetweeted ? p.retweets + 1 : p.retweets - 1,
+               }
+             : p
+         ),
+       }));
+       console.error('Failed to toggle retweet:', error);
+     }
+   },
 
   sendMessage: (recipientId: string, recipientName: string, recipientAvatar: string, content: string) => {
     const conversationId = `conv-${recipientId}`;

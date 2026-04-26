@@ -65,6 +65,7 @@ CREATE TABLE posts (
     image_url TEXT,
     likes_count INT DEFAULT 0 NOT NULL,
     comments_count INT DEFAULT 0 NOT NULL,
+    retweets_count INT DEFAULT 0 NOT NULL,
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );
 
@@ -77,6 +78,13 @@ CREATE TABLE comments (
 );
 
 CREATE TABLE post_likes (
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    post_id UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+    PRIMARY KEY (user_id, post_id)
+);
+
+CREATE TABLE post_retweets (
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     post_id UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL,

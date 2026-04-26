@@ -11,10 +11,10 @@ interface EmergencyReportCardProps {
 }
 
 const priorityConfig = {
-  low: { color: "text-muted-foreground", bg: "bg-muted", variant: "secondary" as const, icon: CheckCircle2 },
-  medium: { color: "text-warning", bg: "bg-warning/10", variant: "outline" as const, icon: AlertTriangle },
-  high: { color: "text-destructive", bg: "bg-destructive/10", variant: "destructive" as const, icon: AlertTriangle },
-  critical: { color: "text-destructive", bg: "bg-destructive/20", variant: "destructive" as const, icon: AlertTriangle },
+  low: { color: "text-green-600", bg: "bg-green-100", variant: "secondary" as const, icon: CheckCircle2 },
+  medium: { color: "text-amber-600", bg: "bg-amber-100", variant: "default" as const, icon: AlertTriangle },
+  high: { color: "text-red-600", bg: "bg-red-100", variant: "destructive" as const, icon: AlertTriangle },
+  critical: { color: "text-red-700", bg: "bg-red-200", variant: "destructive" as const, icon: AlertTriangle },
 };
 
 const statusConfig = {

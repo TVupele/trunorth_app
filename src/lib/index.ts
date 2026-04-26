@@ -17,6 +17,7 @@ export const ROUTE_PATHS = {
   PROFILE: '/profile',
   SETTINGS: '/settings',
   SOCIAL: '/social',
+  NOTIFICATIONS: '/notifications',
   MOBILE_HOME: '/mobile',
   MOBILE_FEED: '/mobile/feed',
   MOBILE_WALLET: '/mobile/wallet',
@@ -56,10 +57,13 @@ export interface Post {
   userAvatar: string;
   content: string;
   image?: string;
+  imageUrl?: string;
   likes: number;
   comments: Comment[];
-  timestamp: string;
+  retweets: number;
   isLiked: boolean;
+  isRetweeted: boolean;
+  timestamp: string;
 }
 
 export interface Comment {

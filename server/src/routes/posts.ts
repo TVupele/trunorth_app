@@ -2,7 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
-import { getPosts, createPost, uploadImage } from '../controllers/posts';
+import { getPosts, createPost, uploadImage, likePost, unlikePost, addComment } from '../controllers/posts';
 import { authMiddleware } from '../middleware/auth';
 
 const router = Router();
@@ -22,10 +22,15 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
 router.get('/', authMiddleware, getPosts);
 router.post('/', authMiddleware, createPost);
 router.post('/upload', authMiddleware, upload.single('image'), uploadImage);
+router.post('/:id/like', authMiddleware, likePost);
+router.delete('/:id/like', authMiddleware, unlikePost);
+router.post('/:id/comment', authMiddleware, addComment);
+router.post('/:id/retweet', authMiddleware, retweetPost);
+router.delete('/:id/retweet', authMiddleware, unretweetPost);
 
 export default router;

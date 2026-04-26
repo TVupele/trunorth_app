@@ -57,27 +57,50 @@ export default function Emergency() {
   }, []);
 
   const handleDetectLocation = () => {
-    setIsDetectingLocation(true);
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setFormData((prev) => ({
-            ...prev,
-            location: `${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}`,
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          }));
-          setIsDetectingLocation(false);
-        },
-        () => {
-          setFormData((prev) => ({ ...prev, location: 'Location detection failed' }));
-          setIsDetectingLocation(false);
-        }
-      );
-    } else {
-      setFormData((prev) => ({ ...prev, location: 'Geolocation not supported' }));
-      setIsDetectingLocation(false);
+    if (!navigator.geolocation) {
+      setFormData((prev) => ({ ...prev, location: 'GPS is not supported by your browser' }));
+      toast.error('Geolocation is not supported by your browser');
+      return;
     }
+
+    setIsDetectingLocation(true);
+    setFormData((prev) => ({ ...prev, location: 'Acquiring GPS signal...' }));
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setFormData((prev) => ({
+          ...prev,
+          location: `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`,
+          latitude,
+          longitude,
+        }));
+        setIsDetectingLocation(false);
+        toast.success('Location detected successfully');
+      },
+      (error) => {
+        let errorMsg = 'Unable to retrieve your location';
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMsg = 'Location access denied. Please enable location permissions or enter manually.';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMsg = 'Location information unavailable. Try again or enter manually.';
+            break;
+          case error.TIMEOUT:
+            errorMsg = 'Location request timed out. Try again or enter manually.';
+            break;
+        }
+        setFormData((prev) => ({ ...prev, location: '' }));
+        setIsDetectingLocation(false);
+        toast.error(errorMsg);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
   };
 
   const handleSubmitReport = async () => {
