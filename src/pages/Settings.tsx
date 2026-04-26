@@ -13,6 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import api from '@/lib/api';
 import { formatDate } from '@/lib/index';
+import i18n from '@/i18n';
 
 interface LoginHistoryItem {
   id: string;
@@ -86,8 +87,9 @@ export default function Settings() {
     });
   };
 
-  const handleLanguageChange = (value: 'en' | 'ha') => {
+  const handleLanguageChange = async (value: 'en' | 'ha') => {
     setLanguage(value);
+    await i18n.changeLanguage(value);
     toast({
       title: 'Language Changed',
       description: `Language set to ${value === 'en' ? 'English' : 'Hausa'}.`,
