@@ -144,6 +144,8 @@ CREATE TABLE events (
     available_seats INT,
     category VARCHAR(100) DEFAULT 'General',
     description TEXT,
+    is_external BOOLEAN DEFAULT false NOT NULL,
+    external_url TEXT,
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );
 

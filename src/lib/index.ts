@@ -115,19 +115,21 @@ export interface Product {
 }
 
 export interface Event {
-  id: string;
-  title: string;
-  image: string;
-  date: string;
-  time: string;
-  location: string;
-  ticketPrice: number;
-  currency: string;
-  availableSeats: number;
-  totalSeats: number;
-  category: string;
-  description: string;
-}
+   id: string;
+   title: string;
+   image: string;
+   date: string;
+   time: string;
+   location: string;
+   ticketPrice: number;
+   currency: string;
+   availableSeats: number;
+   totalSeats: number;
+   category: string;
+   description: string;
+   isExternal?: boolean;
+   externalUrl?: string;
+ }
 
 export interface Campaign {
   id: string;

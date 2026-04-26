@@ -235,7 +235,7 @@ export default function Admin() {
     setSelectedImageFile(null);
     const defaults: Record<string, any> = {
       products: { name: '', description: '', price: 0, stock_quantity: 0, image_url: '' },
-      events: { title: '', description: '', event_date: '', location: '', ticket_price: 0, total_seats: 0, image_url: '' },
+      events: { title: '', description: '', event_date: '', location: '', ticket_price: 0, total_seats: 0, image_url: '', is_external: false, external_url: '' },
       campaigns: { title: '', description: '', goal_amount: 0, end_date: '', image_url: '' },
       'religious-services': { name: '', type: 'prayer', venue: '', service_time: '', denomination: '', capacity: 0, description: '' },
       'ad-banners': { title: '', description: '', type: 'event', image_url: '', cta: 'Learn More', link: '/', is_active: true, display_order: 0 },
@@ -547,25 +547,32 @@ export default function Admin() {
               </>
             )}
             {editDialog.type === 'events' && (
-              <>
-                <div><Label>Title</Label><Input value={editDialog.data?.title || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, title: e.target.value } })} /></div>
-                <div><Label>Description</Label><Textarea value={editDialog.data?.description || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, description: e.target.value } })} /></div>
-                <div><Label>Date & Time</Label><Input type="datetime-local" value={editDialog.data?.event_date ? new Date(editDialog.data.event_date).toISOString().slice(0, 16) : ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, event_date: e.target.value } })} /></div>
-                <div><Label>Location</Label><Input value={editDialog.data?.location || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, location: e.target.value } })} /></div>
-                <div><Label>Ticket Price</Label><Input type="number" value={editDialog.data?.ticket_price || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, ticket_price: e.target.value } })} /></div>
-                <div><Label>Total Seats</Label><Input type="number" value={editDialog.data?.total_seats || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, total_seats: e.target.value } })} /></div>
-                <div className="space-y-2">
-                  <Label>Event Image</Label>
-                  <div className="flex items-center gap-2">
-                    <label className="flex items-center gap-2 cursor-pointer bg-primary px-3 py-2 rounded-md text-primary-foreground hover:bg-primary/90 text-sm">
-                      <input type="file" accept="image/*" onChange={handleImageFileChange} className="hidden" />
-                      Choose Image
-                    </label>
-                    {editDialog.data?.image_url && <span className="text-xs text-muted-foreground">Image selected</span>}
-                  </div>
-                  {editDialog.data?.image_url && <img src={editDialog.data.image_url} alt="Preview" className="h-20 w-20 object-cover rounded" />}
-                </div>
-              </>
+               <>
+                 <div><Label>Title</Label><Input value={editDialog.data?.title || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, title: e.target.value } })} /></div>
+                 <div><Label>Description</Label><Textarea value={editDialog.data?.description || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, description: e.target.value } })} /></div>
+                 <div><Label>Date & Time</Label><Input type="datetime-local" value={editDialog.data?.event_date ? new Date(editDialog.data.event_date).toISOString().slice(0, 16) : ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, event_date: e.target.value } })} /></div>
+                 <div><Label>Location</Label><Input value={editDialog.data?.location || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, location: e.target.value } })} /></div>
+                 <div><Label>Ticket Price (NGN)</Label><Input type="number" value={editDialog.data?.ticket_price || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, ticket_price: e.target.value } })} /></div>
+                 <div><Label>Total Seats</Label><Input type="number" value={editDialog.data?.total_seats || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, total_seats: e.target.value } })} /></div>
+                 <div className="flex items-center gap-2">
+                   <input type="checkbox" id="is_external" checked={editDialog.data?.is_external || false} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, is_external: e.target.checked } })} />
+                   <Label htmlFor="is_external" className="cursor-pointer">External Event (hosted on another platform)</Label>
+                 </div>
+                 {editDialog.data?.is_external && (
+                   <div><Label>External Event URL</Label><Input value={editDialog.data?.external_url || ''} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, external_url: e.target.value } })} placeholder="https://..." /></div>
+                 )}
+                 <div className="space-y-2">
+                   <Label>Event Image</Label>
+                   <div className="flex items-center gap-2">
+                     <label className="flex items-center gap-2 cursor-pointer bg-primary px-3 py-2 rounded-md text-primary-foreground hover:bg-primary/90 text-sm">
+                       <input type="file" accept="image/*" onChange={handleImageFileChange} className="hidden" />
+                       Choose Image
+                     </label>
+                     {editDialog.data?.image_url && <span className="text-xs text-muted-foreground">Image selected</span>}
+                   </div>
+                   {editDialog.data?.image_url && <img src={editDialog.data.image_url} alt="Preview" className="h-20 w-20 object-cover rounded" />}
+                 </div>
+               </>
             )}
                 {editDialog.type === 'campaigns' && (              
               <>

@@ -120,9 +120,9 @@ export function EventCard({ event }: EventCardProps) {
       <CardFooter className="p-4 pt-0">
         <Button
           className="w-full"
-          disabled={event.availableSeats === 0}
+          disabled={!event.isExternal && event.availableSeats === 0}
         >
-          {event.availableSeats === 0 ? 'Sold Out' : 'Buy Ticket'}
+          {event.isExternal ? 'Register / Info' : event.availableSeats === 0 ? 'Sold Out' : 'Buy Ticket'}
         </Button>
       </CardFooter>
     </Card>

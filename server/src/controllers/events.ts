@@ -18,6 +18,8 @@ export const getEvents = async (req: Request, res: Response) => {
       totalSeats: r.total_seats || 0,
       category: r.category || 'General',
       description: r.description,
+      isExternal: r.is_external || false,
+      externalUrl: r.external_url || null,
     }));
     res.json(events);
   } catch (error) {
@@ -46,6 +48,8 @@ export const getEventById = async (req: Request, res: Response) => {
       totalSeats: r.total_seats || 0,
       category: r.category || 'General',
       description: r.description,
+      isExternal: r.is_external || false,
+      externalUrl: r.external_url || null,
     });
   } catch (error) {
     console.error('Get event error:', error);
@@ -54,15 +58,15 @@ export const getEventById = async (req: Request, res: Response) => {
 };
 
 export const createEvent = async (req: Request, res: Response) => {
-  const { title, description, image_url, event_date, location, ticket_price, total_seats, category } = req.body;
+  const { title, description, image_url, event_date, location, ticket_price, total_seats, category, is_external, external_url } = req.body;
   if (!title || !event_date) {
     return res.status(400).json({ error: 'Title and event date are required.' });
   }
   try {
     const result = await query(
-      `INSERT INTO events (title, description, image_url, event_date, location, ticket_price, total_seats, available_seats, category)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $7, $8) RETURNING *`,
-      [title, description, image_url || null, event_date, location, ticket_price || 0, total_seats || 0, category || 'General']
+      `INSERT INTO events (title, description, image_url, event_date, location, ticket_price, total_seats, available_seats, category, is_external, external_url)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $7, $8, $9, $10) RETURNING *`,
+      [title, description, image_url || null, event_date, location, ticket_price || 0, total_seats || 0, category || 'General', is_external || false, external_url || null]
     );
 
     const event = result.rows[0];
@@ -92,16 +96,17 @@ export const createEvent = async (req: Request, res: Response) => {
 };
 
 export const updateEvent = async (req: Request, res: Response) => {
-  const { title, description, image_url, event_date, location, ticket_price, total_seats, available_seats, category } = req.body;
+  const { title, description, image_url, event_date, location, ticket_price, total_seats, available_seats, category, is_external, external_url } = req.body;
   try {
     const result = await query(
       `UPDATE events SET title = COALESCE($1, title), description = COALESCE($2, description),
        image_url = COALESCE($3, image_url), event_date = COALESCE($4, event_date),
        location = COALESCE($5, location), ticket_price = COALESCE($6, ticket_price),
        total_seats = COALESCE($7, total_seats), available_seats = COALESCE($8, available_seats),
-       category = COALESCE($9, category)
-       WHERE id = $10 RETURNING *`,
-      [title, description, image_url, event_date, location, ticket_price, total_seats, available_seats, category, req.params.id]
+       category = COALESCE($9, category), is_external = COALESCE($10, is_external),
+       external_url = COALESCE($11, external_url)
+       WHERE id = $12 RETURNING *`,
+      [title, description, image_url, event_date, location, ticket_price, total_seats, available_seats, category, is_external, external_url, req.params.id]
     );
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Event not found.' });

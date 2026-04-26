@@ -37,7 +37,7 @@ const categories = ['All', 'Concert', 'Conference', 'Sports', 'Festival', 'Works
 export default function Events() {
   const { t } = useTranslation();
   const balance = useWallet((state) => state.balance);
-  const sendMoney = useWallet((state) => state.sendMoney);
+  const fetchWalletData = useWallet((state) => state.fetchWalletData);
   const isLoading = useWallet((state) => state.isLoading);
   const [events, setEvents] = useState<Event[]>([]);
   const [isLoadingEvents, setIsLoadingEvents] = useState(true);
@@ -51,22 +51,24 @@ export default function Events() {
   const [selectedTicket, setSelectedTicket] = useState<PurchasedTicket | null>(null);
   const [dateFilter, setDateFilter] = useState<string>('');
   const [locationFilter, setLocationFilter] = useState<string>('');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await api.get('/events');
-        setEvents(response.data);
-      } catch (error) {
-        console.error('Failed to fetch events:', error);
-        toast.error('Failed to load events.');
-      } finally {
-        setIsLoadingEvents(false);
-      }
-    };
-    fetchEvents();
-  }, []);
+   const fetchEvents = async () => {
+     setIsLoadingEvents(true);
+     try {
+       const response = await api.get('/events');
+       setEvents(response.data);
+     } catch (error) {
+       console.error('Failed to fetch events:', error);
+       toast.error('Failed to load events.');
+     } finally {
+       setIsLoadingEvents(false);
+     }
+   };
+
+   useEffect(() => {
+     fetchEvents();
+   }, []);
 
   const filteredEvents = useMemo(() => {
     return events.filter((event) => {
@@ -89,26 +91,64 @@ export default function Events() {
 
   const handlePurchaseTicket = async () => {
     if (!selectedEvent) return;
+
+    // Pre-check for sufficient balance locally for better UX
     const totalAmount = selectedEvent.ticketPrice * ticketQuantity;
-    if (totalAmount > balance) { toast.error('Insufficient wallet balance'); return; }
-    if (ticketQuantity > selectedEvent.availableSeats) { toast.error('Not enough seats available'); return; }
+    if (totalAmount > balance) {
+      toast.error('Insufficient wallet balance');
+      return;
+    }
+    if (ticketQuantity > selectedEvent.availableSeats) {
+      toast.error('Not enough seats available');
+      return;
+    }
+
     try {
-      await sendMoney(selectedEvent.title, totalAmount, `Ticket purchase for ${selectedEvent.title} (${ticketQuantity}x)`);
+      // Call the backend purchaseTicket API
+      await api.post('/events/purchase', {
+        event_id: selectedEvent.id,
+        quantity: ticketQuantity,
+      });
+
+      // Refresh events and wallet after purchase
+      await Promise.all([fetchEvents(), fetchWalletData()]);
+
+      // Add ticket to local state
       const newTicket: PurchasedTicket = {
-        id: `ticket-${Date.now()}`, eventId: selectedEvent.id, eventTitle: selectedEvent.title,
-        eventDate: selectedEvent.date, eventTime: selectedEvent.time, eventLocation: selectedEvent.location,
-        quantity: ticketQuantity, totalAmount, qrCode: `TRUNORTH-${selectedEvent.id}-${Date.now()}`,
+        id: `ticket-${Date.now()}`,
+        eventId: selectedEvent.id,
+        eventTitle: selectedEvent.title,
+        eventDate: selectedEvent.date,
+        eventTime: selectedEvent.time,
+        eventLocation: selectedEvent.location,
+        quantity: ticketQuantity,
+        totalAmount,
+        qrCode: `TRUNORTH-${selectedEvent.id}-${Date.now()}`,
         purchaseDate: new Date().toISOString(),
       };
       setPurchasedTickets((prev) => [newTicket, ...prev]);
+
       setShowPurchaseDialog(false);
       setSelectedEvent(null);
       setTicketQuantity(1);
       toast.success('Ticket purchased successfully!');
-    } catch (error) { toast.error('Failed to purchase ticket'); }
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.error || 'Failed to purchase ticket';
+      toast.error(errorMsg);
+    }
   };
 
-  const handleEventClick = (event: Event) => { setSelectedEvent(event); setTicketQuantity(1); setShowPurchaseDialog(true); };
+  const handleEventClick = (event: Event) => {
+    // If event is external and has an external URL, redirect to it
+    if (event.isExternal && event.externalUrl) {
+      window.open(event.externalUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    // Otherwise, show the purchase dialog for internal events
+    setSelectedEvent(event);
+    setTicketQuantity(1);
+    setShowPurchaseDialog(true);
+  };
   const handleViewTicket = (ticket: PurchasedTicket) => { setSelectedTicket(ticket); setShowTicketDialog(true); };
   const handleDownloadTicket = (ticket: PurchasedTicket) => { toast.success(`Downloading ticket for ${ticket.eventTitle}`); };
 
@@ -132,16 +172,16 @@ export default function Events() {
 
             <TabsContent value="browse" className="space-y-4">
               {upcomingEvents.length > 0 && (
-                <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-                  <h2 className="text-lg font-semibold mb-3">Upcoming Events</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3">
-                    {upcomingEvents.map((event, index) => (
-                      <motion.div key={event.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + index * 0.1 }}>
-                        <EventCard event={event} />
-                      </motion.div>
-                    ))}
-                  </div>
-                </motion.section>
+               <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+                   <h2 className="text-lg font-semibold mb-3">Upcoming Events</h2>
+                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3">
+                     {upcomingEvents.map((event, index) => (
+                        <motion.div key={event.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + index * 0.1 }}>
+                          <div className="cursor-pointer" onClick={() => handleEventClick(event)}><EventCard event={event} /></div>
+                        </motion.div>
+                     ))}
+                   </div>
+                 </motion.section>
               )}
 
               <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
@@ -192,7 +232,7 @@ export default function Events() {
                     <AnimatePresence mode="popLayout">
                       {filteredEvents.map((event, index) => (
                         <motion.div key={event.id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ delay: index * 0.05 }} layout>
-                          <div onClick={() => handleEventClick(event)}><EventCard event={event} /></div>
+                           <div className="cursor-pointer" onClick={() => handleEventClick(event)}><EventCard event={event} /></div>
                         </motion.div>
                       ))}
                     </AnimatePresence>
@@ -202,7 +242,7 @@ export default function Events() {
                     <AnimatePresence mode="popLayout">
                       {filteredEvents.map((event, index) => (
                         <motion.div key={event.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ delay: index * 0.05 }} layout>
-                          <div onClick={() => handleEventClick(event)} className="flex gap-3 p-3 border rounded-lg hover:bg-muted/50">
+                           <div onClick={() => handleEventClick(event)} className="flex gap-3 p-3 border rounded-lg hover:bg-muted/50 cursor-pointer">
                             <img src={event.image} alt={event.title} className="w-20 h-20 rounded-md object-cover" />
                             <div className="flex-1 min-w-0">
                               <h3 className="font-semibold text-sm truncate">{event.title}</h3>
