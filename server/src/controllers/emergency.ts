@@ -20,6 +20,7 @@ export const getEmergencyReports = async (req: Request, res: Response) => {
       status: r.status,
       timestamp: r.created_at,
       reporterId: r.reporter_id,
+      photos: r.photos || [], // Assuming photos is a JSONB/array column
     }));
     res.json(reports);
   } catch (error) {
