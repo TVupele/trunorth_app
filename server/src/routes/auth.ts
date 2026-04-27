@@ -144,17 +144,24 @@ router.post('/login', async (req, res) => {
       [user.id, device, location, ipAddress]
     ).catch(err => console.error('Failed to save login history:', err));
 
-    res.status(200).json({
-      message: 'Login successful!',
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        fullName: user.full_name,
-        role: user.role,
-        avatarUrl: user.avatar_url,
-      },
-    });
+     const baseUrl = process.env.API_URL || `${req.protocol}://${req.get('host')}`;
+     // Prepend base URL to avatar_url if it's a relative path
+     let avatarUrl = user.avatar_url;
+     if (avatarUrl && avatarUrl.startsWith('/uploads/')) {
+       avatarUrl = `${baseUrl}${avatarUrl}`;
+     }
+
+     res.status(200).json({
+       message: 'Login successful!',
+       token,
+       user: {
+         id: user.id,
+         email: user.email,
+         fullName: user.full_name,
+         role: user.role,
+         avatarUrl: avatarUrl,
+       },
+     });
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Internal server error during login.' });
