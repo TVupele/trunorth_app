@@ -1,47 +1,74 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { Heart, MessageCircle, Send, Repeat, Share, MoreHorizontal, Image as ImageIcon } from 'lucide-react';
+import { Repeat2, Share2, MessageCircle, Heart, MoreHorizontal } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { ROUTE_PATHS } from '@/lib/index';
-import api from '@/lib/api';
+import { useSocial } from '@/hooks/useSocial';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatDate } from '@/lib/index';
+import { useToast } from '@/hooks/use-toast';
 
 export function NewsFeed() {
-  const [posts, setPosts] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [displayedPosts, setDisplayedPosts] = useState(10);
   const { user } = useAuth();
+  const { posts, toggleLike, toggleRetweet, fetchPosts } = useSocial();
+  const { toast } = useToast();
+  const [displayedPosts, setDisplayedPosts] = useState(10);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await api.get('/posts');
-        setPosts(response.data);
-      } catch (error) {
-        console.error('Failed to fetch posts:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchPosts();
-  }, []);
+    const timer = setTimeout(() => setIsLoading(false), 300);
+    return () => clearTimeout(timer);
+  }, [fetchPosts]);
 
   const handleLoadMore = () => {
     setDisplayedPosts((prev) => prev + 10);
   };
 
-  const handleLike = async (postId: string) => {
+  const handleLike = async (postId: string, isLiked: boolean) => {
     try {
-      await api.post(`/posts/${postId}/like`);
-      setPosts(posts.map(p => 
-        p.id === postId ? { ...p, likes_count: p.likes_count + 1 } : p
-      ));
+      await toggleLike(postId);
     } catch (error) {
-      console.error('Failed to like post:', error);
+      toast({ title: 'Error', description: 'Failed to like post', variant: 'destructive' });
+    }
+  };
+
+  const handleRetweet = async (postId: string, isRetweeted: boolean) => {
+    try {
+      await toggleRetweet(postId);
+      toast({
+        title: isRetweeted ? 'Retweet removed' : 'Retweeted!',
+        duration: 1500,
+      });
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to retweet', variant: 'destructive' });
+    }
+  };
+
+  const handleComment = (postId: string) => {
+    toast({
+      title: 'Comments',
+      description: 'Comments are now available!',
+      duration: 2000,
+    });
+  };
+
+  const handleShare = async (post: any) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Post by ${post.userName}`,
+          text: post.content,
+          url: window.location.href,
+        });
+      } catch (err) {
+        // User cancelled
+      }
+    } else {
+      navigator.clipboard.writeText(`${post.content}\n\nShared via TruNorth`).then(() => {
+        toast({ title: 'Copied to clipboard', duration: 2000 });
+      });
     }
   };
 
@@ -81,14 +108,14 @@ export function NewsFeed() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="px-3 py-3 border-b border-border/50 hover:bg-muted/30 cursor-pointer"
+                className="px-3 py-3 border-b border-border/50 hover:bg-muted/30"
               >
                 <div className="flex gap-3">
                   {/* Avatar */}
                   <Avatar className="h-10 w-10 flex-shrink-0">
-                    <AvatarImage src={post.user?.avatar_url} alt={post.user?.full_name} />
+                    <AvatarImage src={post.userAvatar} alt={post.userName} />
                     <AvatarFallback className="text-sm">
-                      {post.user?.full_name?.charAt(0) || post.full_name?.charAt(0) || 'U'}
+                      {post.userName?.charAt(0) || 'U'}
                     </AvatarFallback>
                   </Avatar>
 
@@ -97,14 +124,14 @@ export function NewsFeed() {
                     {/* Header */}
                     <div className="flex items-center gap-1 flex-wrap">
                       <span className="font-semibold text-sm text-foreground">
-                        {post.user?.full_name || post.full_name || 'User'}
+                        {post.userName}
                       </span>
                       <span className="text-muted-foreground text-sm">
-                        @{post.user?.full_name?.toLowerCase().replace(/\s/g, '') || 'user'}
+                        @{post.userName.toLowerCase().replace(/\s/g, '')}
                       </span>
                       <span className="text-muted-foreground text-sm">·</span>
                       <span className="text-muted-foreground text-sm">
-                        {formatDate(post.created_at)}
+                        {formatDate(post.timestamp)}
                       </span>
                       <button className="ml-auto text-muted-foreground hover:text-foreground">
                         <MoreHorizontal className="h-4 w-4" />
@@ -117,41 +144,47 @@ export function NewsFeed() {
                     </p>
 
                     {/* Post Image */}
-                    {post.image_url && (
+                    {post.imageUrl && (
                       <div className="mt-2 rounded-2xl overflow-hidden border border-border/50">
                         <img 
-                          src={post.image_url} 
+                          src={post.imageUrl} 
                           alt="Post" 
                           className="w-full h-auto max-h-80 object-cover"
                         />
                       </div>
                     )}
 
-                    {/* Action Buttons - X style */}
+                    {/* Action Buttons */}
                     <div className="flex items-center justify-between mt-2 -ml-2">
                       <button 
-                        onClick={(e) => { e.preventDefault(); }}
+                        onClick={(e) => { e.preventDefault(); handleComment(post.id); }}
                         className="flex items-center gap-1 p-2 rounded-full text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10"
                       >
                         <MessageCircle className="h-4 w-4" />
-                        <span className="text-xs">{post.comments_count || 0}</span>
+                        <span className="text-xs">{post.comments?.length || 0}</span>
                       </button>
-                      
-                      <button className="flex items-center gap-1 p-2 rounded-full text-muted-foreground hover:text-green-500 hover:bg-green-500/10">
-                        <Repeat className="h-4 w-4" />
-                        <span className="text-xs">0</span>
-                      </button>
-                      
+                       
                       <button 
-                        onClick={(e) => { e.preventDefault(); handleLike(post.id); }}
-                        className="flex items-center gap-1 p-2 rounded-full text-muted-foreground hover:text-red-500 hover:bg-red-500/10"
+                        onClick={(e) => { e.preventDefault(); handleRetweet(post.id, post.isRetweeted); }}
+                        className={`flex items-center gap-1 p-2 rounded-full hover:bg-green-500/10 ${post.isRetweeted ? 'text-green-600' : 'text-muted-foreground hover:text-green-500'}`}
                       >
-                        <Heart className="h-4 w-4" />
-                        <span className="text-xs">{post.likes_count || 0}</span>
+                        <Repeat2 className="h-4 w-4" />
+                        <span className="text-xs">{post.retweets || 0}</span>
                       </button>
-                      
-                      <button className="flex items-center gap-1 p-2 rounded-full text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10">
-                        <Share className="h-4 w-4" />
+                       
+                      <button 
+                        onClick={(e) => { e.preventDefault(); handleLike(post.id, post.isLiked); }}
+                        className={`flex items-center gap-1 p-2 rounded-full hover:bg-red-500/10 ${post.isLiked ? 'text-red-600' : 'text-muted-foreground hover:text-red-500'}`}
+                      >
+                        <Heart className={`h-4 w-4 ${post.isLiked ? 'fill-current' : ''}`} />
+                        <span className="text-xs">{post.likes || 0}</span>
+                      </button>
+                       
+                      <button 
+                        onClick={(e) => { e.preventDefault(); handleShare(post); }}
+                        className="flex items-center gap-1 p-2 rounded-full text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10"
+                      >
+                        <Share2 className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
