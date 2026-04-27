@@ -50,10 +50,10 @@ export default function Wallet() {
 
   const filteredTransactions = transactions.filter((txn) => {
     const matchesFilter = activeFilter === 'all' || txn.type === activeFilter;
-    const matchesSearch = searchQuery === '' ||
-      txn.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      txn.recipient?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      txn.sender?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = !searchQuery ||
+      (txn.description || '').toLowerCase().includes((searchQuery || '').toLowerCase()) ||
+      (txn.recipient || '').toLowerCase().includes((searchQuery || '').toLowerCase()) ||
+      (txn.sender || '').toLowerCase().includes((searchQuery || '').toLowerCase());
     return matchesFilter && matchesSearch;
   });
 

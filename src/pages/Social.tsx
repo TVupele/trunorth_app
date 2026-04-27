@@ -83,8 +83,9 @@ export default function Social() {
 
   const filteredPosts = posts.filter(
     (post) =>
-      post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.userName.toLowerCase().includes(searchQuery.toLowerCase())
+      !searchQuery ||
+      (post.content || '').toLowerCase().includes((searchQuery || '').toLowerCase()) ||
+      (post.userName || '').toLowerCase().includes((searchQuery || '').toLowerCase())
   );
 
   const myPosts = posts.filter((post) => post.userId === 'user-1');

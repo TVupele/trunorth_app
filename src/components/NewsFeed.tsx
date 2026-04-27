@@ -127,7 +127,7 @@ export function NewsFeed() {
                         {post.userName}
                       </span>
                       <span className="text-muted-foreground text-sm">
-                        @{post.userName.toLowerCase().replace(/\s/g, '')}
+                        @{((post.userName || '').toLowerCase().replace(/\s/g, ''))}
                       </span>
                       <span className="text-muted-foreground text-sm">·</span>
                       <span className="text-muted-foreground text-sm">

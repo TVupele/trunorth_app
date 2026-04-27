@@ -59,10 +59,10 @@ export default function ReligiousServices() {
   }, [toast]);
 
   const filteredServices = services.filter((service) => {
-    const matchesSearch =
-      service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      service.venue.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      service.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = !searchQuery ||
+      (service.name || '').toLowerCase().includes((searchQuery || '').toLowerCase()) ||
+      (service.venue || '').toLowerCase().includes((searchQuery || '').toLowerCase()) ||
+      (service.description || '').toLowerCase().includes((searchQuery || '').toLowerCase());
     const matchesType = serviceTypeFilter === 'all' || service.type === serviceTypeFilter;
     const matchesDenomination = denominationFilter === 'all' || service.denomination === denominationFilter;
 

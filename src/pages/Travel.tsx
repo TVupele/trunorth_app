@@ -56,8 +56,9 @@ export default function Travel() {
 
   const filteredPackages = packages
     .filter((pkg) => {
-      const matchesSearch = pkg.destination.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pkg.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = !searchQuery ||
+        (pkg.destination || '').toLowerCase().includes((searchQuery || '').toLowerCase()) ||
+        (pkg.description || '').toLowerCase().includes((searchQuery || '').toLowerCase());
       const matchesPrice = pkg.price >= priceRange[0] && pkg.price <= priceRange[1];
       return matchesSearch && matchesPrice && pkg.available;
     })

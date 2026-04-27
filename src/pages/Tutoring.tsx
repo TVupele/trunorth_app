@@ -77,10 +77,10 @@ export default function Tutoring() {
 
   const filteredTutors = tutors.filter((tutor) => {
     const matchesSearch =
-      searchQuery === '' ||
-      tutor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      !searchQuery ||
+      (tutor.name || '').toLowerCase().includes((searchQuery || '').toLowerCase()) ||
       tutor.subjects.some((subject) =>
-        subject.toLowerCase().includes(searchQuery.toLowerCase())
+        (subject || '').toLowerCase().includes((searchQuery || '').toLowerCase())
       );
 
     const matchesSubject =

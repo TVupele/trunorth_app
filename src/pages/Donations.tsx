@@ -73,9 +73,10 @@ export default function Donations() {
   }, [toast]);
 
   const filteredCampaigns = campaigns.filter((campaign) => {
-    const matchesSearch = campaign.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      campaign.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || campaign.category.toLowerCase() === selectedCategory;
+    const matchesSearch = !searchQuery ||
+      (campaign.title || '').toLowerCase().includes((searchQuery || '').toLowerCase()) ||
+      (campaign.description || '').toLowerCase().includes((searchQuery || '').toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || (campaign.category || '').toLowerCase() === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 

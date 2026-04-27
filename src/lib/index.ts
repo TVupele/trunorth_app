@@ -227,5 +227,5 @@ export const getStatusBadgeVariant = (
     requested: 'default',
   };
 
-  return statusMap[status.toLowerCase()] || 'default';
+  return statusMap[(status || '').toLowerCase()] || 'default';
 };

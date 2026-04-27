@@ -85,7 +85,7 @@ const AI_RESPONSES = {
 
 function getAIResponse(query: string, language: Language): string {
   const responses = AI_RESPONSES[language];
-  const lowerQuery = query.toLowerCase();
+  const lowerQuery = (query || '').toLowerCase();
 
   if (lowerQuery.includes('wallet') || lowerQuery.includes('top up') || lowerQuery.includes('cika')) {
     return responses.wallet;

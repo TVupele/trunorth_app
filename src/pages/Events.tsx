@@ -98,11 +98,12 @@ export default function Events() {
 
   const filteredEvents = useMemo(() => {
     return events.filter((event) => {
-      const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        event.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = !searchQuery ||
+        (event.title || '').toLowerCase().includes((searchQuery || '').toLowerCase()) ||
+        (event.description || '').toLowerCase().includes((searchQuery || '').toLowerCase());
       const matchesCategory = selectedCategory === 'All' || event.category === selectedCategory;
       const matchesDate = !dateFilter || event.date >= dateFilter;
-      const matchesLocation = !locationFilter || event.location.toLowerCase().includes(locationFilter.toLowerCase());
+      const matchesLocation = !locationFilter || (event.location || '').toLowerCase().includes((locationFilter || '').toLowerCase());
       return matchesSearch && matchesCategory && matchesDate && matchesLocation;
     });
   }, [events, searchQuery, selectedCategory, dateFilter, locationFilter]);

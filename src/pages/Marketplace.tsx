@@ -62,8 +62,9 @@ export default function Marketplace() {
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
-      const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = !searchQuery ||
+        (product.name || '').toLowerCase().includes((searchQuery || '').toLowerCase()) ||
+        (product.description || '').toLowerCase().includes((searchQuery || '').toLowerCase());
       const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
       const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
       const matchesRating = product.rating >= minRating;
