@@ -42,20 +42,33 @@ export const getPosts = async (req: Request, res: Response) => {
            ORDER BY c.created_at ASC`,
           [post.id]
         );
-        const comments = commentsResult.rows.map((c: any) => ({
-          id: c.id,
-          userId: c.user_id,
-          userName: c.full_name,
-          userAvatar: c.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${c.full_name}`,
-          content: c.content,
-          timestamp: c.created_at,
-        }));
+        const comments = commentsResult.rows.map((c: any) => {
+          // Prepend base URL to avatar if it's a relative upload path
+          let avatarUrl = c.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${c.full_name}`;
+          if (avatarUrl && avatarUrl.startsWith('/uploads/')) {
+            avatarUrl = `${baseUrl}${avatarUrl}`;
+          }
+          return {
+            id: c.id,
+            userId: c.user_id,
+            userName: c.full_name,
+            userAvatar: avatarUrl,
+            content: c.content,
+            timestamp: c.created_at,
+          };
+        });
+
+        // Prepend base URL to user avatar if it's a relative upload path
+        let userAvatarUrl = post.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${post.full_name}`;
+        if (userAvatarUrl && userAvatarUrl.startsWith('/uploads/')) {
+          userAvatarUrl = `${baseUrl}${userAvatarUrl}`;
+        }
 
         return {
           id: post.id,
           userId: post.user_id,
           userName: post.full_name,
-          userAvatar: post.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${post.full_name}`,
+          userAvatar: userAvatarUrl,
           content: post.content,
           imageUrl: post.image_url ? (post.image_url.startsWith('http') ? post.image_url : `${baseUrl}${post.image_url}`) : null,
           likes: post.likes_count,
@@ -105,11 +118,16 @@ export const createPost = async (req: Request, res: Response) => {
 
     const baseUrl = process.env.API_URL || `${req.protocol}://${req.get('host')}`;
     const p = postWithUser.rows[0];
+    // Prepend base URL to user avatar if it's a relative upload path
+    let userAvatarUrl = p.avatar_url;
+    if (userAvatarUrl && userAvatarUrl.startsWith('/uploads/')) {
+      userAvatarUrl = `${baseUrl}${userAvatarUrl}`;
+    }
     const fullPost = {
       id: p.id,
       user_id: p.user_id,
       full_name: p.full_name,
-      avatar_url: p.avatar_url,
+      avatar_url: userAvatarUrl,
       content: p.content,
       image_url: p.image_url,
       likes_count: p.likes_count,

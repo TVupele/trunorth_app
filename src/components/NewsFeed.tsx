@@ -124,7 +124,7 @@ export function NewsFeed() {
                     {/* Header */}
                     <div className="flex items-center gap-1 flex-wrap">
                       <span className="font-semibold text-sm text-foreground">
-                        {post.userName}
+                        {post.userName || 'Anonymous'}
                       </span>
                       <span className="text-muted-foreground text-sm">
                         @{((post.userName || '').toLowerCase().replace(/\s/g, ''))}
