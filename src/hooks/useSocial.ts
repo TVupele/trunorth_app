@@ -50,7 +50,7 @@ export const useSocial = create<SocialState>((set, get) => ({
         const posts = response.data.map((post: any) => ({
           id: post.id,
           userId: post.user_id,
-          userName: post.full_name || 'Anonymous',
+          userName: post.full_name != null ? post.full_name : 'Anonymous',
           userAvatar: post.avatar_url || post.image_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Falcon',
           content: post.content,
           imageUrl: post.imageUrl || post.image_url || undefined,
