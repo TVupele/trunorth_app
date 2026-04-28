@@ -5,6 +5,7 @@ import { AdsBanner } from '@/components/AdsBanner';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useWallet } from '@/hooks/useWallet';
 import { useAuth } from '@/hooks/useAuth';
+import { useSocial } from '@/hooks/useSocial';
 import api from '@/lib/api';
 import { ROUTE_PATHS, formatCurrency } from '@/lib/index';
 import {
@@ -34,6 +35,7 @@ export default function Home() {
   const fetchStats = useDashboardStats((state) => state.fetchStats);
   const isStatsLoading = useDashboardStats((state) => state.isLoading);
   const statsError = useDashboardStats((state) => state.error);
+  const { createPost: createSocialPost } = useSocial();
   const { toast } = useToast();
   const [showApprovalDialog, setShowApprovalDialog] = useState(false);
   const [approvalType, setApprovalType] = useState<'vendor' | 'tutor'>('vendor');
@@ -89,7 +91,10 @@ export default function Home() {
   };
 
   const handleCreatePost = async () => {
-    if (!postContent.trim()) return;
+    if (!postContent.trim() && !postImage) {
+      toast({ title: 'Error', description: 'Please enter content or add an image', variant: 'destructive' });
+      return;
+    }
     setIsCreatingPost(true);
     try {
       let imageUrl: string | undefined;
@@ -101,10 +106,8 @@ export default function Home() {
         });
         imageUrl = response.data.url;
       }
-      await api.post('/posts', {
-        content: postContent,
-        image_url: imageUrl
-      });
+      // Use useSocial's createPost to ensure the post appears immediately in the feed
+      await createSocialPost(postContent, imageUrl);
       toast({ title: 'Success', description: 'Post created successfully!' });
       setShowPostDialog(false);
       setPostContent('');

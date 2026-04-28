@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { Post, Comment } from '@/lib/index';
 import api from '@/lib/api';
+import { useAuth } from '@/hooks/useAuth';
 
 interface Message {
   id: string;
@@ -42,7 +43,7 @@ export const useSocial = create<SocialState>((set, get) => ({
   posts: [],
   conversations: [],
   messages: {},
-  currentUserId: 'user-1',
+  currentUserId: useAuth.getState().user?.id || 'user-1',
 
    fetchPosts: async () => {
      try {
@@ -71,11 +72,12 @@ export const useSocial = create<SocialState>((set, get) => ({
      try {
        const response = await api.post('/posts', { content, image_url: image });
        const savedPost = response.data;
+       const authUser = useAuth.getState().user;
         const newPost: Post = {
           id: savedPost.id,
           userId: savedPost.user_id,
-          userName: savedPost.full_name || 'Current User',
-          userAvatar: savedPost.avatar_url || savedPost.image_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser',
+          userName: savedPost.full_name || authUser?.fullName || 'User',
+          userAvatar: savedPost.avatar_url || authUser?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + encodeURIComponent(authUser?.fullName || 'User'),
           content: savedPost.content,
           imageUrl: savedPost.imageUrl || savedPost.image_url || undefined,
           likes: savedPost.likes_count || savedPost.likes || 0,
@@ -90,11 +92,12 @@ export const useSocial = create<SocialState>((set, get) => ({
        }));
      } catch (error) {
        console.error('Failed to create post:', error);
+       const authUser = useAuth.getState().user;
        const newPost: Post = {
          id: `post-${Date.now()}`,
          userId: get().currentUserId,
-         userName: 'Current User',
-         userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser',
+         userName: authUser?.fullName || 'User',
+         userAvatar: authUser?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + encodeURIComponent(authUser?.fullName || 'User'),
          content,
          imageUrl: image,
          likes: 0,
@@ -111,11 +114,12 @@ export const useSocial = create<SocialState>((set, get) => ({
    },
 
    addComment: async (postId: string, content: string) => {
+     const authUser = useAuth.getState().user;
      const newComment = {
        id: `comment-temp-${Date.now()}`,
        userId: get().currentUserId,
-       userName: 'Current User',
-       userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser',
+       userName: authUser?.fullName || 'User',
+       userAvatar: authUser?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + encodeURIComponent(authUser?.fullName || 'User'),
        content,
        timestamp: new Date().toISOString(),
      };
@@ -240,11 +244,12 @@ export const useSocial = create<SocialState>((set, get) => ({
 
   sendMessage: (recipientId: string, recipientName: string, recipientAvatar: string, content: string) => {
     const conversationId = `conv-${recipientId}`;
+    const authUser = useAuth.getState().user;
     const newMessage: Message = {
       id: `msg-${Date.now()}`,
       senderId: get().currentUserId,
-      senderName: 'Current User',
-      senderAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser',
+      senderName: authUser?.fullName || 'User',
+      senderAvatar: authUser?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + encodeURIComponent(authUser?.fullName || 'User'),
       recipientId,
       content,
       timestamp: new Date().toISOString(),
