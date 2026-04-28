@@ -132,28 +132,28 @@ export default function Emergency() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-2 py-4 max-w-7xl">
-        <div className="mb-4">
-          <h1 className="text-2xl font-bold mb-1">Emergency Reporting</h1>
-          <p className="text-muted-foreground text-sm">Report emergencies and track their status in real-time</p>
-        </div>
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold mb-1">{t('Emergency Reporting')}</h1>
+        <p className="text-muted-foreground text-sm">{t('Report emergencies and track their status in real-time')}</p>
+      </div>
 
         <div className="grid gap-4 lg:grid-cols-3 mb-6">
           <Card className="lg:col-span-2 border-destructive/20 bg-gradient-to-br from-destructive/5 to-background">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
-                <AlertTriangle className="h-5 w-5 text-destructive" />
-                Report Emergency
-              </CardTitle>
-              <CardDescription className="text-xs">Quick access to emergency reporting. Your report will be immediately processed.</CardDescription>
-            </CardHeader>
+             <CardHeader>
+               <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
+                 <AlertTriangle className="h-5 w-5 text-destructive" />
+                 {t('Report Emergency')}
+               </CardTitle>
+               <CardDescription className="text-xs">{t('Quick access to emergency reporting. Your report will be immediately processed.')}</CardDescription>
+             </CardHeader>
             <CardContent>
               <Dialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button size="lg" className="w-full bg-destructive hover:bg-destructive/90 text-destructive-foreground text-sm md:text-base h-10 md:h-12">
-                    <AlertTriangle className="mr-2 h-4 w-4" />
-                    Report Emergency Now
-                  </Button>
-                </DialogTrigger>
+                 <DialogTrigger asChild>
+                   <Button size="lg" className="w-full bg-destructive hover:bg-destructive/90 text-destructive-foreground text-sm md:text-base h-10 md:h-12">
+                     <AlertTriangle className="mr-2 h-4 w-4" />
+                     {t('Report Emergency Now')}
+                   </Button>
+                 </DialogTrigger>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle className="text-xl">Submit Emergency Report</DialogTitle>
@@ -213,10 +213,10 @@ export default function Emergency() {
           </Card>
 
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base"><Phone className="h-4 w-4" />Emergency Contacts</CardTitle>
-              <CardDescription className="text-xs">Quick dial emergency services</CardDescription>
-            </CardHeader>
+             <CardHeader>
+               <CardTitle className="flex items-center gap-2 text-base"><Phone className="h-4 w-4" />{t('Emergency Contacts')}</CardTitle>
+               <CardDescription className="text-xs">{t('Quick dial emergency services')}</CardDescription>
+             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-2">
               {emergencyContacts.map((contact) => (
                 <Button key={contact.name} variant="outline" className="w-full h-auto p-2 flex flex-col items-center justify-center hover:bg-primary/5 hover:border-primary" asChild>

@@ -177,12 +177,12 @@ export default function MobileWallet() {
         <DialogContent>
           <DialogHeader><DialogTitle>{t('Add Funds')}</DialogTitle></DialogHeader>
           <div className="space-y-4 py-4">
-            <Input
-              type="number"
-              placeholder="Amount"
-              value={topUpAmount}
-              onChange={(e) => setTopUpAmount(e.target.value)}
-            />
+             <Input
+               type="number"
+               placeholder={t('Amount')}
+               value={topUpAmount}
+               onChange={(e) => setTopUpAmount(e.target.value)}
+             />
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowTopUpDialog(false)}>Cancel</Button>
@@ -196,8 +196,8 @@ export default function MobileWallet() {
         <DialogContent>
           <DialogHeader><DialogTitle>{t('Send Money')}</DialogTitle></DialogHeader>
           <div className="space-y-4 py-4">
-            <Input placeholder="Recipient (email or ID)" value={recipient} onChange={(e) => setRecipient(e.target.value)} />
-            <Input type="number" placeholder="Amount" value={sendAmount} onChange={(e) => setSendAmount(e.target.value)} />
+             <Input placeholder={t('Recipient (email or ID)')} value={recipient} onChange={(e) => setRecipient(e.target.value)} />
+             <Input type="number" placeholder={t('Amount')} value={sendAmount} onChange={(e) => setSendAmount(e.target.value)} />
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowSendDialog(false)}>Cancel</Button>

@@ -230,13 +230,13 @@ export default function Wallet() {
                     <div className="space-y-4 py-4">
                       <div className="space-y-2">
                         <Label htmlFor="topup-amount">Amount ({currency})</Label>
-                        <Input
-                          id="topup-amount"
-                          type="number"
-                          placeholder="Enter amount"
-                          value={topUpAmount}
-                          onChange={(e) => setTopUpAmount(e.target.value)}
-                        />
+                           <Input
+                           id="topup-amount"
+                           type="number"
+                           placeholder={t('Enter amount')}
+                           value={topUpAmount}
+                           onChange={(e) => setTopUpAmount(e.target.value)}
+                         />
                       </div>
                       <div className="flex gap-2">
                         {[5000, 10000, 25000, 50000].map((amount) => (
@@ -310,13 +310,13 @@ export default function Wallet() {
 
                         {paymentMethod === 'bank_transfer' && (
                           <div className="space-y-2">
-                            <Label htmlFor="transfer-ref">Transfer Reference (Optional)</Label>
-                            <Input
-                              id="transfer-ref"
-                              placeholder="Enter bank transfer reference"
-                              value={bankTransferRef}
-                              onChange={(e) => setBankTransferRef(e.target.value)}
-                            />
+                         <Label htmlFor="transfer-ref">{t('Transfer Reference (Optional)')}</Label>
+                         <Input
+                           id="transfer-ref"
+                           placeholder={t('Enter bank transfer reference')}
+                           value={bankTransferRef}
+                           onChange={(e) => setBankTransferRef(e.target.value)}
+                         />
                             <div className="rounded-lg bg-muted p-3 text-sm">
                               <p className="font-medium mb-1">Bank Details:</p>
                               <p>Bank: First Bank of Nigeria</p>
@@ -357,14 +357,14 @@ export default function Wallet() {
                         <Label htmlFor="recipient">Recipient Email</Label>
                         <Input id="recipient" placeholder="Enter recipient email" value={recipient} onChange={(e) => setRecipient(e.target.value)} />
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="send-amount">Amount ({currency})</Label>
-                        <Input id="send-amount" type="number" placeholder="Enter amount" value={sendAmount} onChange={(e) => setSendAmount(e.target.value)} />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="description">Description (Optional)</Label>
-                        <Input id="description" placeholder="What's this for?" value={description} onChange={(e) => setDescription(e.target.value)} />
-                      </div>
+                       <div className="space-y-2">
+                         <Label htmlFor="send-amount">Amount ({currency})</Label>
+                         <Input id="send-amount" type="number" placeholder={t('Enter amount')} value={sendAmount} onChange={(e) => setSendAmount(e.target.value)} />
+                       </div>
+                       <div className="space-y-2">
+                         <Label htmlFor="description">Description (Optional)</Label>
+                         <Input id="description" placeholder={t("What's this for?")} value={description} onChange={(e) => setDescription(e.target.value)} />
+                       </div>
                     </div>
                     <DialogFooter>
                       <Button variant="outline" onClick={() => setSendMoneyDialogOpen(false)}>Cancel</Button>

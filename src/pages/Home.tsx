@@ -213,15 +213,15 @@ export default function Home() {
   }
 
   // Add tutor dashboard link if user is a tutor
-  if (isTutor) {
-    services.push({
-      icon: <GraduationCap className="w-5 h-5" />,
-      title: 'Tutor Dashboard',
-      description: 'Manage your courses, bookings, and earnings',
-      href: ROUTE_PATHS.TUTOR_DASHBOARD,
-      variant: 'primary' as const,
-    });
-  }
+   if (isTutor) {
+     services.push({
+       icon: <GraduationCap className="w-5 h-5" />,
+       title: t('Tutor Dashboard'),
+       description: t('Manage your courses, bookings, and earnings'),
+       href: ROUTE_PATHS.TUTOR_DASHBOARD,
+       variant: 'primary' as const,
+     });
+   }
 
   return (
     <div>
@@ -254,13 +254,13 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <Send className="h-8 w-8 text-primary" />
-                  <div>
-                    <h3 className="font-semibold">Share with the Community</h3>
-                    <p className="text-sm text-muted-foreground">Create a post to share updates</p>
-                  </div>
-                </div>
-                <Button onClick={openPostDialog} variant="default" size="sm">
-                  <Send className="h-4 w-4 mr-2" />Create Post
+               <div>
+                     <h3 className="font-semibold">{t('Share with the Community')}</h3>
+                     <p className="text-sm text-muted-foreground">{t('Create a post to share updates')}</p>
+                   </div>
+                 </div>
+                 <Button onClick={openPostDialog} variant="default" size="sm">
+                   <Send className="h-4 w-4 mr-2" />{t('Create Post')}
                 </Button>
               </div>
             </CardContent>
@@ -350,17 +350,17 @@ export default function Home() {
       {/* Create Post Dialog */}
       <Dialog open={showPostDialog} onOpenChange={setShowPostDialog}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create Post</DialogTitle>
-            <DialogDescription>Share something with the community</DialogDescription>
-          </DialogHeader>
+       <DialogHeader>
+         <DialogTitle>{t('Create Post')}</DialogTitle>
+         <DialogDescription>{t('Share something with the community')}</DialogDescription>
+       </DialogHeader>
           <div className="space-y-4 py-4">
-            <Textarea
-              placeholder="What's on your mind?"
-              value={postContent}
-              onChange={(e) => setPostContent(e.target.value)}
-              className="min-h-[100px] resize-none"
-            />
+             <Textarea
+               placeholder={t("What's on your mind?")}
+               value={postContent}
+               onChange={(e) => setPostContent(e.target.value)}
+               className="min-h-[100px] resize-none"
+             />
             <div className="flex items-center gap-4">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -369,10 +369,10 @@ export default function Home() {
                   onChange={handleImageChange}
                   className="hidden"
                 />
-                <Button variant="outline" size="sm" type="button">
-                  <ImageIcon className="h-4 w-4" />
-                  <span className="ml-2">Add Image</span>
-                </Button>
+                 <Button variant="outline" size="sm" type="button">
+                   <ImageIcon className="h-4 w-4" />
+                   <span className="ml-2">{t('Add Image')}</span>
+                 </Button>
               </label>
               {postImagePreview && (
                 <div className="relative w-12 h-12 rounded-md overflow-hidden">

@@ -204,7 +204,7 @@ export default function Events() {
                   <div className="flex flex-col sm:flex-row gap-3">
                     <div className="relative flex-1">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
-                      <Input placeholder="Search events..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-8 h-8 text-sm" />
+                       <Input placeholder={t('Search events...')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-8 h-8 text-sm" />
                     </div>
                     <div className="flex gap-2">
                       <Select value={selectedCategory} onValueChange={setSelectedCategory}>

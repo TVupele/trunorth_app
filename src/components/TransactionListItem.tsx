@@ -1,12 +1,15 @@
 import { ArrowUpRight, ArrowDownLeft, Plus, CreditCard } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Transaction, formatCurrency, formatDate, getStatusBadgeVariant } from '@/lib/index';
+import { useTranslation } from 'react-i18next';
 
 interface TransactionListItemProps {
   transaction: Transaction;
 }
 
 export function TransactionListItem({ transaction }: TransactionListItemProps) {
+  const { t } = useTranslation();
+
   const getTransactionIcon = () => {
     switch (transaction.type) {
       case 'send':
@@ -55,13 +58,13 @@ export function TransactionListItem({ transaction }: TransactionListItemProps) {
 
   const getTransactionLabel = () => {
     if (transaction.type === 'send' && transaction.recipient) {
-      return `To: ${transaction.recipient}`;
+      return `${t('To:')} ${transaction.recipient}`;
     }
     if (transaction.type === 'receive' && transaction.sender) {
-      return `From: ${transaction.sender}`;
+      return `${t('From:')} ${transaction.sender}`;
     }
     if (transaction.type === 'request' && transaction.sender) {
-      return `Request from ${transaction.sender}`;
+      return `${t('Request from')} ${transaction.sender}`;
     }
     return transaction.description;
   };
@@ -81,10 +84,10 @@ export function TransactionListItem({ transaction }: TransactionListItemProps) {
               <p className="text-sm text-muted-foreground">
                 {transaction.timestamp && !isNaN(Date.parse(transaction.timestamp)) 
                   ? formatDate(transaction.timestamp) 
-                  : 'Pending'}
+                  : t('Pending')}
               </p>
               <Badge variant={getStatusBadgeVariant(transaction.status)} className="text-xs">
-                {transaction.status}
+                {t(transaction.status)}
               </Badge>
             </div>
           </div>

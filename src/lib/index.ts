@@ -1,3 +1,5 @@
+import i18n from '@/i18n';
+
 export const ROUTE_PATHS = {
   HOME: '/',
   LOGIN: '/login',
@@ -199,10 +201,10 @@ export const formatDate = (dateString: string): string => {
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
 
-  if (diffMins < 1) return 'Just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffMins < 1) return t('Just now');
+  if (diffMins < 60) return `${diffMins} ${t('minute')} ${t('ago')}`;
+  if (diffHours < 24) return `${diffHours} ${t('hour')} ${t('ago')}`;
+  if (diffDays < 7) return `${diffDays} ${t('day')} ${t('ago')}`;
 
   return new Intl.DateTimeFormat('en-US', {
     month: 'short',

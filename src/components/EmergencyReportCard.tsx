@@ -43,13 +43,13 @@ const statusConfig = {
   resolved: { variant: "secondary" as const, icon: CheckCircle2 },
 };
 
-const typeLabels = {
-  medical: "Medical Emergency",
-  fire: "Fire Emergency",
-  accident: "Accident",
-  security: "Security Issue",
-  other: "Other Emergency",
-};
+  const typeLabels = {
+    medical: t('Medical Emergency'),
+    fire: t('Fire Emergency'),
+    accident: t('Accident'),
+    security: t('Security Issue'),
+    other: t('Other Emergency'),
+  };
 
 export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
   const [showDetails, setShowDetails] = useState(false);
@@ -68,7 +68,7 @@ export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
               <h3 className="font-semibold text-lg">{typeLabels[report.type] || report.type}</h3>
               <Badge variant={priorityStyle.variant} className={priorityStyle.bg}>
                 <PriorityIcon className="w-3 h-3 mr-1" />
-                {report.priority.toUpperCase()}
+                {t(report.priority.toUpperCase())}
               </Badge>
             </div>
             <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
@@ -84,7 +84,7 @@ export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
           </div>
           <Badge variant={statusStyle.variant} className="shrink-0">
             <StatusIcon className={`w-3 h-3 mr-1 ${report.status === "in-progress" ? "animate-spin" : ""}`} />
-            {report.status === "in-progress" ? "In Progress" : report.status.charAt(0).toUpperCase() + report.status.slice(1)}
+            {t(report.status === "in-progress" ? "In Progress" : report.status.charAt(0).toUpperCase() + report.status.slice(1))}
           </Badge>
         </div>
       </CardHeader>
@@ -111,21 +111,21 @@ export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
         )}
 
         <div className="mt-4 space-y-2">
-          <div className="text-xs font-medium text-muted-foreground">Status Timeline</div>
+          <div className="text-xs font-medium text-muted-foreground">{t('Status Timeline')}</div>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
               <div className="w-2 h-2 rounded-full bg-primary" />
-              <span className="text-xs">Reported</span>
+              <span className="text-xs">{t('Reported')}</span>
             </div>
             <div className="flex-1 h-px bg-border" />
             <div className="flex items-center gap-1">
               <div className={`w-2 h-2 rounded-full ${report.status !== "pending" ? "bg-primary" : "bg-muted"}`} />
-              <span className="text-xs">In Progress</span>
+              <span className="text-xs">{t('In Progress')}</span>
             </div>
             <div className="flex-1 h-px bg-border" />
             <div className="flex items-center gap-1">
               <div className={`w-2 h-2 rounded-full ${report.status === "resolved" ? "bg-primary" : "bg-muted"}`} />
-              <span className="text-xs">Resolved</span>
+              <span className="text-xs">{t('Resolved')}</span>
             </div>
           </div>
         </div>
@@ -133,7 +133,7 @@ export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
 
       <CardFooter className="pt-3 border-t border-border">
         <Button variant="outline" className="w-full" size="sm" onClick={() => setShowDetails(true)}>
-          View Details
+          {t('View Details')}
         </Button>
       </CardFooter>
     </Card>
@@ -149,7 +149,7 @@ export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
         <Alert variant="destructive" className="mb-3">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            This is a {report.priority} priority emergency requiring immediate attention.
+            {t('This is a')} {report.priority} {t('priority emergency requiring immediate attention.')}
           </AlertDescription>
         </Alert>
         {cardContent}
@@ -174,7 +174,7 @@ export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
        />
      </>
    );
- }
+}
 
 // Full Report Details Dialog Component
 function EmergencyReportDetailsDialog({ report, open, onOpenChange }: { report: EmergencyReport; open: boolean; onOpenChange: (open: boolean) => void }) {
@@ -189,10 +189,10 @@ function EmergencyReportDetailsDialog({ report, open, onOpenChange }: { report: 
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
-            {typeLabels[report.type] || report.type} Report
+            {typeLabels[report.type] || report.type} {t('Report')}
           </DialogTitle>
           <DialogDescription>
-            Submitted on {formatDate(report.timestamp)}
+            {t('Submitted on')} {formatDate(report.timestamp)}
           </DialogDescription>
         </DialogHeader>
 
@@ -201,17 +201,17 @@ function EmergencyReportDetailsDialog({ report, open, onOpenChange }: { report: 
           <div className="flex items-center gap-3 flex-wrap">
             <Badge variant={priorityStyle.variant} className={priorityStyle.bg}>
               <PriorityIcon className="w-3 h-3 mr-1" />
-              {report.priority.toUpperCase()} PRIORITY
+              {t(report.priority.toUpperCase())} {t('PRIORITY')}
             </Badge>
             <Badge variant={statusStyle.variant}>
               <StatusIcon className={`w-3 h-3 mr-1 ${report.status === "in-progress" ? "animate-spin" : ""}`} />
-              {report.status === "in-progress" ? "In Progress" : report.status.charAt(0).toUpperCase() + report.status.slice(1)}
+              {t(report.status === "in-progress" ? "In Progress" : report.status.charAt(0).toUpperCase() + report.status.slice(1))}
             </Badge>
           </div>
 
           {/* Description */}
           <div className="space-y-2">
-            <h4 className="font-semibold">Description</h4>
+            <h4 className="font-semibold">{t('Description')}</h4>
             <p className="text-sm text-foreground bg-muted p-3 rounded-md">{report.description}</p>
           </div>
 
@@ -219,7 +219,7 @@ function EmergencyReportDetailsDialog({ report, open, onOpenChange }: { report: 
           <div className="space-y-2">
             <h4 className="font-semibold flex items-center gap-2">
               <MapPin className="h-4 w-4 text-muted-foreground" />
-              Location
+              {t('Location')}
             </h4>
             <p className="text-sm text-foreground bg-muted p-3 rounded-md font-mono">
               {report.location || 'Not specified'}
@@ -234,7 +234,7 @@ function EmergencyReportDetailsDialog({ report, open, onOpenChange }: { report: 
           {/* Photos */}
           {report.photos && report.photos.length > 0 && (
             <div className="space-y-2">
-              <h4 className="font-semibold">Evidence Photos ({report.photos.length})</h4>
+              <h4 className="font-semibold">{t('Evidence Photos')} ({report.photos.length})</h4>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {report.photos.map((photo, index) => (
                   <div key={index} className="relative aspect-square rounded-md overflow-hidden border border-border">
@@ -247,28 +247,28 @@ function EmergencyReportDetailsDialog({ report, open, onOpenChange }: { report: 
 
           {/* Timeline */}
           <div className="space-y-2">
-            <h4 className="font-semibold">Status Timeline</h4>
+            <h4 className="font-semibold">{t('Status Timeline')}</h4>
             <div className="flex items-center gap-2 p-4 bg-muted/50 rounded-lg">
               <div className="flex flex-col items-center gap-1">
                 <div className="w-3 h-3 rounded-full bg-primary" />
-                <span className="text-xs">Reported</span>
+                <span className="text-xs">{t('Reported')}</span>
               </div>
               <div className="flex-1 h-px bg-border" />
               <div className="flex flex-col items-center gap-1">
                 <div className={`w-3 h-3 rounded-full ${report.status !== "pending" ? "bg-primary" : "bg-muted"}`} />
-                <span className="text-xs">In Progress</span>
+                <span className="text-xs">{t('In Progress')}</span>
               </div>
               <div className="flex-1 h-px bg-border" />
               <div className="flex flex-col items-center gap-1">
                 <div className={`w-3 h-3 rounded-full ${report.status === "resolved" ? "bg-primary" : "bg-muted"}`} />
-                <span className="text-xs">Resolved</span>
+                <span className="text-xs">{t('Resolved')}</span>
               </div>
             </div>
           </div>
         </div>
 
         <DialogFooter>
-          <Button onClick={() => onOpenChange(false)}>Close</Button>
+          <Button onClick={() => onOpenChange(false)}>{t('Close')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
