@@ -42,12 +42,15 @@ export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
   const StatusIcon = statusStyle.icon;
   const isHighPriority = report.priority === "high" || report.priority === "critical";
 
-  const typeLabels = {
-    medical: t('Medical Emergency'),
-    fire: t('Fire Emergency'),
-    accident: t('Accident'),
-    security: t('Security Issue'),
-    other: t('Other Emergency'),
+  const getTypeLabel = (type: string) => {
+    const labels: Record<string, string> = {
+      medical: t('Medical Emergency'),
+      fire: t('Fire Emergency'),
+      accident: t('Accident'),
+      security: t('Security Issue'),
+      other: t('Other Emergency'),
+    };
+    return labels[type] || type;
   };
 
   const cardContent = (
@@ -56,7 +59,7 @@ export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="font-semibold text-lg">{typeLabels[report.type] || report.type}</h3>
+              <h3 className="font-semibold text-lg">{getTypeLabel(report.type)}</h3>
               <Badge variant={priorityStyle.variant} className={priorityStyle.bg}>
                 <PriorityIcon className="w-3 h-3 mr-1" />
                 {t(report.priority.toUpperCase())}
@@ -169,10 +172,22 @@ export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
 
 // Full Report Details Dialog Component
 function EmergencyReportDetailsDialog({ report, open, onOpenChange }: { report: EmergencyReport; open: boolean; onOpenChange: (open: boolean) => void }) {
+  const { t } = useTranslation();
   const priorityStyle = priorityConfig[report.priority] || priorityConfig.medium;
   const PriorityIcon = priorityStyle.icon;
   const statusStyle = statusConfig[report.status] || statusConfig.pending;
   const StatusIcon = statusStyle.icon;
+
+  const getTypeLabel = (type: string) => {
+    const labels: Record<string, string> = {
+      medical: t('Medical Emergency'),
+      fire: t('Fire Emergency'),
+      accident: t('Accident'),
+      security: t('Security Issue'),
+      other: t('Other Emergency'),
+    };
+    return labels[type] || type;
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -180,7 +195,7 @@ function EmergencyReportDetailsDialog({ report, open, onOpenChange }: { report: 
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
-            {typeLabels[report.type] || report.type} {t('Report')}
+             {getTypeLabel(report.type)} {t('Report')}
           </DialogTitle>
           <DialogDescription>
             {t('Submitted on')} {formatDate(report.timestamp)}

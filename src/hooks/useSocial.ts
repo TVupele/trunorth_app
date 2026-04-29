@@ -45,14 +45,14 @@ export const useSocial = create<SocialState>((set, get) => ({
   messages: {},
   currentUserId: 'user-1',
 
-   fetchPosts: async () => {
-     try {
-       const response = await api.get('/posts');
+    fetchPosts: async () => {
+      try {
+        const response = await api.get('/posts');
         const posts = response.data.map((post: any) => ({
           id: post.id,
           userId: post.user_id,
-          userName: post.full_name != null ? post.full_name : 'Anonymous',
-          userAvatar: post.avatar_url || post.image_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Falcon',
+          userName: post.full_name || `User_${post.user_id?.slice(0, 8)}`,
+          userAvatar: post.avatar_url || post.image_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(post.full_name || post.user_id || 'default')}`,
           content: post.content,
           imageUrl: post.imageUrl || post.image_url || undefined,
           likes: post.likes_count || post.likes || 0,
@@ -62,69 +62,69 @@ export const useSocial = create<SocialState>((set, get) => ({
           isRetweeted: post.isRetweeted || false,
           timestamp: post.created_at || post.timestamp,
         }));
-       set({ posts });
-     } catch (error) {
-       console.error('Failed to fetch posts', error);
-     }
-   },
+        set({ posts });
+      } catch (error) {
+        console.error('Failed to fetch posts', error);
+      }
+    },
 
-   createPost: async (content: string, image?: string) => {
-     try {
-       const response = await api.post('/posts', { content, image_url: image });
-       const savedPost = response.data;
-       const authUser = useAuth.getState().user;
+    createPost: async (content: string, image?: string) => {
+      try {
+        const response = await api.post('/posts', { content, image_url: image });
+        const savedPost = response.data;
+        const authUser = useAuth.getState().user;
+         const newPost: Post = {
+           id: savedPost.id,
+           userId: savedPost.user_id,
+           userName: savedPost.full_name || authUser?.fullName || 'User',
+           userAvatar: savedPost.avatar_url || authUser?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + encodeURIComponent(authUser?.fullName || authUser?.id || 'User'),
+           content: savedPost.content,
+           imageUrl: savedPost.imageUrl || savedPost.image_url || undefined,
+           likes: savedPost.likes_count || savedPost.likes || 0,
+           comments: savedPost.comments || [],
+           retweets: savedPost.retweets_count || savedPost.retweets || 0,
+           isLiked: savedPost.isLiked || false,
+           isRetweeted: savedPost.isRetweeted || false,
+           timestamp: savedPost.created_at || savedPost.timestamp,
+         };
+        set((state) => ({
+          posts: [newPost, ...state.posts],
+        }));
+      } catch (error) {
+        console.error('Failed to create post:', error);
+        const authUser = useAuth.getState().user;
         const newPost: Post = {
-          id: savedPost.id,
-          userId: savedPost.user_id,
-          userName: savedPost.full_name || authUser?.fullName || 'User',
-          userAvatar: savedPost.avatar_url || authUser?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + encodeURIComponent(authUser?.fullName || 'User'),
-          content: savedPost.content,
-          imageUrl: savedPost.imageUrl || savedPost.image_url || undefined,
-          likes: savedPost.likes_count || savedPost.likes || 0,
-          comments: savedPost.comments || [],
-          retweets: savedPost.retweets_count || savedPost.retweets || 0,
-          isLiked: savedPost.isLiked || false,
-          isRetweeted: savedPost.isRetweeted || false,
-          timestamp: savedPost.created_at || savedPost.timestamp,
+          id: `post-${Date.now()}`,
+          userId: get().currentUserId,
+          userName: authUser?.fullName || 'User',
+          userAvatar: authUser?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + encodeURIComponent(authUser?.fullName || authUser?.id || 'User'),
+          content,
+          imageUrl: image,
+          likes: 0,
+          comments: [],
+          retweets: 0,
+          isLiked: false,
+          isRetweeted: false,
+          timestamp: new Date().toISOString(),
         };
-       set((state) => ({
-         posts: [newPost, ...state.posts],
-       }));
-     } catch (error) {
-       console.error('Failed to create post:', error);
-       const authUser = useAuth.getState().user;
-       const newPost: Post = {
-         id: `post-${Date.now()}`,
-         userId: get().currentUserId,
-         userName: authUser?.fullName || 'User',
-         userAvatar: authUser?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + encodeURIComponent(authUser?.fullName || 'User'),
-         content,
-         imageUrl: image,
-         likes: 0,
-         comments: [],
-         retweets: 0,
-         isLiked: false,
-         isRetweeted: false,
-         timestamp: new Date().toISOString(),
-       };
-       set((state) => ({
-         posts: [newPost, ...state.posts],
-       }));
-     }
-   },
+        set((state) => ({
+          posts: [newPost, ...state.posts],
+        }));
+      }
+    },
 
-   addComment: async (postId: string, content: string) => {
-     const authUser = useAuth.getState().user;
-     const newComment = {
-       id: `comment-temp-${Date.now()}`,
-       userId: get().currentUserId,
-       userName: authUser?.fullName || 'User',
-       userAvatar: authUser?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + encodeURIComponent(authUser?.fullName || 'User'),
-       content,
-       timestamp: new Date().toISOString(),
-     };
+    addComment: async (postId: string, content: string) => {
+      const authUser = useAuth.getState().user;
+      const newComment = {
+        id: `comment-temp-${Date.now()}`,
+        userId: get().currentUserId,
+        userName: authUser?.fullName || 'User',
+        userAvatar: authUser?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + encodeURIComponent(authUser?.fullName || authUser?.id || 'User'),
+        content,
+        timestamp: new Date().toISOString(),
+      };
 
-     // Optimistically add comment
+      // Optimistically add comment
      set((state) => ({
        posts: state.posts.map((post) =>
          post.id === postId
@@ -242,21 +242,21 @@ export const useSocial = create<SocialState>((set, get) => ({
      }
    },
 
-  sendMessage: (recipientId: string, recipientName: string, recipientAvatar: string, content: string) => {
-    const conversationId = `conv-${recipientId}`;
-    const authUser = useAuth.getState().user;
-    const newMessage: Message = {
-      id: `msg-${Date.now()}`,
-      senderId: get().currentUserId,
-      senderName: authUser?.fullName || 'User',
-      senderAvatar: authUser?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + encodeURIComponent(authUser?.fullName || 'User'),
-      recipientId,
-      content,
-      timestamp: new Date().toISOString(),
-      read: false,
-    };
+    sendMessage: (recipientId: string, recipientName: string, recipientAvatar: string, content: string) => {
+      const conversationId = `conv-${recipientId}`;
+      const authUser = useAuth.getState().user;
+      const newMessage: Message = {
+        id: `msg-${Date.now()}`,
+        senderId: get().currentUserId,
+        senderName: authUser?.fullName || 'User',
+        senderAvatar: authUser?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + encodeURIComponent(authUser?.fullName || authUser?.id || 'User'),
+        recipientId,
+        content,
+        timestamp: new Date().toISOString(),
+        read: false,
+      };
 
-    set((state) => {
+      set((state) => {
       const existingMessages = state.messages[conversationId] || [];
       const existingConversation = state.conversations.find(
         (conv) => conv.id === conversationId
