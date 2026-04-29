@@ -3,9 +3,10 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle, MapPin, Clock, CheckCircle2, Loader2, XCircle } from "lucide-react";
+import { AlertTriangle, MapPin, Clock, CheckCircle2, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -14,17 +15,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
 
 interface EmergencyReportCardProps {
   report: EmergencyReport;
@@ -43,6 +33,15 @@ const statusConfig = {
   resolved: { variant: "secondary" as const, icon: CheckCircle2 },
 };
 
+export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
+  const { t } = useTranslation();
+  const [showDetails, setShowDetails] = useState(false);
+  const priorityStyle = priorityConfig[report.priority] || priorityConfig.medium;
+  const PriorityIcon = priorityStyle.icon;
+  const statusStyle = statusConfig[report.status] || statusConfig.pending;
+  const StatusIcon = statusStyle.icon;
+  const isHighPriority = report.priority === "high" || report.priority === "critical";
+
   const typeLabels = {
     medical: t('Medical Emergency'),
     fire: t('Fire Emergency'),
@@ -50,14 +49,6 @@ const statusConfig = {
     security: t('Security Issue'),
     other: t('Other Emergency'),
   };
-
-export function EmergencyReportCard({ report }: EmergencyReportCardProps) {
-  const [showDetails, setShowDetails] = useState(false);
-  const priorityStyle = priorityConfig[report.priority] || priorityConfig.medium;
-  const PriorityIcon = priorityStyle.icon;
-  const statusStyle = statusConfig[report.status] || statusConfig.pending;
-  const StatusIcon = statusStyle.icon;
-  const isHighPriority = report.priority === "high" || report.priority === "critical";
 
   const cardContent = (
     <Card className="overflow-hidden transition-all duration-200 hover:shadow-lg">

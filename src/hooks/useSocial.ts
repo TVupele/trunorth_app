@@ -43,7 +43,7 @@ export const useSocial = create<SocialState>((set, get) => ({
   posts: [],
   conversations: [],
   messages: {},
-  currentUserId: useAuth.getState().user?.id || 'user-1',
+  currentUserId: 'user-1',
 
    fetchPosts: async () => {
      try {

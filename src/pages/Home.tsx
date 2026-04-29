@@ -60,15 +60,15 @@ export default function Home() {
       const endpoint = approvalType === 'vendor' ? '/admin/approve-vendor' : '/admin/approve-tutor';
       await api.post(endpoint);
       toast({
-        title: 'Request Submitted',
-        description: `Your ${approvalType} request has been submitted and is pending admin approval.`,
+        title: t('Request Submitted'),
+        description: t('Your {{type}} request has been submitted and is pending admin approval.', { type: approvalType }),
       });
       setShowApprovalDialog(false);
     } catch (error: any) {
       const errorData = error.response?.data?.error;
-      const errorMessage = typeof errorData === 'string' ? errorData : 'An error occurred.';
+      const errorMessage = typeof errorData === 'string' ? errorData : t('An error occurred.');
       toast({
-        title: 'Request Failed',
+        title: t('Request Failed'),
         description: String(errorMessage),
         variant: 'destructive',
       });
@@ -92,7 +92,7 @@ export default function Home() {
 
   const handleCreatePost = async () => {
     if (!postContent.trim() && !postImage) {
-      toast({ title: 'Error', description: 'Please enter content or add an image', variant: 'destructive' });
+      toast({ title: t('Error'), description: t('Please enter content or add an image'), variant: 'destructive' });
       return;
     }
     setIsCreatingPost(true);
@@ -108,13 +108,13 @@ export default function Home() {
       }
       // Use useSocial's createPost to ensure the post appears immediately in the feed
       await createSocialPost(postContent, imageUrl);
-      toast({ title: 'Success', description: 'Post created successfully!' });
+      toast({ title: t('Success'), description: t('Post created successfully!') });
       setShowPostDialog(false);
       setPostContent('');
       setPostImage(null);
       setPostImagePreview('');
     } catch (error: any) {
-      toast({ title: 'Error', description: String(error.response?.data?.error) || 'Failed to create post', variant: 'destructive' });
+      toast({ title: t('Error'), description: String(error.response?.data?.error) || t('Failed to send money'), variant: 'destructive' });
     } finally {
       setIsCreatingPost(false);
     }
@@ -385,9 +385,9 @@ export default function Home() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowPostDialog(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setShowPostDialog(false)}>{t('Cancel')}</Button>
             <Button onClick={handleCreatePost} disabled={!postContent.trim() || isCreatingPost}>
-              {isCreatingPost ? 'Posting...' : 'Post'}
+              {isCreatingPost ? t('Posting...') : t('Post')}
             </Button>
           </DialogFooter>
         </DialogContent>

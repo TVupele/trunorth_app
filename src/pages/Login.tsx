@@ -28,12 +28,12 @@ export default function Login() {
     try {
       await login({ email, pass: password });
       toast({
-        title: 'Login successful!',
+        title: t('Login successful!'),
       });
       navigate('/');
     } catch (error: any) {
       toast({
-        title: 'Login failed',
+        title: t('Login failed'),
         description: String(error.response?.data?.error || error.message),
         variant: 'destructive',
       });

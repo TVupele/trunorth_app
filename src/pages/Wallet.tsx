@@ -62,39 +62,39 @@ export default function Wallet() {
     if (isNaN(amount) || amount <= 0 || !recipient) return;
     try {
       await api.post('/wallet/send', { recipient, amount, description });
-      toast({ title: 'Money Sent', description: `${formatCurrency(amount, currency)} sent to ${recipient}` });
+      toast({ title: t('Money Sent'), description: `${formatCurrency(amount, currency)} sent to ${recipient}` });
       setSendAmount('');
       setRecipient('');
       setDescription('');
       setSendMoneyDialogOpen(false);
       fetchWalletData();
     } catch (err: any) {
-      toast({ title: 'Error', description: err.response?.data?.error || 'Failed to send money', variant: 'destructive' });
+      toast({ title: t('Error'), description: err.response?.data?.error || t('Failed to send money'), variant: 'destructive' });
     }
   };
 
   const handleRequestMoney = async () => {
     const amount = parseFloat(requestAmount);
     if (isNaN(amount) || amount <= 0 || !requestRecipient) {
-      toast({ title: 'Invalid Request', description: 'Select a recipient and enter a valid amount.', variant: 'destructive' });
+      toast({ title: t('Invalid Request'), description: t('Select a recipient and enter a valid amount.'), variant: 'destructive' });
       return;
     }
     try {
       await api.post('/wallet/request', { recipient: requestRecipient, amount, description: requestDescription });
-      toast({ title: 'Request Sent', description: `Request for ${formatCurrency(amount, currency)} sent to ${requestRecipient}` });
+      toast({ title: t('Request Sent'), description: `Request for ${formatCurrency(amount, currency)} sent to ${requestRecipient}` });
       setRequestAmount('');
       setRequestRecipient('');
       setRequestDescription('');
       setRequestMoneyDialogOpen(false);
     } catch (err: any) {
-      toast({ title: 'Error', description: err.response?.data?.error || 'Failed to send request', variant: 'destructive' });
+      toast({ title: t('Error'), description: err.response?.data?.error || t('Failed to send request'), variant: 'destructive' });
     }
   };
 
   const handleTopUp = async () => {
     const amount = parseFloat(topUpAmount);
     if (isNaN(amount) || amount <= 0) {
-      toast({ title: 'Invalid Amount', description: 'Enter a valid amount.', variant: 'destructive' });
+      toast({ title: t('Invalid Amount'), description: t('Enter a valid amount.'), variant: 'destructive' });
       return;
     }
 
@@ -113,12 +113,12 @@ export default function Wallet() {
           paymentIntentId: intentRes.data.clientSecret,
           amount,
         });
-        toast({ title: 'Top-up Successful', description: `${formatCurrency(amount, currency)} added via Stripe` });
+        toast({ title: t('Top-up Successful'), description: `${formatCurrency(amount, currency)} added via Stripe` });
         setTopUpDialogOpen(false);
         setTopUpAmount('');
         fetchWalletData();
       } catch (err: any) {
-        toast({ title: 'Stripe Error', description: err.response?.data?.error || 'Payment failed', variant: 'destructive' });
+        toast({ title: t('Stripe Error'), description: err.response?.data?.error || t('Payment failed'), variant: 'destructive' });
       } finally {
         setStripeProcessing(false);
       }
@@ -135,12 +135,12 @@ export default function Wallet() {
           orderId: orderRes.data.orderId,
           amount,
         });
-        toast({ title: 'Top-up Successful', description: `${formatCurrency(amount, currency)} added via PayPal` });
+        toast({ title: t('Top-up Successful'), description: `${formatCurrency(amount, currency)} added via PayPal` });
         setTopUpDialogOpen(false);
         setTopUpAmount('');
         fetchWalletData();
       } catch (err: any) {
-        toast({ title: 'PayPal Error', description: err.response?.data?.error || 'Payment failed', variant: 'destructive' });
+        toast({ title: t('PayPal Error'), description: err.response?.data?.error || t('Payment failed'), variant: 'destructive' });
       } finally {
         setPaypalProcessing(false);
       }
@@ -150,13 +150,13 @@ export default function Wallet() {
     if (paymentMethod === 'bank_transfer') {
       try {
         await api.post('/payments/bank-transfer', { amount, reference: bankTransferRef });
-        toast({ title: 'Top-up Successful', description: `${formatCurrency(amount, currency)} added via bank transfer` });
+        toast({ title: t('Top-up Successful'), description: `${formatCurrency(amount, currency)} added via bank transfer` });
         setTopUpDialogOpen(false);
         setTopUpAmount('');
         setBankTransferRef('');
         fetchWalletData();
       } catch (err: any) {
-        toast({ title: 'Transfer Error', description: err.response?.data?.error || 'Transfer failed', variant: 'destructive' });
+        toast({ title: t('Transfer Error'), description: err.response?.data?.error || t('Transfer failed'), variant: 'destructive' });
       }
       return;
     }
@@ -174,7 +174,7 @@ export default function Wallet() {
         setTopUpAmount('');
         fetchWalletData();
       } catch (err: any) {
-        toast({ title: 'Card Error', description: err.response?.data?.error || 'Card payment failed', variant: 'destructive' });
+        toast({ title: t('Card Error'), description: err.response?.data?.error || t('Card payment failed'), variant: 'destructive' });
       } finally {
         setStripeProcessing(false);
       }
@@ -201,7 +201,7 @@ export default function Wallet() {
           <Alert variant="destructive">
             <AlertDescription className="flex items-center justify-between">
               {error}
-              <Button variant="ghost" size="sm" onClick={clearError}>Dismiss</Button>
+              <Button variant="ghost" size="sm" onClick={clearError}>{t('Dismiss')}</Button>
             </AlertDescription>
           </Alert>
         )}
@@ -328,12 +328,12 @@ export default function Wallet() {
                       </div>
                     </div>
                     <DialogFooter>
-                      <Button variant="outline" onClick={() => setTopUpDialogOpen(false)}>Cancel</Button>
+                      <Button variant="outline" onClick={() => setTopUpDialogOpen(false)}>{t('Cancel')}</Button>
                       <Button
                         onClick={handleTopUp}
                         disabled={!topUpAmount || parseFloat(topUpAmount) <= 0 || stripeProcessing || paypalProcessing}
                       >
-                        {stripeProcessing || paypalProcessing ? 'Processing...' : `Top Up ${topUpAmount ? formatCurrency(parseFloat(topUpAmount), currency) : ''}`}
+                        {stripeProcessing || paypalProcessing ? t('Processing...') : `${t('Top Up')} ${topUpAmount ? formatCurrency(parseFloat(topUpAmount), currency) : ''}`}
                       </Button>
                     </DialogFooter>
                   </DialogContent>
@@ -367,8 +367,8 @@ export default function Wallet() {
                        </div>
                     </div>
                     <DialogFooter>
-                      <Button variant="outline" onClick={() => setSendMoneyDialogOpen(false)}>Cancel</Button>
-                      <Button onClick={handleSendMoney} disabled={isLoading}>{isLoading ? 'Processing...' : 'Send Money'}</Button>
+                      <Button variant="outline" onClick={() => setSendMoneyDialogOpen(false)}>{t('Cancel')}</Button>
+                      <Button onClick={handleSendMoney} disabled={isLoading}>{isLoading ? t('Processing...') : t('Send Money')}</Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
@@ -401,8 +401,8 @@ export default function Wallet() {
                       </div>
                     </div>
                     <DialogFooter>
-                      <Button variant="outline" onClick={() => setRequestMoneyDialogOpen(false)}>Cancel</Button>
-                      <Button onClick={handleRequestMoney} disabled={isLoading}>{isLoading ? 'Sending...' : 'Send Request'}</Button>
+                      <Button variant="outline" onClick={() => setRequestMoneyDialogOpen(false)}>{t('Cancel')}</Button>
+                      <Button onClick={handleRequestMoney} disabled={isLoading}>{isLoading ? t('Sending...') : t('Send Request')}</Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
