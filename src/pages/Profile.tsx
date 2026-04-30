@@ -96,30 +96,26 @@ export default function Profile() {
 
    const handleSave = async () => {
      let avatarUrl = formData.avatarUrl || undefined;
-     
-     // If a new avatar file is selected, upload it first
+
+     // If a new avatar file is selected, convert it to base64
      if (avatarFile) {
+       setIsUploadingAvatar(true);
        try {
-         setIsUploadingAvatar(true);
-         const formDataObj = new FormData();
-         formDataObj.append('image', avatarFile);
-         const response = await api.post('/posts/upload', formDataObj, {
-           headers: { 'Content-Type': 'multipart/form-data' }
+         avatarUrl = await new Promise((resolve, reject) => {
+           const reader = new FileReader();
+           reader.readAsDataURL(avatarFile);
+           reader.onload = () => resolve(reader.result as string);
+           reader.onerror = (error) => reject(error);
          });
-         avatarUrl = response.data.url;
-       } catch (error: any) {
-         toast({
-           title: 'Error',
-           description: String(error.response?.data?.error) || 'Failed to upload avatar',
-           variant: 'destructive',
-         });
+       } catch (error) {
+         toast({ title: 'Error', description: 'Failed to process avatar image', variant: 'destructive' });
          setIsUploadingAvatar(false);
          return;
        } finally {
          setIsUploadingAvatar(false);
        }
      }
-     
+
      updateMutation.mutate({
          fullName: formData.fullName,
          bio: formData.bio,
@@ -127,7 +123,6 @@ export default function Profile() {
          avatarUrl: avatarUrl
      });
    };
-
    const handleCancel = () => {
      if (profile) {
        setFormData({

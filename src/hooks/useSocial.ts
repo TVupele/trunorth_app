@@ -50,17 +50,17 @@ export const useSocial = create<SocialState>((set, get) => ({
         const response = await api.get('/posts');
         const posts = response.data.map((post: any) => ({
           id: post.id,
-          userId: post.user_id,
-          userName: post.full_name || `User_${post.user_id?.slice(0, 8)}`,
-          userAvatar: post.avatar_url || post.image_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(post.full_name || post.user_id || 'default')}`,
+          userId: post.userId || post.user_id,
+          userName: post.userName || post.full_name || `User_${(post.userId || post.user_id)?.slice(0, 8)}`,
+          userAvatar: post.userAvatar || post.avatar_url || post.image_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(post.userName || post.full_name || post.userId || post.user_id || 'default')}`,
           content: post.content,
           imageUrl: post.imageUrl || post.image_url || undefined,
-          likes: post.likes_count || post.likes || 0,
+          likes: post.likes || post.likes_count || 0,
           comments: post.comments || [],
-          retweets: post.retweets_count || post.retweets || 0,
+          retweets: post.retweets || post.retweets_count || 0,
           isLiked: post.isLiked || false,
           isRetweeted: post.isRetweeted || false,
-          timestamp: post.created_at || post.timestamp,
+          timestamp: post.timestamp || post.created_at,
         }));
         set({ posts });
       } catch (error) {

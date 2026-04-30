@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Repeat2, Share2, MessageCircle, Heart, MoreHorizontal } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -10,6 +11,7 @@ import { formatDate } from '@/lib/index';
 import { useToast } from '@/hooks/use-toast';
 
 export function NewsFeed() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { posts, toggleLike, toggleRetweet, fetchPosts } = useSocial();
   const { toast } = useToast();
@@ -30,7 +32,7 @@ export function NewsFeed() {
     try {
       await toggleLike(postId);
     } catch (error) {
-      toast({ title: 'Error', description: 'Failed to like post', variant: 'destructive' });
+      toast({ title: t('Error'), description: t('Failed to like post'), variant: 'destructive' });
     }
   };
 
@@ -38,18 +40,18 @@ export function NewsFeed() {
     try {
       await toggleRetweet(postId);
       toast({
-        title: isRetweeted ? 'Retweet removed' : 'Retweeted!',
+        title: isRetweeted ? t('Retweet removed') : t('Retweeted!'),
         duration: 1500,
       });
     } catch (error) {
-      toast({ title: 'Error', description: 'Failed to retweet', variant: 'destructive' });
+      toast({ title: 'Error', description: t('Failed to retweet'), variant: 'destructive' });
     }
   };
 
   const handleComment = (postId: string) => {
     toast({
-      title: 'Comments',
-      description: 'Comments are now available!',
+      title: t('Comments'),
+      description: t('Comments are now available!'),
       duration: 2000,
     });
   };
@@ -58,7 +60,7 @@ export function NewsFeed() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `Post by ${post.userName}`,
+          title: `${t('Post by')} ${post.userName}`,
           text: post.content,
           url: window.location.href,
         });
@@ -67,7 +69,7 @@ export function NewsFeed() {
       }
     } else {
       navigator.clipboard.writeText(`${post.content}\n\nShared via TruNorth`).then(() => {
-        toast({ title: 'Copied to clipboard', duration: 2000 });
+        toast({ title: t('Copied to clipboard'), duration: 2000 });
       });
     }
   };
@@ -95,8 +97,8 @@ export function NewsFeed() {
     <div>
       {posts.length === 0 ? (
         <div className="text-center py-12 px-3">
-          <p className="text-muted-foreground text-sm">No posts yet</p>
-          <p className="text-muted-foreground text-xs mt-1">Be the first to share something!</p>
+          <p className="text-muted-foreground text-sm">{t('No posts yet')}</p>
+          <p className="text-muted-foreground text-xs mt-1">{t('Be the first to share something!')}</p>
         </div>
       ) : (
         <>
@@ -124,7 +126,7 @@ export function NewsFeed() {
                     {/* Header */}
                     <div className="flex items-center gap-1 flex-wrap">
                       <span className="font-semibold text-sm text-foreground">
-                        {post.userName || 'Anonymous'}
+                        {post.userName || t('Anonymous')}
                       </span>
                       <span className="text-muted-foreground text-sm">
                         @{((post.userName || '').toLowerCase().replace(/\s/g, ''))}
@@ -148,7 +150,7 @@ export function NewsFeed() {
                       <div className="mt-2 rounded-2xl overflow-hidden border border-border/50">
                         <img 
                           src={post.imageUrl} 
-                          alt="Post" 
+                          alt={t('Post')} 
                           className="w-full h-auto max-h-80 object-cover"
                         />
                       </div>

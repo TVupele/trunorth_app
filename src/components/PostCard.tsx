@@ -16,10 +16,11 @@ interface PostCardProps {
 }
 
 export function PostCard({ post }: PostCardProps) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { toggleLike, toggleRetweet, addComment } = useSocial();
   const { toast } = useToast();
-  const authorName = post.userId === user?.id ? (user?.fullName || 'You') : post.userName;
+  const authorName = post.userId === user?.id ? (user?.fullName || t('You')) : post.userName;
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,7 +51,7 @@ export function PostCard({ post }: PostCardProps) {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `Post by ${post.userName}`,
+          title: `${t('Post by')} ${post.userName}`,
           text: post.content,
           url: window.location.href,
         });

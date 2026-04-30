@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, NavLink } from 'react-router-dom';
 import { Home, Compass, Bell, AlertTriangle, ArrowUpRight, ArrowDownLeft, Plus, Wallet as WalletIcon } from 'lucide-react';
