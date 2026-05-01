@@ -177,10 +177,10 @@ export default function Tutoring() {
           transition={{ duration: 0.5 }}
         >
           <div className="mb-8">
-            <h1 className="text-4xl font-bold tracking-tight mb-2">Tutoring Marketplace</h1>
-            <p className="text-muted-foreground text-lg">
-              Find expert tutors for personalized learning sessions
-            </p>
+             <h1 className="text-4xl font-bold tracking-tight mb-2">{t('Tutoring Marketplace')}</h1>
+             <p className="text-muted-foreground text-lg">
+               {t('Find expert tutors to help you achieve your goals')}
+             </p>
           </div>
 
           <div className="mb-8 space-y-4">
@@ -188,7 +188,7 @@ export default function Tutoring() {
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
-                  placeholder="Search by tutor name or subject..."
+                   placeholder={t('Search by tutor name or subject...')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 h-12"
@@ -226,10 +226,10 @@ export default function Tutoring() {
                         <Label>Subject</Label>
                         <Select value={selectedSubject} onValueChange={setSelectedSubject}>
                           <SelectTrigger>
-                            <SelectValue placeholder="All subjects" />
+                             <SelectValue placeholder={t('All Subjects')} />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="all">All subjects</SelectItem>
+                             <SelectItem value="all">{t('All Subjects')}</SelectItem>
                             {allSubjects.map((subject) => (
                               <SelectItem key={subject} value={subject}>
                                 {subject}
@@ -264,10 +264,10 @@ export default function Tutoring() {
                           onValueChange={(value) => setMinRating(parseFloat(value))}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Any rating" />
+                             <SelectValue placeholder={t('Any Rating')} />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="0">Any rating</SelectItem>
+                             <SelectItem value="0">{t('Any Rating')}</SelectItem>
                             <SelectItem value="4">4+ stars</SelectItem>
                             <SelectItem value="4.5">4.5+ stars</SelectItem>
                             <SelectItem value="4.8">4.8+ stars</SelectItem>
@@ -279,10 +279,10 @@ export default function Tutoring() {
                         <Label>{t('Availability')}</Label>
                         <Select value={availabilityFilter} onValueChange={setAvailabilityFilter}>
                           <SelectTrigger>
-                            <SelectValue placeholder="All tutors" />
+                             <SelectValue placeholder={t('All Tutors')} />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="all">All tutors</SelectItem>
+                             <SelectItem value="all">{t('All Tutors')}</SelectItem>
                             <SelectItem value="available">Available now</SelectItem>
                             <SelectItem value="unavailable">Unavailable</SelectItem>
                           </SelectContent>
@@ -354,7 +354,7 @@ export default function Tutoring() {
               className="mb-8"
             >
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-bold">Featured Tutors</h2>
+                <h2 className="text-2xl font-bold">{t('Featured Tutors')}</h2>
                 <Badge variant="secondary" className="text-sm">
                   Top Rated
                 </Badge>
@@ -375,7 +375,7 @@ export default function Tutoring() {
             transition={{ delay: 0.2 }}
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold">All Tutors</h2>
+               <h2 className="text-2xl font-bold">{t('All Tutors')}</h2>
               <div className="text-sm text-muted-foreground">
                 {filteredTutors.length} {filteredTutors.length === 1 ? 'tutor' : 'tutors'} found
               </div>
@@ -386,12 +386,12 @@ export default function Tutoring() {
                 <CardContent className="py-12 text-center">
                   <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                   <h3 className="text-lg font-semibold mb-2">{t('No tutors found')}</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Try adjusting your filters or search query
-                  </p>
-                  <Button variant="outline" onClick={resetFilters}>
-                    Reset Filters
-                  </Button>
+                   <p className="text-muted-foreground mb-4">
+                     {t('Try adjusting your filters or search query')}
+                   </p>
+                       <Button variant="outline" onClick={resetFilters}>
+                         {t('Reset Filters')}
+                       </Button>
                 </CardContent>
               </Card>
             ) : (
@@ -417,10 +417,10 @@ export default function Tutoring() {
       <Dialog open={bookingDialogOpen} onOpenChange={setBookingDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden">
           <DialogHeader>
-            <DialogTitle>Book Tutoring Session</DialogTitle>
-            <DialogDescription>
-              Schedule a session with {selectedTutor?.name}
-            </DialogDescription>
+             <DialogTitle>{t('Book Tutoring Session')}</DialogTitle>
+             <DialogDescription>
+               {t('Schedule a session with')} {selectedTutor?.name}
+             </DialogDescription>
           </DialogHeader>
 
           <ScrollArea className="h-[60vh] pr-4">
@@ -460,7 +460,7 @@ export default function Tutoring() {
                   <Label htmlFor="subject">Subject</Label>
                   <Select value={bookingSubject} onValueChange={setBookingSubject}>
                     <SelectTrigger id="subject">
-                      <SelectValue placeholder="Select subject" />
+                       <SelectValue placeholder={t('Select subject')} />
                     </SelectTrigger>
                     <SelectContent>
                       {selectedTutor.subjects.map((subject) => (
@@ -476,7 +476,7 @@ export default function Tutoring() {
                   <Label htmlFor="duration">Duration (hours)</Label>
                   <Select value={bookingDuration} onValueChange={setBookingDuration}>
                     <SelectTrigger id="duration">
-                      <SelectValue placeholder="Select duration" />
+                       <SelectValue placeholder={t('Select duration')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="1">1 hour</SelectItem>
@@ -510,10 +510,10 @@ export default function Tutoring() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="notes">Additional Notes (Optional)</Label>
+                 <Label htmlFor="notes">{t('Additional Notes')} ({t('Optional')})</Label>
                 <Textarea
                   id="notes"
-                  placeholder="Any specific topics or requirements for the session..."
+                   placeholder={t('Any specific topics or requirements for the session...')}
                   value={bookingNotes}
                   onChange={(e) => setBookingNotes(e.target.value)}
                   rows={3}
@@ -524,7 +524,7 @@ export default function Tutoring() {
 
               <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
                 <div>
-                  <div className="text-sm text-muted-foreground">Total Amount</div>
+                   <div className="text-sm text-muted-foreground">{t('Total Amount')}</div>
                   <div className="text-xs text-muted-foreground mt-1">
                     {bookingDuration}h × {formatCurrency(selectedTutor.hourlyRate)}/h
                   </div>
@@ -541,15 +541,15 @@ export default function Tutoring() {
             <Button variant="outline" onClick={() => setBookingDialogOpen(false)}>
               Cancel
             </Button>
-            <Button
-              onClick={handleConfirmBooking}
-              disabled={
-                isWalletLoading || !bookingSubject || !bookingDate || !bookingTime
-              }
-            >
-              <DollarSign className="h-4 w-4 mr-2" />
-              {isWalletLoading ? 'Processing...' : 'Confirm & Pay'}
-            </Button>
+               <Button
+                 onClick={handleConfirmBooking}
+                 disabled={
+                   isWalletLoading || !bookingSubject || !bookingDate || !bookingTime
+                 }
+               >
+                 <DollarSign className="h-4 w-4 mr-2" />
+                 {isWalletLoading ? t('Processing...') : t('Confirm & Pay')}
+               </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -127,8 +127,8 @@ export default function Donations() {
       <div className="w-full px-2 py-4 md:px-4 lg:px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <div className="mb-4">
-            <h1 className="text-2xl font-bold tracking-tight mb-1">Donations</h1>
-            <p className="text-muted-foreground text-sm">Support meaningful causes and make a difference in your community</p>
+             <h1 className="text-2xl font-bold tracking-tight mb-1">{t('Donations')}</h1>
+             <p className="text-muted-foreground text-sm">{t('Support meaningful causes')}</p>
           </div>
 
           <div className="grid gap-3 md:grid-cols-3 mb-4">
@@ -166,14 +166,14 @@ export default function Donations() {
 
           <Tabs defaultValue="campaigns" className="space-y-4">
             <TabsList>
-              <TabsTrigger value="campaigns" className="text-xs">All Campaigns</TabsTrigger>
-              <TabsTrigger value="history" className="text-xs">Donation History</TabsTrigger>
+               <TabsTrigger value="campaigns" className="text-xs">{t('All Campaigns')}</TabsTrigger>
+               <TabsTrigger value="history" className="text-xs">{t('Donation History')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="campaigns" className="space-y-4">
               {featuredCampaigns.length > 0 && (
                 <div className="space-y-3">
-                  <h2 className="text-lg font-semibold">Featured Campaigns</h2>
+                   <h2 className="text-lg font-semibold">{t('Featured Campaigns')}</h2>
                   <div className="grid gap-4 md:grid-cols-2">
                     {featuredCampaigns.map((campaign) => (
                       <motion.div key={campaign.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}>
@@ -186,14 +186,14 @@ export default function Donations() {
 
               <div className="space-y-3">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                  <h2 className="text-lg font-semibold">All Campaigns</h2>
+                   <h2 className="text-lg font-semibold">{t('All Campaigns')}</h2>
                   <div className="flex flex-col gap-2 sm:flex-row">
                     <div className="relative flex-1 sm:w-48">
                       <Search className="absolute left-3 top-1/2 h-3 w-3 -translate-y-1/2 text-muted-foreground" />
-                      <Input placeholder="Search campaigns..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-8 h-8 text-sm" />
+                       <Input placeholder={t('Search campaigns...')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-8 h-8 text-sm" />
                     </div>
                     <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                      <SelectTrigger className="w-full sm:w-40 h-8 text-sm"><SelectValue placeholder="Category" /></SelectTrigger>
+                       <SelectTrigger className="w-full sm:w-40 h-8 text-sm"><SelectValue placeholder={t('Category')} /></SelectTrigger>
                       <SelectContent>
                         {categories.map((category) => (
                           <SelectItem key={category} value={category} className="text-sm">{category.charAt(0).toUpperCase() + category.slice(1)}</SelectItem>
@@ -211,8 +211,8 @@ export default function Donations() {
                   <Card>
                     <CardContent className="flex flex-col items-center justify-center py-12">
                       <Heart className="h-12 w-12 text-muted-foreground mb-4" />
-                      <p className="text-lg font-medium mb-2">No campaigns found</p>
-                      <p className="text-sm text-muted-foreground">Try adjusting your search or filters</p>
+                       <p className="text-lg font-medium mb-2">{t('No campaigns found')}</p>
+                       <p className="text-sm text-muted-foreground">{t('Try adjusting your search or filters')}</p>
                     </CardContent>
                   </Card>
                 ) : (
@@ -234,8 +234,8 @@ export default function Donations() {
                 <Card>
                   <CardContent className="flex flex-col items-center justify-center py-12">
                     <Heart className="h-12 w-12 text-muted-foreground mb-4" />
-                    <p className="text-lg font-medium mb-2">No donations yet</p>
-                    <p className="text-sm text-muted-foreground mb-4">Start making a difference by donating to a campaign</p>
+                     <p className="text-lg font-medium mb-2">{t('No donations yet')}</p>
+                     <p className="text-sm text-muted-foreground mb-4">{t('Start making a difference by donating to a campaign')}</p>
                   </CardContent>
                 </Card>
               ) : (
@@ -296,7 +296,7 @@ export default function Donations() {
                 <div><h3 className="font-semibold mb-2">About this campaign</h3><p className="text-sm text-muted-foreground">{selectedCampaign.description}</p></div>
                 <div className="space-y-4">
                   <div>
-                    <Label className="text-base font-semibold mb-3 block">Select donation amount</Label>
+                     <Label className="text-base font-semibold mb-3 block">{t('Select donation amount')}</Label>
                     <div className="grid grid-cols-3 gap-2 mb-3">
                       {presetAmounts.map((amount) => (
                         <Button key={amount} variant={donationAmount === amount ? 'default' : 'outline'} onClick={() => { setDonationAmount(amount); setCustomAmount(''); }} className="font-mono">{formatCurrency(amount)}</Button>
@@ -304,20 +304,20 @@ export default function Donations() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="custom-amount">Or enter custom amount</Label>
-                      <Input id="custom-amount" type="number" placeholder="Enter amount" value={customAmount} onChange={(e) => { setCustomAmount(e.target.value); setDonationAmount(null); }} className="font-mono" />
+                       <Input id="custom-amount" type="number" placeholder={t('Or enter custom amount')} value={customAmount} onChange={(e) => { setCustomAmount(e.target.value); setDonationAmount(null); }} className="font-mono" />
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Checkbox id="anonymous" checked={isAnonymous} onCheckedChange={(checked) => setIsAnonymous(checked as boolean)} />
-                    <Label htmlFor="anonymous" className="text-sm font-normal cursor-pointer">Make this donation anonymous</Label>
+                     <Label htmlFor="anonymous" className="text-sm font-normal cursor-pointer">{t('Make this donation anonymous')}</Label>
                   </div>
                   <div className="rounded-lg bg-muted p-4 space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Donation amount</span>
+                      <span className="text-muted-foreground">{t('Donation amount')}</span>
                       <span className="font-mono font-medium">{formatCurrency(donationAmount || (customAmount ? parseFloat(customAmount) : 0))}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Wallet balance</span>
+                      <span className="text-muted-foreground">{t('Wallet balance')}</span>
                       <span className="font-mono font-medium">{formatCurrency(balance)}</span>
                     </div>
                   </div>
@@ -325,7 +325,7 @@ export default function Donations() {
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setSelectedCampaign(null)}>Cancel</Button>
-                <Button onClick={handleDonate} disabled={isLoading}>{isLoading ? 'Processing...' : 'Donate Now'}</Button>
+                 <Button onClick={handleDonate} disabled={isLoading}>{isLoading ? t('Processing...') : t('Donate Now')}</Button>
               </DialogFooter>
             </>
           )}

@@ -295,7 +295,7 @@ export default function Travel() {
                   <div>
                     <Label htmlFor="booking-date" className="mb-2 block">
                       <Calendar className="h-4 w-4 inline mr-2" />
-                      Travel Date
+                      {t('Travel Date')}
                     </Label>
                     <Input
                       id="booking-date"
@@ -309,7 +309,7 @@ export default function Travel() {
                   <div>
                     <Label htmlFor="traveler-count" className="mb-2 block">
                       <Users className="h-4 w-4 inline mr-2" />
-                      Number of Travelers
+                       {t('Number of Travelers')}
                     </Label>
                     <Select
                       value={travelerCount.toString()}
@@ -348,7 +348,7 @@ export default function Travel() {
 
                   <div className="bg-accent/10 rounded-lg p-3 text-sm">
                     <p className="text-muted-foreground">
-                      Wallet Balance: <span className="font-semibold text-foreground">{formatCurrency(balance)}</span>
+                     {t('Wallet Balance')}: <span className="font-semibold text-foreground">{formatCurrency(balance)}</span>
                     </p>
                   </div>
                 </div>
@@ -359,14 +359,14 @@ export default function Travel() {
                     onClick={() => setSelectedPackage(null)}
                     className="flex-1"
                   >
-                    Cancel
+                     {t('Cancel')}
                   </Button>
                   <Button
                     onClick={handleBooking}
                     disabled={isBooking || !bookingDate}
                     className="flex-1"
                   >
-                    {isBooking ? 'Processing...' : 'Confirm Booking'}
+                     {isBooking ? t('Processing...') : t('Confirm Booking')}
                   </Button>
                 </div>
               </div>
