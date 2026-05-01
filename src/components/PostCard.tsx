@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Heart, MessageCircle, Repeat2, Share2, Send } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Post, formatDate } from '@/lib/index';
 import { useSocial } from '@/hooks/useSocial';
 import { useAuth } from '@/hooks/useAuth';
@@ -7,9 +8,14 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Separator } from '@/components/ui/separator';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 
 interface PostCardProps {
   post: Post;
@@ -21,7 +27,7 @@ export function PostCard({ post }: PostCardProps) {
   const { toggleLike, toggleRetweet, addComment } = useSocial();
   const { toast } = useToast();
   const authorName = post.userId === user?.id ? (user?.fullName || t('You')) : post.userName;
-  const [showComments, setShowComments] = useState(false);
+  const [showCommentModal, setShowCommentModal] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -44,7 +50,6 @@ export function PostCard({ post }: PostCardProps) {
     addComment(post.id, commentText);
     setCommentText('');
     setIsSubmitting(false);
-    setShowComments(true);
   };
 
   const handleShare = async () => {
@@ -103,7 +108,7 @@ export function PostCard({ post }: PostCardProps) {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setShowComments(!showComments)}
+            onClick={() => setShowCommentModal(true)}
             className="h-6 px-1 text-xs"
           >
             <MessageCircle className="h-3 w-3 mr-1" />
@@ -129,54 +134,61 @@ export function PostCard({ post }: PostCardProps) {
         </div>
       </CardFooter>
 
-      <AnimatePresence>
-        {showComments && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            className="overflow-hidden px-3 pb-2"
-          >
-            <div className="space-y-2 max-h-32 overflow-y-auto py-1">
-              {post.comments.slice(0, 3).map((comment) => (
-                <div key={comment.id} className="flex gap-1.5">
-                  <Avatar className="h-5 w-5 flex-shrink-0">
-                    <AvatarImage src={comment.userAvatar} alt={comment.userName} />
-                    <AvatarFallback className="text-[8px]">{comment.userName.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 bg-muted rounded px-2 py-1">
-                    <p className="text-[10px]">{comment.content}</p>
+      <Dialog open={showCommentModal} onOpenChange={setShowCommentModal}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle>Comments</DialogTitle>
+            <DialogDescription>{post.content}</DialogDescription>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto py-4">
+            {post.comments.length > 0 ? (
+              <div className="space-y-4">
+                {post.comments.map((comment) => (
+                  <div key={comment.id} className="flex gap-2">
+                    <Avatar className="h-8 w-8 flex-shrink-0">
+                      <AvatarImage src={comment.userAvatar} alt={comment.userName} />
+                      <AvatarFallback className="text-xs">
+                        {comment.userName.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 bg-muted rounded-lg p-3">
+                      <p className="text-xs font-medium">{comment.userName}</p>
+                      <p className="text-sm">{comment.content}</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {formatDate(comment.timestamp)}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex gap-1 mt-1">
-              <Textarea
-                placeholder="Comment..."
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                className="min-h-[40px] resize-none text-xs py-1"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleComment();
-                  }
-                }}
-              />
-              <Button
-                size="icon"
-                onClick={handleComment}
-                disabled={!commentText.trim() || isSubmitting}
-                className="h-8 w-8 flex-shrink-0"
-              >
-                <Send className="h-3 w-3" />
-              </Button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground">No comments yet</p>
+            )}
+          </div>
+          <div className="flex gap-2 mt-4 pt-4 border-t">
+            <Textarea
+              placeholder="Write a comment..."
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              className="min-h-[60px] resize-none"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleComment();
+                }
+              }}
+            />
+            <Button
+              size="icon"
+              onClick={handleComment}
+              disabled={!commentText.trim() || isSubmitting}
+              className="h-10 w-10 flex-shrink-0"
+            >
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

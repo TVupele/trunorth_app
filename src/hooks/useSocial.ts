@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Post, Comment } from '@/lib/index';
+import { Post } from '@/lib/index';
 import api from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -29,6 +29,7 @@ interface SocialState {
   conversations: Conversation[];
   messages: Record<string, Message[]>;
   currentUserId: string;
+  uploadImage: (file: File) => Promise<string>;
   fetchPosts: () => Promise<void>;
   createPost: (content: string, image?: string) => void;
   addComment: (postId: string, content: string) => void;
@@ -44,6 +45,20 @@ export const useSocial = create<SocialState>((set, get) => ({
   conversations: [],
   messages: {},
   currentUserId: 'user-1',
+
+    uploadImage: async (file: File): Promise<string> => {
+      const formData = new FormData();
+      formData.append('image', file);
+      try {
+        const response = await api.post('/posts/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        return response.data.url;
+      } catch (error) {
+        console.error('Image upload failed:', error);
+        throw error;
+      }
+    },
 
     fetchPosts: async () => {
       try {

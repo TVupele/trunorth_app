@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Image as ImageIcon, Send, MessageCircle, Heart, Trash2, Plus } from 'lucide-react';
+import { Search, Image as ImageIcon, Send } from 'lucide-react';
 import { useSocial } from '@/hooks/useSocial';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 import { PostCard } from '@/components/PostCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,7 +19,8 @@ import { formatDate } from '@/lib/index';
 export default function Social() {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const { posts, conversations, messages, fetchPosts, createPost, sendMessage, markMessagesAsRead } = useSocial();
+  const { toast } = useToast();
+  const { posts, conversations, messages, fetchPosts, createPost, uploadImage, sendMessage, markMessagesAsRead } = useSocial();
   const [postContent, setPostContent] = useState('');
   const [postImage, setPostImage] = useState<File | null>(null);
   const [postImagePreview, setPostImagePreview] = useState('');
@@ -37,14 +39,14 @@ export default function Social() {
       let imageUrl: string | undefined;
       if (postImage) {
         try {
-          imageUrl = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(postImage);
-            reader.onload = () => resolve(reader.result as string);
-            reader.onerror = (error) => reject(error);
-          });
+          imageUrl = await uploadImage(postImage);
         } catch (error) {
           console.error('Image upload failed:', error);
+          toast({
+            title: 'Image upload failed',
+            description: 'Your post will be created without the image.',
+            duration: 3000,
+          });
         }
       }
       createPost(postContent, imageUrl);
