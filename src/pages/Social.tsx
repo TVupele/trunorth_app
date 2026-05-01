@@ -36,13 +36,13 @@ export default function Social() {
     if (postContent.trim()) {
       let imageUrl: string | undefined;
       if (postImage) {
-        const formData = new FormData();
-        formData.append('image', postImage);
         try {
-          const response = await api.post('/posts/upload', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+          imageUrl = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(postImage);
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = (error) => reject(error);
           });
-          imageUrl = response.data.url;
         } catch (error) {
           console.error('Image upload failed:', error);
         }

@@ -129,12 +129,12 @@ export default function Travel() {
           transition={{ duration: 0.4 }}
         >
           <div className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight mb-2">Travel Packages</h1>
-            <p className="text-muted-foreground">Discover amazing destinations and book your next adventure</p>
+            <h1 className="text-3xl font-bold tracking-tight mb-2">{t('Travel Packages')}</h1>
+            <p className="text-muted-foreground">{t('Discover amazing destinations and book your next adventure')}</p>
           </div>
 
           <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Featured Destinations</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('Featured Destinations')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {featuredPackages.map((pkg) => (
                 <motion.div
@@ -155,7 +155,7 @@ export default function Travel() {
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search destinations..."
+                placeholder={t('Search destinations...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -164,12 +164,12 @@ export default function Travel() {
             <div className="flex gap-2">
               <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Sort by" />
+                  <SelectValue placeholder={t('Sort by')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="popularity">Popularity</SelectItem>
-                  <SelectItem value="price">Price</SelectItem>
-                  <SelectItem value="rating">Rating</SelectItem>
+                  <SelectItem value="popularity">{t('Popularity')}</SelectItem>
+                  <SelectItem value="price">{t('Price')}</SelectItem>
+                  <SelectItem value="rating">{t('Rating')}</SelectItem>
                 </SelectContent>
               </Select>
               <Button
@@ -194,7 +194,7 @@ export default function Travel() {
                 <Card className="p-6 mb-6">
                   <div className="space-y-4">
                     <div>
-                      <Label className="mb-3 block">Price Range</Label>
+                      <Label className="mb-3 block">{t('Price Range')}</Label>
                       <Slider
                         value={priceRange}
                         onValueChange={setPriceRange}
@@ -241,8 +241,8 @@ export default function Travel() {
               className="text-center py-16"
             >
               <MapPin className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-xl font-semibold mb-2">No packages found</h3>
-              <p className="text-muted-foreground">Try adjusting your search or filters</p>
+              <h3 className="text-xl font-semibold mb-2">{t('No packages found')}</h3>
+              <p className="text-muted-foreground">{t('Try adjusting your search or filters')}</p>
             </motion.div>
           )}
         </motion.div>
@@ -278,7 +278,7 @@ export default function Travel() {
                 </div>
 
                 <div>
-                  <h3 className="font-semibold mb-2">Package Highlights</h3>
+                  <h3 className="font-semibold mb-2">{t('Package Highlights')}</h3>
                   <ul className="space-y-2">
                     {selectedPackage.highlights.map((highlight, index) => (
                       <li key={index} className="flex items-start gap-2 text-sm">
@@ -330,16 +330,16 @@ export default function Travel() {
 
                   <div className="bg-muted rounded-lg p-4">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm text-muted-foreground">Price per person</span>
+                      <span className="text-sm text-muted-foreground">{t('Price per person')}</span>
                       <span className="font-medium">{formatCurrency(selectedPackage.price)}</span>
                     </div>
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm text-muted-foreground">Travelers</span>
+                      <span className="text-sm text-muted-foreground">{t('Travelers')}</span>
                       <span className="font-medium">× {travelerCount}</span>
                     </div>
                     <Separator className="my-2" />
                     <div className="flex justify-between items-center">
-                      <span className="font-semibold">Total Amount</span>
+                      <span className="font-semibold">{t('Total Amount')}</span>
                       <span className="text-xl font-bold text-primary">
                         {formatCurrency(selectedPackage.price * travelerCount)}
                       </span>

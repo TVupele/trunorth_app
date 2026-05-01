@@ -258,7 +258,7 @@ export default function Tutoring() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label>Minimum Rating</Label>
+                        <Label>{t('Minimum Rating')}</Label>
                         <Select
                           value={minRating.toString()}
                           onValueChange={(value) => setMinRating(parseFloat(value))}
@@ -276,7 +276,7 @@ export default function Tutoring() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label>Availability</Label>
+                        <Label>{t('Availability')}</Label>
                         <Select value={availabilityFilter} onValueChange={setAvailabilityFilter}>
                           <SelectTrigger>
                             <SelectValue placeholder="All tutors" />
@@ -385,7 +385,7 @@ export default function Tutoring() {
               <Card>
                 <CardContent className="py-12 text-center">
                   <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                  <h3 className="text-lg font-semibold mb-2">No tutors found</h3>
+                  <h3 className="text-lg font-semibold mb-2">{t('No tutors found')}</h3>
                   <p className="text-muted-foreground mb-4">
                     Try adjusting your filters or search query
                   </p>

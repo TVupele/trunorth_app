@@ -99,12 +99,12 @@ export default function Home() {
     try {
       let imageUrl: string | undefined;
       if (postImage) {
-        const formData = new FormData();
-        formData.append('image', postImage);
-        const response = await api.post('/posts/upload', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
+        imageUrl = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(postImage);
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = (error) => reject(error);
         });
-        imageUrl = response.data.url;
       }
       // Use useSocial's createPost to ensure the post appears immediately in the feed
       await createSocialPost(postContent, imageUrl);
@@ -114,7 +114,7 @@ export default function Home() {
       setPostImage(null);
       setPostImagePreview('');
     } catch (error: any) {
-      toast({ title: t('Error'), description: String(error.response?.data?.error) || t('Failed to send money'), variant: 'destructive' });
+      toast({ title: t('Error'), description: String(error.response?.data?.error) || t('Failed to create post'), variant: 'destructive' });
     } finally {
       setIsCreatingPost(false);
     }

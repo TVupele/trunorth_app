@@ -122,7 +122,7 @@ export default function Marketplace() {
       <div className="w-full px-2 py-4 md:px-4 lg:px-6">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Marketplace</h1>
+            <h1 className="text-2xl font-bold tracking-tight">{t('Marketplace')}</h1>
             <p className="mt-1 text-muted-foreground text-sm">Discover amazing products from trusted sellers</p>
           </div>
           <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
@@ -184,7 +184,7 @@ export default function Marketplace() {
         <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Search products..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9 h-9 text-sm" />
+            <Input placeholder={t('Search products...')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9 h-9 text-sm" />
           </div>
         </div>
 
@@ -202,7 +202,7 @@ export default function Marketplace() {
               </div>
             </div>
             <div className="rounded-lg border bg-card p-6">
-              <h3 className="mb-4 font-semibold">Price Range</h3>
+              <h3 className="mb-4 font-semibold">{t('Price Range')}</h3>
               <Slider value={priceRange} onValueChange={setPriceRange} max={50000} step={1000} className="w-full" />
               <div className="flex items-center justify-between text-sm text-muted-foreground mt-2">
                 <span>{formatCurrency(priceRange[0])}</span><span>{formatCurrency(priceRange[1])}</span>
@@ -252,7 +252,7 @@ export default function Marketplace() {
             ) : filteredProducts.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <Search className="h-16 w-16 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold">No products found</h3>
+                <h3 className="text-lg font-semibold">{t('No products found')}</h3>
                 <p className="text-muted-foreground">Try adjusting your filters</p>
               </div>
             ) : (
